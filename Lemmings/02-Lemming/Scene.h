@@ -27,6 +27,7 @@ public:
 
 private:
 	void initShaders();
+	void initLevels();
 	void eraseMask(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 
@@ -37,11 +38,23 @@ private:
 	ShaderProgram simpleTexProgram, maskedTexProgram;
 	float currentTime;
 	glm::mat4 projection;
-	vector<Lemming> lemmings;
-
-	int numLemmings;
-	int spawnedLemmings;
 	Lemming lemming;
+
+	struct Level {
+		string name;
+		int lemmingsToSpawn;
+		int lemmingsToSave;
+		int availableTime;
+		glm::vec2 spawnPosition;
+		glm::vec2 savePosition;
+		string colorTextureFile;
+		string maskTextureFile;
+	};
+	vector<Level> levels;
+	int actualLevel;
+
+	vector<Lemming> lemmings;
+	int spawnedLemmings;
 };
 
 

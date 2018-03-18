@@ -23,12 +23,15 @@ void Scene::init()
 	glm::vec2 texCoords[2] = {glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f)};
 
 	initShaders();
+	initLevels();
+
+	Level level = levels[actualLevel];
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
-	colorTexture.loadFromFile("images/fun2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
 	colorTexture.setMagFilter(GL_NEAREST);
-	maskTexture.loadFromFile("images/fun2_mask.png", TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.loadFromFile(level.maskTextureFile, TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
@@ -38,13 +41,11 @@ void Scene::init()
 	lemming.init(glm::vec2(60, 30), simpleTexProgram);
 	lemming.setMapMask(&maskTexture);
 
-
-	numLemmings = 10;
 	spawnedLemmings = 0;
 
-	for (int i = 0; i < numLemmings; ++i) {
+	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming lem;
-		lem.init(glm::vec2(60, 30), simpleTexProgram);
+		lem.init(level.spawnPosition, simpleTexProgram);
 		lem.setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);
@@ -57,9 +58,11 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
+	Level level = levels[actualLevel];
+
 	// Spawn lemmings every second
 	int sec = int(currentTime / 1000);
-	if (spawnedLemmings < numLemmings && spawnedLemmings <= sec) {
+	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
 		++spawnedLemmings;
 	}
 
@@ -201,5 +204,19 @@ void Scene::initShaders()
 	fShader.free();
 }
 
+void Scene::initLevels()
+{
+	actualLevel = 0;
 
+	Level firstLevel;
+	firstLevel.name = "Just dig!";
+	firstLevel.lemmingsToSpawn = 10;
+	firstLevel.lemmingsToSave = 1;
+	firstLevel.availableTime = 5 * 60;
+	firstLevel.spawnPosition = glm::vec2(60, 30);
+	firstLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	firstLevel.colorTextureFile = "images/fun2.png";
+	firstLevel.maskTextureFile = "images/fun2_mask.png";
+	levels.push_back(firstLevel);
+}
 
