@@ -30,6 +30,7 @@ private:
 	void initLevels();
 	void eraseMask(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
+	void changeLevel(int level);
 
 private:
 	Texture colorTexture;

@@ -59,9 +59,13 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	Level level = levels[actualLevel];
+	cout << actualLevel << endl << spawnedLemmings << endl;
 
 	// Spawn lemmings every second
 	int sec = int(currentTime / 1000);
+
+	if (sec == 15) changeLevel(1);
+
 	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
 		++spawnedLemmings;
 	}
@@ -215,8 +219,45 @@ void Scene::initLevels()
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(60, 30);
 	firstLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
-	firstLevel.colorTextureFile = "images/fun2.png";
-	firstLevel.maskTextureFile = "images/fun2_mask.png";
+	firstLevel.colorTextureFile = "images/fun1.png";
+	firstLevel.maskTextureFile = "images/fun1_mask.png";
 	levels.push_back(firstLevel);
+
+	Level secondLevel;
+	secondLevel.name = "Only floaters can survive this";
+	secondLevel.lemmingsToSpawn = 10;
+	secondLevel.lemmingsToSave = 1;
+	secondLevel.availableTime = 5 * 60;
+	secondLevel.spawnPosition = glm::vec2(30, 15);
+	secondLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	secondLevel.colorTextureFile = "images/fun2.png";
+	secondLevel.maskTextureFile = "images/fun2_mask.png";
+	levels.push_back(secondLevel);
+}
+
+void Scene::changeLevel(int newLevel)
+{
+	actualLevel = newLevel;
+
+	Level level = levels[actualLevel];
+
+	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
+	colorTexture.setMinFilter(GL_NEAREST);
+	colorTexture.setMagFilter(GL_NEAREST);
+	maskTexture.loadFromFile(level.maskTextureFile, TEXTURE_PIXEL_FORMAT_L);
+	maskTexture.setMinFilter(GL_NEAREST);
+	maskTexture.setMagFilter(GL_NEAREST);
+
+	lemmings.clear();
+
+	spawnedLemmings = 0;
+
+	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
+		Lemming lem;
+		lem.init(level.spawnPosition, simpleTexProgram);
+		lem.setMapMask(&maskTexture);
+
+		lemmings.push_back(lem);
+	}
 }
 
