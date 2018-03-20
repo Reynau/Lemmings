@@ -44,9 +44,9 @@ void Scene::init()
 	spawnedLemmings = 0;
 
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
-		Lemming lem;
-		lem.init(level.spawnPosition, simpleTexProgram);
-		lem.setMapMask(&maskTexture);
+		Lemming * lem = new Lemming();
+		lem->init(level.spawnPosition, simpleTexProgram);
+		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);
 	}
@@ -64,14 +64,14 @@ void Scene::update(int deltaTime)
 	// Spawn lemmings every second
 	int sec = int(currentTime / 1000);
 
-	if (sec == 15) changeLevel(1);
+	//if (sec == 15) changeLevel(1);
 
 	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
 		++spawnedLemmings;
 	}
 
 	for (int i = 0; i < spawnedLemmings; ++i) {
-		lemmings[i].update(deltaTime);
+		lemmings[i]->update(deltaTime);
 	}
 
 
@@ -96,7 +96,7 @@ void Scene::render()
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 
 	for (int i = 0; i < spawnedLemmings; ++i) {
-		lemmings[i].render();
+		lemmings[i]->render();
 	}
 
 
@@ -253,9 +253,9 @@ void Scene::changeLevel(int newLevel)
 	spawnedLemmings = 0;
 
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
-		Lemming lem;
-		lem.init(level.spawnPosition, simpleTexProgram);
-		lem.setMapMask(&maskTexture);
+		Lemming * lem = new Lemming();
+		lem->init(level.spawnPosition, simpleTexProgram);
+		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);
 	}

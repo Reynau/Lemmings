@@ -54,7 +54,7 @@ private:
 	vector<Level> levels;
 	int actualLevel;
 
-	vector<Lemming> lemmings;
+	vector<Lemming *> lemmings;
 	int spawnedLemmings;
 };
 
