@@ -39,7 +39,6 @@ private:
 	ShaderProgram simpleTexProgram, maskedTexProgram;
 	float currentTime;
 	glm::mat4 projection;
-	Lemming lemming;
 
 	struct Level {
 		string name;

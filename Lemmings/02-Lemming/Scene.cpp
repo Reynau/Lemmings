@@ -37,9 +37,6 @@ void Scene::init()
 
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	
-	lemming.init(glm::vec2(60, 30), simpleTexProgram);
-	lemming.setMapMask(&maskTexture);
 
 	spawnedLemmings = 0;
 
@@ -59,12 +56,14 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	Level level = levels[actualLevel];
-	cout << actualLevel << endl << spawnedLemmings << endl;
 
 	// Spawn lemmings every second
 	int sec = int(currentTime / 1000);
+	if (int(currentTime/100) % 10 == 0) {
+		cout << "Level: " << actualLevel << endl << "Lemmings spawned: " << spawnedLemmings << endl;
+	}
 
-	//if (sec == 15) changeLevel(1);
+	if (sec == 15) changeLevel(0);
 
 	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
 		++spawnedLemmings;
@@ -74,8 +73,6 @@ void Scene::update(int deltaTime)
 		lemmings[i]->update(deltaTime);
 	}
 
-
-	lemming.update(deltaTime);
 }
 
 void Scene::render()
@@ -99,8 +96,6 @@ void Scene::render()
 		lemmings[i]->render();
 	}
 
-
-	lemming.render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
@@ -233,6 +228,17 @@ void Scene::initLevels()
 	secondLevel.colorTextureFile = "images/fun2.png";
 	secondLevel.maskTextureFile = "images/fun2_mask.png";
 	levels.push_back(secondLevel);
+
+	Level thirdLevel;
+	thirdLevel.name = "Tailor-made for blockers";
+	thirdLevel.lemmingsToSpawn = 50;
+	thirdLevel.lemmingsToSave = 5;
+	thirdLevel.availableTime = 5 * 60;
+	thirdLevel.spawnPosition = glm::vec2(50, 15);
+	thirdLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	thirdLevel.colorTextureFile = "images/fun3.png";
+	thirdLevel.maskTextureFile = "images/fun3_mask.png";
+	levels.push_back(thirdLevel);
 }
 
 void Scene::changeLevel(int newLevel)
@@ -248,6 +254,10 @@ void Scene::changeLevel(int newLevel)
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
+	for (std::vector<Lemming *>::iterator it = lemmings.begin(); it != lemmings.end(); ++it)
+	{
+		delete (*it);
+	}
 	lemmings.clear();
 
 	spawnedLemmings = 0;
