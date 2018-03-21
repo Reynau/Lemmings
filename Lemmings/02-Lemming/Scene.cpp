@@ -63,7 +63,7 @@ void Scene::update(int deltaTime)
 		cout << "Level: " << actualLevel << endl << "Lemmings spawned: " << spawnedLemmings << endl;
 	}
 
-	if (sec == 15) changeLevel(0);
+	if (sec == 15) changeLevel(1);
 
 	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
 		++spawnedLemmings;
@@ -261,6 +261,7 @@ void Scene::changeLevel(int newLevel)
 	lemmings.clear();
 
 	spawnedLemmings = 0;
+	currentTime = 0;
 
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
