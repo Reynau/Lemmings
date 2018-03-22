@@ -36,11 +36,11 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 		sprite->setAnimationSpeed(FALLING_RIGHT, 12);
 		for (int i = 0; i<4; i++)
-			sprite->addKeyframe(FALLING_RIGHT, glm::vec2(float(i) / 4, 32.0f / 16.0f));
+			sprite->addKeyframe(FALLING_RIGHT, glm::vec2(float(i) / 8, 32.0f / 48.0f));
 
 		sprite->setAnimationSpeed(FALLING_LEFT, 12);
 		for (int i = 0; i<4; i++)
-			sprite->addKeyframe(FALLING_LEFT, glm::vec2(float(i) / 4, 32.0f / 48.0f));
+			sprite->addKeyframe(FALLING_LEFT, glm::vec2(float(i) / 8, 48.0f / 48.0f));
 		
 	sprite->changeAnimation(FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
