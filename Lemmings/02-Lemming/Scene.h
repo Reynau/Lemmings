@@ -32,6 +32,11 @@ private:
 	void applyMask(int mouseX, int mouseY);
 	void changeLevel(int level);
 
+	bool lemmingHasToSpawn();
+
+	void clearLemmings();
+	void resetLemmings();
+
 private:
 	Texture colorTexture;
 	VariableTexture maskTexture;
@@ -55,6 +60,7 @@ private:
 
 	vector<Lemming *> lemmings;
 	int spawnedLemmings;
+	int aliveLemmings;
 };
 
 

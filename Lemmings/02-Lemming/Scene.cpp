@@ -55,20 +55,15 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
-	Level level = levels[actualLevel];
-
-	// Spawn lemmings every second
-	int sec = int(currentTime / 1000);
 	if (int(currentTime/100) % 10 == 0) {
 		cout << "Level: " << actualLevel << endl << "Lemmings spawned: " << spawnedLemmings << endl;
 	}
 
-	if (sec == 15) changeLevel(1);
-
-	if (spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec) {
+	if (lemmingHasToSpawn()) {
 		++spawnedLemmings;
 	}
 
+	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		lemmings[i]->update(deltaTime);
 	}
@@ -213,7 +208,7 @@ void Scene::initLevels()
 	firstLevel.lemmingsToSave = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(60, 30);
-	firstLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	firstLevel.savePosition = glm::vec2(180, 60); // TODO: Must adjust this position (randomly selected)
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
 	levels.push_back(firstLevel);
@@ -254,15 +249,22 @@ void Scene::changeLevel(int newLevel)
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
-	for (std::vector<Lemming *>::iterator it = lemmings.begin(); it != lemmings.end(); ++it)
-	{
-		delete (*it);
-	}
-	lemmings.clear();
+	resetLemmings();
 
-	spawnedLemmings = 0;
 	currentTime = 0;
+}
 
+bool Scene::lemmingHasToSpawn() {
+	Level level = levels[actualLevel];
+	int sec = int(currentTime / 1000);
+
+	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec;
+}
+
+void Scene::resetLemmings() {
+	clearLemmings();
+
+	Level level = levels[actualLevel];
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
 		lem->init(level.spawnPosition, simpleTexProgram);
@@ -270,5 +272,15 @@ void Scene::changeLevel(int newLevel)
 
 		lemmings.push_back(lem);
 	}
+
+	spawnedLemmings = 0;
+	aliveLemmings = 0;
 }
 
+void Scene::clearLemmings() {
+	for (std::vector<Lemming *>::iterator it = lemmings.begin(); it != lemmings.end(); ++it)
+	{
+		delete (*it);
+	}
+	lemmings.clear();
+}
