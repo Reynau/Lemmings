@@ -31,6 +31,7 @@ private:
 	void eraseMask(int mouseX, int mouseY);
 	void applyMask(int mouseX, int mouseY);
 	void changeLevel(int level);
+	void finishLevel();
 
 	bool lemmingHasToSpawn();
 

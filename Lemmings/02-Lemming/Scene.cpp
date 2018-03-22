@@ -68,6 +68,10 @@ void Scene::update(int deltaTime)
 		lemmings[i]->update(deltaTime);
 	}
 
+	// A level finishes when any lemming is alive
+	if (aliveLemmings == 0) {
+		finishLevel();
+	}
 }
 
 void Scene::render()
@@ -254,6 +258,20 @@ void Scene::changeLevel(int newLevel)
 	currentTime = 0;
 }
 
+void Scene::finishLevel() {
+	Level level = levels[actualLevel];
+
+	// TODO: Improve this logic
+	if (aliveLemmings >= level.lemmingsToSave) {
+		// Win
+		changeLevel(++actualLevel);
+	}
+	else {
+		// Lose
+		changeLevel(actualLevel);
+	}
+}
+
 bool Scene::lemmingHasToSpawn() {
 	Level level = levels[actualLevel];
 	int sec = int(currentTime / 1000);
@@ -274,7 +292,7 @@ void Scene::resetLemmings() {
 	}
 
 	spawnedLemmings = 0;
-	aliveLemmings = 0;
+	aliveLemmings = level.lemmingsToSpawn;
 }
 
 void Scene::clearLemmings() {
