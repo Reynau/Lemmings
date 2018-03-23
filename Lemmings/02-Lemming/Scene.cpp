@@ -42,15 +42,7 @@ void Scene::init()
 	lemmingTexture.setMinFilter(GL_NEAREST);
 	lemmingTexture.setMagFilter(GL_NEAREST);
 
-	spawnedLemmings = 0;
-
-	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
-		Lemming * lem = new Lemming();
-		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture);
-		lem->setMapMask(&maskTexture);
-
-		lemmings.push_back(lem);
-	}
+	initLemmings();
 }
 
 unsigned int x = 0;
@@ -278,9 +270,7 @@ bool Scene::lemmingHasToSpawn() {
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec;
 }
 
-void Scene::resetLemmings() {
-	clearLemmings();
-
+void Scene::initLemmings() {
 	Level level = levels[actualLevel];
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
@@ -292,6 +282,11 @@ void Scene::resetLemmings() {
 
 	spawnedLemmings = 0;
 	aliveLemmings = level.lemmingsToSpawn;
+}
+
+void Scene::resetLemmings() {
+	clearLemmings();
+	initLemmings();
 }
 
 void Scene::clearLemmings() {

@@ -35,6 +35,7 @@ private:
 
 	bool lemmingHasToSpawn();
 
+	void initLemmings();
 	void clearLemmings();
 	void resetLemmings();
 
