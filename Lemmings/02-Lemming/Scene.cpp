@@ -25,7 +25,7 @@ void Scene::init()
 	initShaders();
 	initLevels();
 
-	Level level = levels[actualLevel];
+	Level level = levels[currentLevel];
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
@@ -56,7 +56,10 @@ void Scene::update(int deltaTime)
 
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
-		lemmings[i]->update(deltaTime);
+		if (lemmings[i]) {
+			lemmings[i]->update(deltaTime);
+			checkIfLemmingSafe(i);
+		}
 	}
 
 	// A level finishes when any lemming is alive
@@ -83,7 +86,7 @@ void Scene::render()
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 
 	for (int i = 0; i < spawnedLemmings; ++i) {
-		lemmings[i]->render();
+		if (lemmings[i]) lemmings[i]->render();
 	}
 
 }
@@ -195,15 +198,15 @@ void Scene::initShaders()
 
 void Scene::initLevels()
 {
-	actualLevel = 0;
+	currentLevel = 0;
 
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
 	firstLevel.lemmingsToSpawn = 10;
-	firstLevel.lemmingsToSave = 1;
+	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(60, 30);
-	firstLevel.savePosition = glm::vec2(180, 60); // TODO: Must adjust this position (randomly selected)
+	firstLevel.savePosition = glm::vec2(180, 130); // TODO: Must adjust this position (randomly selected)
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
 	levels.push_back(firstLevel);
@@ -211,7 +214,7 @@ void Scene::initLevels()
 	Level secondLevel;
 	secondLevel.name = "Only floaters can survive this";
 	secondLevel.lemmingsToSpawn = 10;
-	secondLevel.lemmingsToSave = 1;
+	secondLevel.lemmingsToSecure = 1;
 	secondLevel.availableTime = 5 * 60;
 	secondLevel.spawnPosition = glm::vec2(30, 15);
 	secondLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
@@ -222,7 +225,7 @@ void Scene::initLevels()
 	Level thirdLevel;
 	thirdLevel.name = "Tailor-made for blockers";
 	thirdLevel.lemmingsToSpawn = 50;
-	thirdLevel.lemmingsToSave = 5;
+	thirdLevel.lemmingsToSecure = 5;
 	thirdLevel.availableTime = 5 * 60;
 	thirdLevel.spawnPosition = glm::vec2(50, 15);
 	thirdLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
@@ -233,9 +236,9 @@ void Scene::initLevels()
 
 void Scene::changeLevel(int newLevel)
 {
-	actualLevel = newLevel;
+	currentLevel = newLevel;
 
-	Level level = levels[actualLevel];
+	Level level = levels[currentLevel];
 
 	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
@@ -250,28 +253,51 @@ void Scene::changeLevel(int newLevel)
 }
 
 void Scene::finishLevel() {
-	Level level = levels[actualLevel];
+	Level level = levels[currentLevel];
 
 	// TODO: Improve this logic
-	if (aliveLemmings >= level.lemmingsToSave) {
+	if (safeLemmings >= level.lemmingsToSecure) {
 		// Win
-		changeLevel(++actualLevel);
+		changeLevel(++currentLevel);
 	}
 	else {
 		// Lose
-		changeLevel(actualLevel);
+		changeLevel(currentLevel);
+	}
+}
+
+void Scene::checkIfLemmingSafe(int lemmingId) {
+	Level level = levels[currentLevel];
+
+	glm::vec2 safeSquare = glm::vec2(20, 20); // TODO: Adjust safe square
+
+	glm::vec2 initialPoint = level.savePosition - safeSquare;
+	glm::vec2 endingPoint = level.savePosition + safeSquare;
+
+	Lemming * lemming = lemmings[lemmingId];
+	if (lemmingColideWith(lemming, initialPoint, endingPoint)) {
+		removeLemming(lemmingId);
+		--aliveLemmings;
+		++safeLemmings;
 	}
 }
 
 bool Scene::lemmingHasToSpawn() {
-	Level level = levels[actualLevel];
+	Level level = levels[currentLevel];
 	int sec = int(currentTime / 1000);
 
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec;
 }
 
+bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
+	glm::vec2 lemmingPos = lemming->getPosition();
+
+	// TODO: Improve collision detection
+	return (lemmingPos.x > startPoint.x  && lemmingPos.x < endPoint.x && lemmingPos.y > startPoint.y && lemmingPos.y < endPoint.y);
+}
+
 void Scene::initLemmings() {
-	Level level = levels[actualLevel];
+	Level level = levels[currentLevel];
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
 		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture);
@@ -281,6 +307,7 @@ void Scene::initLemmings() {
 	}
 
 	spawnedLemmings = 0;
+	safeLemmings = 0;
 	aliveLemmings = level.lemmingsToSpawn;
 }
 
@@ -290,9 +317,13 @@ void Scene::resetLemmings() {
 }
 
 void Scene::clearLemmings() {
-	for (std::vector<Lemming *>::iterator it = lemmings.begin(); it != lemmings.end(); ++it)
-	{
-		delete (*it);
+	for (int i = 0; i < lemmings.size(); ++i) {
+		removeLemming(i);
 	}
 	lemmings.clear();
+}
+
+void Scene::removeLemming(int lemmingId) {
+	delete (lemmings[lemmingId]);
+	lemmings[lemmingId] = NULL;
 }

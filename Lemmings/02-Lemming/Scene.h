@@ -33,11 +33,14 @@ private:
 	void changeLevel(int level);
 	void finishLevel();
 
+	void checkIfLemmingSafe(int lemmingId);
 	bool lemmingHasToSpawn();
+	bool lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint);
 
 	void initLemmings();
 	void clearLemmings();
 	void resetLemmings();
+	void removeLemming(int lemmingId);
 
 private:
 	Texture colorTexture;
@@ -51,7 +54,7 @@ private:
 	struct Level {
 		string name;
 		int lemmingsToSpawn;
-		int lemmingsToSave;
+		int lemmingsToSecure;
 		int availableTime;
 		glm::vec2 spawnPosition;
 		glm::vec2 savePosition;
@@ -59,13 +62,14 @@ private:
 		string maskTextureFile;
 	};
 	vector<Level> levels;
-	int actualLevel;
+	int currentLevel;
 
 	// Lemming related
 	Texture lemmingTexture;
 	vector<Lemming *> lemmings;
 	int spawnedLemmings;
 	int aliveLemmings;
+	int safeLemmings;
 };
 
 

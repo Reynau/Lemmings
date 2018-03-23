@@ -19,6 +19,9 @@ public:
 	void render();
 	
 	void setMapMask(VariableTexture *mapMask);
+
+public:
+	glm::vec2 getPosition();
 	
 private:
 	int collisionFloor(int maxFall);

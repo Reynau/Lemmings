@@ -123,6 +123,10 @@ void Lemming::setMapMask(VariableTexture *mapMask)
 	mask = mapMask;
 }
 
+glm::vec2 Lemming::getPosition() {
+	return sprite->position();
+}
+
 int Lemming::collisionFloor(int maxFall)
 {
 	bool bContact = false;
