@@ -38,11 +38,15 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 
+	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	lemmingTexture.setMinFilter(GL_NEAREST);
+	lemmingTexture.setMagFilter(GL_NEAREST);
+
 	spawnedLemmings = 0;
 
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
-		lem->init(level.spawnPosition, simpleTexProgram);
+		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture);
 		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);
@@ -55,13 +59,8 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
-	if (int(currentTime/100) % 10 == 0) {
-		cout << "Level: " << actualLevel << endl << "Lemmings spawned: " << spawnedLemmings << endl;
-	}
-
-	if (lemmingHasToSpawn()) {
-		++spawnedLemmings;
-	}
+	// Spawn lemmings
+	if (lemmingHasToSpawn()) ++spawnedLemmings;
 
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
@@ -285,7 +284,7 @@ void Scene::resetLemmings() {
 	Level level = levels[actualLevel];
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
-		lem->init(level.spawnPosition, simpleTexProgram);
+		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture);
 		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);

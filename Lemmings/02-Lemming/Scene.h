@@ -46,6 +46,7 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 
+	// Level related
 	struct Level {
 		string name;
 		int lemmingsToSpawn;
@@ -59,6 +60,8 @@ private:
 	vector<Level> levels;
 	int actualLevel;
 
+	// Lemming related
+	Texture lemmingTexture;
 	vector<Lemming *> lemmings;
 	int spawnedLemmings;
 	int aliveLemmings;

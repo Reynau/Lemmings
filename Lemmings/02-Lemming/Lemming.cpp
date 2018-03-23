@@ -17,13 +17,10 @@ enum LemmingAnims
 };
 
 
-void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram)
+void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture)
 {
 	state = FALLING_RIGHT_STATE;
-	spritesheet.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheet.setMinFilter(GL_NEAREST);
-	spritesheet.setMagFilter(GL_NEAREST);
-	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 16.0f/48.0f), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.125, 16.0f/48.0f), lemmingTexture, &shaderProgram);
 	sprite->setNumberAnimations(4);
 	
 		sprite->setAnimationSpeed(WALKING_RIGHT, 12);
