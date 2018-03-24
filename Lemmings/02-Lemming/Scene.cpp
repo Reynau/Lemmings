@@ -43,12 +43,15 @@ void Scene::init()
 	lemmingTexture.setMagFilter(GL_NEAREST);
 
 	initLemmings();
+
+	sceneSpeed = FAST;
 }
 
 unsigned int x = 0;
 
 void Scene::update(int deltaTime)
 {
+	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
 
 	// Spawn lemmings
@@ -326,4 +329,16 @@ void Scene::clearLemmings() {
 void Scene::removeLemming(int lemmingId) {
 	delete (lemmings[lemmingId]);
 	lemmings[lemmingId] = NULL;
+}
+
+int Scene::considerSceneSpeed(int deltaTime) {
+	switch (sceneSpeed) {
+	case PAUSE:
+		return 0;
+	case NORMAL:
+		return deltaTime;
+	case FAST:
+		return 2 * deltaTime;
+	}
+	return deltaTime;
 }

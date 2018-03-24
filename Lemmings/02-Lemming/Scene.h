@@ -42,6 +42,8 @@ private:
 	void resetLemmings();
 	void removeLemming(int lemmingId);
 
+	int considerSceneSpeed(int deltaTime);
+
 private:
 	Texture colorTexture;
 	VariableTexture maskTexture;
@@ -70,6 +72,14 @@ private:
 	int spawnedLemmings;
 	int aliveLemmings;
 	int safeLemmings;
+
+	// Scene Speed
+	enum SceneSpeed {
+		PAUSE,
+		NORMAL,
+		FAST,
+	};
+	SceneSpeed sceneSpeed;
 };
 
 
