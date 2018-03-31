@@ -16,7 +16,6 @@ Scene::~Scene()
 		delete map;
 }
 
-
 void Scene::init()
 {
 	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
@@ -44,7 +43,10 @@ void Scene::init()
 
 	initLemmings();
 
-	sceneSpeed = FAST;
+	sceneSpeed = NORMAL;
+
+	cur = new cursor();
+	cur->initCursor(simpleTexProgram);
 }
 
 unsigned int x = 0;
@@ -61,7 +63,8 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (lemmings[i]) {
 			lemmings[i]->update(deltaTime);
-			checkIfLemmingSafe(i);
+			if (lemmings[i]->isDead()) removeLemming(i);
+			else checkIfLemmingSafe(i);
 		}
 	}
 
@@ -92,17 +95,19 @@ void Scene::render()
 		if (lemmings[i]) lemmings[i]->render();
 	}
 
+	cur->render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
-	if(bLeftButton)
+	/*if(bLeftButton)
 		eraseMask(mouseX, mouseY);
 	else if(bRightButton)
-		applyMask(mouseX, mouseY);
+		applyMask(mouseX, mouseY);*/
+	cur->setPos(mouseX, mouseY);
 }
 
-void Scene::eraseMask(int mouseX, int mouseY)
+/*void Scene::eraseMask(int mouseX, int mouseY)
 {
 	int posX, posY;
 
@@ -142,7 +147,7 @@ void Scene::applyMask(int mouseX, int mouseY)
 			}
 		}
 	}
-}
+}*/
 
 void Scene::initShaders()
 {
@@ -327,6 +332,7 @@ void Scene::clearLemmings() {
 }
 
 void Scene::removeLemming(int lemmingId) {
+	lemmings[lemmingId]->remove();
 	delete (lemmings[lemmingId]);
 	lemmings[lemmingId] = NULL;
 }

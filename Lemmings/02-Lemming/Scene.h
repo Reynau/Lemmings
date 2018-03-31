@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
+#include "cursor.h"
 
 
 // Scene contains all the entities of our game.
@@ -25,11 +26,14 @@ public:
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
 
+public:
+	VariableTexture maskTexture;
+
 private:
 	void initShaders();
 	void initLevels();
-	void eraseMask(int mouseX, int mouseY);
-	void applyMask(int mouseX, int mouseY);
+	//void eraseMask(int mouseX, int mouseY);
+	//void applyMask(int mouseX, int mouseY);
 	void changeLevel(int level);
 	void finishLevel();
 
@@ -46,7 +50,6 @@ private:
 
 private:
 	Texture colorTexture;
-	VariableTexture maskTexture;
 	MaskedTexturedQuad *map;
 	ShaderProgram simpleTexProgram, maskedTexProgram;
 	float currentTime;
@@ -69,6 +72,7 @@ private:
 	// Lemming related
 	Texture lemmingTexture;
 	vector<Lemming *> lemmings;
+	cursor * cur;
 	int spawnedLemmings;
 	int aliveLemmings;
 	int safeLemmings;

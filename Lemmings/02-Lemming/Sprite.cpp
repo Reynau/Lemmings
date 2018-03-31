@@ -104,9 +104,29 @@ void Sprite::changeAnimation(int animId)
 	}
 }
 
+void Sprite::setFallSpeed(float speed)
+{
+	fall_speed = speed;
+}
+
 int Sprite::animation() const
 {
 	return currentAnimation;
+}
+
+int Sprite::keyFrame() const
+{
+	return currentKeyframe;
+}
+
+float Sprite::animationTime() const
+{
+	return timeAnimation;
+}
+
+float Sprite::fallSpeed() const
+{
+	return fall_speed;
 }
 
 void Sprite::setPosition(const glm::vec2 &newPos)
