@@ -39,10 +39,15 @@ private:
 
 	int collisionFloor(int maxFall);
 	bool collision();
+
+	void incrementFallSpeed();
 	
 private:
 	const float SPRITE_HEIGHT = 160.0f;
-	const float GRAVITY = 0.15f;
+
+	const float GRAVITY = 0.05f;
+	const float MAXIMUM_FALL_SPEED = 3.0f;
+	const float MINIMUM_FALL_SPEED = 2.0f;
 
 	LemmingState state;
 	Texture spritesheet;
