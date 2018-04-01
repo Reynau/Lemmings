@@ -61,6 +61,7 @@ void Scene::update(int deltaTime)
 
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
+		//if (i == 0 && currentTime/1000 > 2.0f) lemmings[i]->setState(Lemming::LemmingState::BLOCKER_STATE);
 		if (lemmings[i]) {
 			lemmings[i]->update(deltaTime);
 			if (lemmings[i]->isDead()) removeLemming(i);
@@ -206,14 +207,14 @@ void Scene::initShaders()
 
 void Scene::initLevels()
 {
-	currentLevel = 0;
+	currentLevel = 2;
 
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
 	firstLevel.lemmingsToSpawn = 10;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
-	firstLevel.spawnPosition = glm::vec2(60, 30);
+	firstLevel.spawnPosition = glm::vec2(60, 40);
 	firstLevel.savePosition = glm::vec2(180, 130); // TODO: Must adjust this position (randomly selected)
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
@@ -299,6 +300,7 @@ bool Scene::lemmingHasToSpawn() {
 
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
 	glm::vec2 lemmingPos = lemming->getPosition();
+	lemmingPos.x = lemmingPos.x + 120;
 
 	// TODO: Improve collision detection
 	return (lemmingPos.x > startPoint.x  && lemmingPos.x < endPoint.x && lemmingPos.y > startPoint.y && lemmingPos.y < endPoint.y);
