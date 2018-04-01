@@ -39,12 +39,10 @@ private:
 
 	int collisionFloor(int maxFall);
 	bool collision();
-
-	int getFallSpeed(Sprite * sprite);
 	
 private:
 	const float SPRITE_HEIGHT = 160.0f;
-
+	const float GRAVITY = 0.15f;
 
 	LemmingState state;
 	Texture spritesheet;
@@ -52,6 +50,7 @@ private:
 	VariableTexture *mask;
 	LemmingState pending_state;
 	bool pending_floater;
+	float fallSpeed;
 
 };
 

@@ -77,12 +77,12 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	sprite->changeAnimation(FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
 
-	sprite->setFallSpeed(2.0f);
+	fallSpeed = 2.0f;
 }
 
 void Lemming::update(int deltaTime)
 {
-	int fall, speed;
+	int fall;
 	int posX, posY;
 
 	if (sprite->update(deltaTime) == 0)
@@ -150,17 +150,18 @@ void Lemming::update(int deltaTime)
 			state = pending_state;
 		}
 		else {
-			speed = getFallSpeed(sprite);
 			fall = collisionFloor(3);
-			if (fall > 1)
-				sprite->position() += glm::vec2(0, speed);
-			else {
-				if (speed == 3.0f) {
+			if (fall > 1) {	// If is not going to touch the floor
+				sprite->position() += glm::vec2(0, fallSpeed);
+				fallSpeed += GRAVITY;
+			}
+			else {			// If is going to touch the floor
+				if (fallSpeed == 3.0f) {
 					sprite->changeAnimation(FALL_DIE);
 					state = FALL_DIE_STATE;
 				}
 				else {
-					sprite->setFallSpeed(2.0f);
+					fallSpeed = 2.0f;
 					sprite->changeAnimation(WALKING_LEFT);
 					state = WALKING_LEFT_STATE;
 				}
@@ -173,17 +174,18 @@ void Lemming::update(int deltaTime)
 			state = pending_state;
 		}
 		else {
-			speed = getFallSpeed(sprite);
 			fall = collisionFloor(3);
-			if (fall > 1)
-				sprite->position() += glm::vec2(0, speed);
+			if (fall > 1) {
+				sprite->position() += glm::vec2(0, fallSpeed);
+				fallSpeed += GRAVITY;
+			}
 			else {
-				if (speed == 3.0f) {
+				if (fallSpeed == 3.0f) {
 					sprite->changeAnimation(FALL_DIE);
 					state = FALL_DIE_STATE;
 				}
 				else {
-					sprite->setFallSpeed(2.0f);
+					fallSpeed = 2.0f;
 					sprite->changeAnimation(WALKING_RIGHT);
 					state = WALKING_RIGHT_STATE;
 				}
@@ -339,17 +341,6 @@ bool Lemming::collision()
 
 	return true;
 }
-
-int Lemming::getFallSpeed(Sprite * sprite)
-{
-	float speed = sprite->fallSpeed();
-	if (speed <= 3.0f && sprite->keyFrame() == 3) {
-		speed += 0.15f;
-		sprite->setFallSpeed(speed);
-	}
-	return int(speed);
-}
-
 
 
 
