@@ -47,6 +47,10 @@ void Scene::init()
 
 	cur = new cursor();
 	cur->initCursor(simpleTexProgram);
+
+
+	// TESTING
+	lemmings[0]->setState(Lemming::LemmingState::DIGGER_RIGHT_STATE);
 }
 
 unsigned int x = 0;
@@ -62,8 +66,6 @@ void Scene::update(int deltaTime)
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
-
-		//if (i == 0 && currentTime/1000 > 2.0f) lemmings[i]->setState(Lemming::LemmingState::BLOCKER_STATE);
 			
 		lemmings[i]->update(deltaTime);
 		if (lemmings[i]->isDead()) removeLemming(i);
@@ -329,7 +331,7 @@ void Scene::resetLemmings() {
 
 void Scene::clearLemmings() {
 	for (int i = 0; i < lemmings.size(); ++i) {
-		removeLemming(i);
+		if (lemmings[i]) removeLemming(i);
 	}
 	lemmings.clear();
 }

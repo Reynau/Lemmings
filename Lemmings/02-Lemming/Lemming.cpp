@@ -148,6 +148,7 @@ void Lemming::update(int deltaTime)
 		if (pending_floater && sprite->animationTime() > 30.0f) {
 			sprite->changeAnimation(FLOATER_INI_LEFT);
 			state = pending_state;
+			pending_state = NULL_STATE;
 		}
 		else {
 			fall = collisionFloor(3);
@@ -172,6 +173,7 @@ void Lemming::update(int deltaTime)
 		if (pending_floater && sprite->animationTime() > 30.0f) {
 			sprite->changeAnimation(FLOATER_INI_RIGHT);
 			state = pending_state;
+			pending_state = NULL_STATE;
 		}
 		else {
 			fall = collisionFloor(3);
