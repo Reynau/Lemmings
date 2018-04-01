@@ -61,12 +61,13 @@ void Scene::update(int deltaTime)
 
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
+		if (!lemmings[i]) continue;
+
 		//if (i == 0 && currentTime/1000 > 2.0f) lemmings[i]->setState(Lemming::LemmingState::BLOCKER_STATE);
-		if (lemmings[i]) {
-			lemmings[i]->update(deltaTime);
-			if (lemmings[i]->isDead()) removeLemming(i);
-			else checkIfLemmingSafe(i);
-		}
+			
+		lemmings[i]->update(deltaTime);
+		if (lemmings[i]->isDead()) removeLemming(i);
+		else checkIfLemmingSafe(i);
 	}
 
 	// A level finishes when any lemming is alive
