@@ -61,7 +61,10 @@ private:
 	};
 
 private:
-	void dig();
+	void _dig(LemmingAnims fallAnim, LemmingState fallState);
+	void _walk(LemmingAnims fallAnimation, LemmingState fallState);
+	void _float(LemmingAnims walkAnimation, LemmingState walkState);
+	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
 
 	int collisionFloor(int maxFall);
 	bool collision();
@@ -70,8 +73,11 @@ private:
 	bool isGoingLeft();
 	bool isGoingRight();
 
+	bool changeToPendingState();
+
 	LemmingState getStateFromSkill(LemmingSkill skill);
 
+	void changeDirection();
 	void incrementFallSpeed();
 };
 
