@@ -108,7 +108,7 @@ void Scene::render()
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
 	if(bLeftButton)
-		applySkill(Lemming::DIGGER_RIGHT_STATE); // TESTING
+		applySkill(Lemming::DIGGER); // TESTING
 	/*else if(bRightButton)
 		applyMask(mouseX, mouseY);*/
 	cursor->setPos(mouseX, mouseY);
@@ -215,7 +215,7 @@ void Scene::initLevels()
 {
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
-	firstLevel.lemmingsToSpawn = 10;
+	firstLevel.lemmingsToSpawn = 1;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(60, 40);
@@ -309,11 +309,11 @@ void Scene::checkSelecting()
 	index_selected_lem = NULL;
 }
 
-void Scene::applySkill(Lemming::LemmingState skill)
+void Scene::applySkill(Lemming::LemmingSkill skill)
 {
 	if (!index_selected_lem) return;
 	// TESTING
-	if (!lemmings[index_selected_lem-1]->setState(skill)) return;
+	if (!lemmings[index_selected_lem-1]->setSkill(skill)) return;
 	//--availableSkills[skill]; 
 }
 

@@ -12,19 +12,11 @@
 
 class Lemming
 {
-
 public:
-	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture);
-	void update(int deltaTime);
-	void render();
-
-	bool isDead();
-	void remove();
-	bool occupied();
-
-	void setMapMask(VariableTexture *mapMask);
-
-	glm::vec2 getPosition();
+	enum LemmingSkill 
+	{
+		BLOCKER, DIGGER, FLOATER
+	};
 
 	enum LemmingState
 	{
@@ -33,15 +25,20 @@ public:
 		DEAD_STATE
 	};
 
-	bool setState(LemmingState state);
-	
-private:
-	void dig();
+public:
+	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture);
+	void update(int deltaTime);
+	void render();
 
-	int collisionFloor(int maxFall);
-	bool collision();
+	bool isDead();
+	bool isBusy();
 
-	void incrementFallSpeed();
+	void remove();
+
+	void setMapMask(VariableTexture *mapMask);
+
+	glm::vec2 getPosition();
+	bool setSkill(LemmingSkill newSkill);
 	
 private:
 	const float SPRITE_HEIGHT = 160.0f;
@@ -58,6 +55,19 @@ private:
 	bool pending_floater;
 	float fallSpeed;
 
+private:
+	void dig();
+
+	int collisionFloor(int maxFall);
+	bool collision();
+
+	bool isSameSkill(LemmingSkill newState);
+	bool isGoingLeft();
+	bool isGoingRight();
+
+	LemmingState getStateFromSkill(LemmingSkill skill);
+
+	void incrementFallSpeed();
 };
 
 

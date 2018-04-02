@@ -38,7 +38,7 @@ private:
 	void finishLevel();
 
 	void checkSelecting();
-	void applySkill(Lemming::LemmingState skill);
+	void applySkill(Lemming::LemmingSkill skill);
 
 	void checkIfLemmingSafe(int lemmingId);
 	bool lemmingHasToSpawn();

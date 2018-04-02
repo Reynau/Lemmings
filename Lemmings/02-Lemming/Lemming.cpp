@@ -82,6 +82,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 void Lemming::update(int deltaTime)
 {
+	cout << state << endl;
 	int fall;
 	//int posX, posY;
 
@@ -273,13 +274,13 @@ bool Lemming::isDead() {
 	return state == DEAD_STATE;
 }
 
-void Lemming::remove() {
-	sprite->free();
-}
-
-bool Lemming::occupied()
+bool Lemming::isBusy()
 {
 	return (pending_state != NULL_STATE || pending_floater);
+}
+
+void Lemming::remove() {
+	sprite->free();
 }
 
 void Lemming::render()
@@ -297,24 +298,51 @@ glm::vec2 Lemming::getPosition() {
 }
 
 
-bool Lemming::setState(LemmingState selected_state)
+bool Lemming::setSkill(LemmingSkill newSkill)
 {
-	if ((selected_state == FLOATER_LEFT_STATE || selected_state == FLOATER_RIGHT_STATE) && (state != FLOATER_LEFT_STATE || state != FLOATER_RIGHT_STATE)) {
+	if (isSameSkill(newSkill)) return false;
+
+	if (newSkill == FLOATER) {
 		pending_floater = true;
-		return true;
 	}
-	else if (selected_state != state) {
-		pending_state = selected_state;
+	else {
+		pending_state = getStateFromSkill(newSkill);
 		pending_floater = false;
-		return true;
 	}
-	else
-		return false;
+	return true;
 }
 
+Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill) 
+{
+	if (skill == BLOCKER) return BLOCKER_STATE;
 
+	if (isGoingLeft()) {
+		if (skill == DIGGER) return DIGGER_LEFT_STATE;
+		if (skill == FLOATER) return FLOATER_LEFT_STATE;
+	}
+	else {
+		if (skill == DIGGER) return DIGGER_RIGHT_STATE;
+		if (skill == FLOATER) return FLOATER_RIGHT_STATE;
+	}
+}
 
-void Lemming::dig() {
+bool Lemming::isGoingLeft() {
+	return (state == WALKING_LEFT_STATE || state == FALLING_LEFT_STATE || state == DIGGER_LEFT_STATE || state == FLOATER_LEFT_STATE);
+}
+bool Lemming::isGoingRight() {
+	return !isGoingLeft();
+}
+
+bool Lemming::isSameSkill(LemmingSkill newSkill) 
+{
+	if (newSkill == BLOCKER && state == BLOCKER_STATE) return true;
+	if (newSkill == DIGGER && (state == DIGGER_RIGHT_STATE || state == DIGGER_LEFT_STATE)) return true;
+	if (newSkill == FLOATER && (state == FLOATER_RIGHT_STATE || state == FLOATER_LEFT_STATE)) return true;
+	return false;
+}
+
+void Lemming::dig() 
+{
 	int posX, posY;
 	if (sprite->keyFrame() % 5 == 0) {
 		sprite->position() += glm::vec2(0, 1);
