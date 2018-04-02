@@ -76,17 +76,18 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 void Lemming::update(int deltaTime)
 {
-	cout << state << endl;
 	int fall;
-	//int posX, posY;
 
 	if (sprite->update(deltaTime) == 0)
 		return;
 
 	switch (state)
 	{
-	case BLOCKER_STATE:
-		/*posX = (sprite->position()).x + 127;
+	case BLOCKER_LEFT_STATE:
+		
+
+		/*int posX, posY;
+		posX = (sprite->position()).x + 127;
 		posY = (sprite->position()).y + 7;
 		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
 			for (int x = max(0, posX - 5); x <= min(mask->width() - 1, posX -5); x++)
@@ -94,6 +95,19 @@ void Lemming::update(int deltaTime)
 		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
 			for (int x = max(0, posX + 5); x <= min(mask->width() - 1, posX + 5); x++)
 				mask->setPixel(x, y, 255);*/
+		break;
+	case BLOCKER_RIGHT_STATE:
+
+
+		/*int posX, posY;
+		posX = (sprite->position()).x + 127;
+		posY = (sprite->position()).y + 7;
+		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
+		for (int x = max(0, posX - 5); x <= min(mask->width() - 1, posX -5); x++)
+		mask->setPixel(x, y, 255);
+		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
+		for (int x = max(0, posX + 5); x <= min(mask->width() - 1, posX + 5); x++)
+		mask->setPixel(x, y, 255);*/
 		break;
 	case DIGGER_LEFT_STATE:
 		dig();
@@ -196,7 +210,7 @@ void Lemming::update(int deltaTime)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		else if (pending_state == BLOCKER_STATE) {
+		else if (pending_state == BLOCKER_LEFT_STATE || pending_state == BLOCKER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::BLOCKER_ANIM);
 			state = pending_state;
 			pending_state = NULL_STATE;
@@ -229,7 +243,7 @@ void Lemming::update(int deltaTime)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		else if (pending_state == BLOCKER_STATE) {
+		else if (pending_state == BLOCKER_LEFT_STATE || pending_state == BLOCKER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::BLOCKER_ANIM);
 			state = pending_state;
 			pending_state = NULL_STATE;
@@ -308,13 +322,14 @@ bool Lemming::setSkill(LemmingSkill newSkill)
 
 Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill) 
 {
-	if (skill == BLOCKER) return BLOCKER_STATE;
 
 	if (isGoingLeft()) {
+		if (skill == BLOCKER) return BLOCKER_LEFT_STATE;
 		if (skill == DIGGER) return DIGGER_LEFT_STATE;
 		if (skill == FLOATER) return FLOATER_LEFT_STATE;
 	}
 	else {
+		if (skill == BLOCKER) return BLOCKER_RIGHT_STATE;
 		if (skill == DIGGER) return DIGGER_RIGHT_STATE;
 		if (skill == FLOATER) return FLOATER_RIGHT_STATE;
 	}
@@ -329,7 +344,7 @@ bool Lemming::isGoingRight() {
 
 bool Lemming::isSameSkill(LemmingSkill newSkill) 
 {
-	if (newSkill == BLOCKER && state == BLOCKER_STATE) return true;
+	if (newSkill == BLOCKER && (state == BLOCKER_RIGHT_STATE || state == BLOCKER_LEFT_STATE)) return true;
 	if (newSkill == DIGGER && (state == DIGGER_RIGHT_STATE || state == DIGGER_LEFT_STATE)) return true;
 	if (newSkill == FLOATER && (state == FLOATER_RIGHT_STATE || state == FLOATER_LEFT_STATE)) return true;
 	return false;
