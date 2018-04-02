@@ -81,7 +81,7 @@ private:
 	int safeLemmings;
 
 	// Cursor related
-	cursor * cur;
+	Cursor * cursor;
 	int index_selected_lem;
 
 	// Scene Speed

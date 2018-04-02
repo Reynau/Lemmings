@@ -8,7 +8,7 @@
 // all properties it needs to track its movement.
 
 
-class cursor
+class Cursor
 {
 public:
 	void initCursor(ShaderProgram &shaderProgram);

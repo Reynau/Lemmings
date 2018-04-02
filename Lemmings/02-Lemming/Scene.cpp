@@ -49,8 +49,8 @@ void Scene::init()
 
 	sceneSpeed = NORMAL;
 
-	cur = new cursor();
-	cur->initCursor(simpleTexProgram);
+	cursor = new Cursor();
+	cursor->initCursor(simpleTexProgram);
 	index_selected_lem = NULL;
 }
 
@@ -102,7 +102,7 @@ void Scene::render()
 		if (lemmings[i]) lemmings[i]->render();
 	}
 
-	cur->render();
+	cursor->render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
@@ -111,7 +111,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		applySkill(Lemming::DIGGER_RIGHT_STATE); // TESTING
 	/*else if(bRightButton)
 		applyMask(mouseX, mouseY);*/
-	cur->setPos(mouseX, mouseY);
+	cursor->setPos(mouseX, mouseY);
 }
 
 /*void Scene::eraseMask(int mouseX, int mouseY)
@@ -293,12 +293,12 @@ void Scene::checkSelecting()
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
 
-		glm::vec2 curPos = cur->getPos();
+		glm::vec2 curPos = cursor->getPos();
 		glm::vec2 lemPos = lemmings[i]->getPosition();
 		for (int y = int(curPos.y); y <= int(curPos.y) + 14; y++) {
 			for (int x = int(curPos.x); x <= int(curPos.x) + 14; x++) {
 				if (glm::vec2(int(lemPos.x) + 7, int(lemPos.y) + 7) == glm::vec2(x, y)) {
-					cur->setSelect(cursor::SELECT);
+					cursor->setSelect(Cursor::SELECT);
 					index_selected_lem = i+1;
 					selected = true;
 				}
@@ -306,7 +306,7 @@ void Scene::checkSelecting()
 		}
 	}
 	if (!selected) {
-		cur->setSelect(cursor::NORMAL);
+		cursor->setSelect(Cursor::NORMAL);
 		index_selected_lem = NULL;
 	}
 }

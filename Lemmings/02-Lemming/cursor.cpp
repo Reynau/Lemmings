@@ -5,7 +5,7 @@
 
 
 
-void cursor::initCursor(ShaderProgram &shaderProgram)
+void Cursor::initCursor(ShaderProgram &shaderProgram)
 {
 	spritesheet.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
@@ -24,28 +24,28 @@ void cursor::initCursor(ShaderProgram &shaderProgram)
 	sprite->setPosition(glm::vec2(0, 0));
 }
 
-glm::vec2 cursor::getPos()
+glm::vec2 Cursor::getPos()
 {
 	return sprite->position();
 }
 
-void cursor::setPos(int mouseX, int mouseY)
+void Cursor::setPos(int mouseX, int mouseY)
 {
 	sprite->setPosition(glm::vec2((mouseX / 3) - 7, (mouseY / 3) - 7));
 }
 
-void cursor::update(int deltaTime)
+void Cursor::update(int deltaTime)
 {
 	if (sprite->update(deltaTime) == 0)
 		return;
 }
 
-void cursor::render()
+void Cursor::render()
 {
 	sprite->render();
 }
 
-void cursor::setSelect(bool selecting)
+void Cursor::setSelect(bool selecting)
 {
 	if (selecting && sprite->animation() == NORMAL) sprite->changeAnimation(SELECT);
 	else if (!selecting && sprite->animation() == SELECT) sprite->changeAnimation(NORMAL);
