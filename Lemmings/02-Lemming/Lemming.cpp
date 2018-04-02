@@ -83,7 +83,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 void Lemming::update(int deltaTime)
 {
 	int fall;
-	int posX, posY;
+	//int posX, posY;
 
 	if (sprite->update(deltaTime) == 0)
 		return;
@@ -277,6 +277,11 @@ void Lemming::remove() {
 	sprite->free();
 }
 
+bool Lemming::occupied()
+{
+	return (pending_state != NULL_STATE || pending_floater);
+}
+
 void Lemming::render()
 {
 	sprite->render();
@@ -292,13 +297,19 @@ glm::vec2 Lemming::getPosition() {
 }
 
 
-void Lemming::setState(LemmingState selected_state)
+bool Lemming::setState(LemmingState selected_state)
 {
-	if (selected_state == FLOATER_LEFT_STATE || selected_state == FLOATER_RIGHT_STATE) pending_floater = true;
-	else {
+	if ((selected_state == FLOATER_LEFT_STATE || selected_state == FLOATER_RIGHT_STATE) && (state != FLOATER_LEFT_STATE || state != FLOATER_RIGHT_STATE)) {
+		pending_floater = true;
+		return true;
+	}
+	else if (selected_state != state) {
 		pending_state = selected_state;
 		pending_floater = false;
+		return true;
 	}
+	else
+		return false;
 }
 
 
@@ -308,8 +319,8 @@ void Lemming::dig() {
 	if (sprite->keyFrame() % 5 == 0) {
 		sprite->position() += glm::vec2(0, 1);
 
-		posX = (sprite->position()).x + 127;
-		posY = (sprite->position()).y + 15;
+		posX = int(sprite->position().x) + 127;
+		posY = int(sprite->position().y) + 15;
 		for (int y = max(0, posY); y <= min(mask->height() - 1, posY); y++)
 			for (int x = max(0, posX - 3); x <= min(mask->width() - 1, posX + 4); x++)
 				mask->setPixel(x, y, 0);

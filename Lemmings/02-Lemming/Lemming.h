@@ -20,6 +20,7 @@ public:
 
 	bool isDead();
 	void remove();
+	bool occupied();
 
 	void setMapMask(VariableTexture *mapMask);
 
@@ -32,7 +33,7 @@ public:
 		DEAD_STATE
 	};
 
-	void setState(LemmingState state);
+	bool setState(LemmingState state);
 	
 private:
 	void dig();

@@ -18,13 +18,17 @@ Scene::~Scene()
 
 void Scene::init()
 {
-	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
-	glm::vec2 texCoords[2] = {glm::vec2(120.f / 512.0, 0.f), glm::vec2((120.f + 320.f) / 512.0f, 160.f / 256.0f)};
+	//SELECT LEVEL
+	currentLevel = 0;
 
-	initShaders();
 	initLevels();
 
 	Level level = levels[currentLevel];
+
+	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
+	glm::vec2 texCoords[2] = {glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f)};
+
+	initShaders();
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
@@ -47,10 +51,7 @@ void Scene::init()
 
 	cur = new cursor();
 	cur->initCursor(simpleTexProgram);
-
-
-	// TESTING
-	lemmings[0]->setState(Lemming::LemmingState::DIGGER_RIGHT_STATE);
+	index_selected_lem = NULL;
 }
 
 unsigned int x = 0;
@@ -72,10 +73,12 @@ void Scene::update(int deltaTime)
 		else checkIfLemmingSafe(i);
 	}
 
-	// A level finishes when any lemming is alive
+	// A level finishes when all lemmings are not alive
 	if (aliveLemmings == 0) {
 		finishLevel();
 	}
+
+	checkSelecting();
 }
 
 void Scene::render()
@@ -104,9 +107,9 @@ void Scene::render()
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
-	/*if(bLeftButton)
-		eraseMask(mouseX, mouseY);
-	else if(bRightButton)
+	if(bLeftButton)
+		applySkill(Lemming::DIGGER_RIGHT_STATE); // TESTING
+	/*else if(bRightButton)
 		applyMask(mouseX, mouseY);*/
 	cur->setPos(mouseX, mouseY);
 }
@@ -210,8 +213,6 @@ void Scene::initShaders()
 
 void Scene::initLevels()
 {
-	currentLevel = 2;
-
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
 	firstLevel.lemmingsToSpawn = 10;
@@ -221,6 +222,7 @@ void Scene::initLevels()
 	firstLevel.savePosition = glm::vec2(180, 130); // TODO: Must adjust this position (randomly selected)
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
+	firstLevel.offset = 120.f;
 	levels.push_back(firstLevel);
 
 	Level secondLevel;
@@ -229,9 +231,10 @@ void Scene::initLevels()
 	secondLevel.lemmingsToSecure = 1;
 	secondLevel.availableTime = 5 * 60;
 	secondLevel.spawnPosition = glm::vec2(30, 15);
-	secondLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	secondLevel.savePosition = glm::vec2(300, 250); // TODO: Must adjust this position (randomly selected)
 	secondLevel.colorTextureFile = "images/fun2.png";
 	secondLevel.maskTextureFile = "images/fun2_mask.png";
+	secondLevel.offset = 69.f;
 	levels.push_back(secondLevel);
 
 	Level thirdLevel;
@@ -243,6 +246,7 @@ void Scene::initLevels()
 	thirdLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
 	thirdLevel.colorTextureFile = "images/fun3.png";
 	thirdLevel.maskTextureFile = "images/fun3_mask.png";
+	thirdLevel.offset = 22.f;
 	levels.push_back(thirdLevel);
 }
 
@@ -251,6 +255,11 @@ void Scene::changeLevel(int newLevel)
 	currentLevel = newLevel;
 
 	Level level = levels[currentLevel];
+
+	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+	glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+
+	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 
 	colorTexture.loadFromFile(level.colorTextureFile, TEXTURE_PIXEL_FORMAT_RGBA);
 	colorTexture.setMinFilter(GL_NEAREST);
@@ -278,6 +287,38 @@ void Scene::finishLevel() {
 	}
 }
 
+void Scene::checkSelecting()
+{
+	bool selected = false;
+	for (int i = 0; i < spawnedLemmings; ++i) {
+		if (!lemmings[i]) continue;
+
+		glm::vec2 curPos = cur->getPos();
+		glm::vec2 lemPos = lemmings[i]->getPosition();
+		for (int y = int(curPos.y); y <= int(curPos.y) + 14; y++) {
+			for (int x = int(curPos.x); x <= int(curPos.x) + 14; x++) {
+				if (glm::vec2(int(lemPos.x) + 7, int(lemPos.y) + 7) == glm::vec2(x, y)) {
+					cur->setSelect(cursor::SELECT);
+					index_selected_lem = i+1;
+					selected = true;
+				}
+			}
+		}
+	}
+	if (!selected) {
+		cur->setSelect(cursor::NORMAL);
+		index_selected_lem = NULL;
+	}
+}
+
+void Scene::applySkill(Lemming::LemmingState skill)
+{
+	if (!index_selected_lem) return;
+	// TESTING
+	if (!lemmings[index_selected_lem-1]->setState(skill)) return;
+	//--availableSkills[skill]; 
+}
+
 void Scene::checkIfLemmingSafe(int lemmingId) {
 	Level level = levels[currentLevel];
 
@@ -302,8 +343,10 @@ bool Scene::lemmingHasToSpawn() {
 }
 
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
+	Level level = levels[currentLevel];
+
 	glm::vec2 lemmingPos = lemming->getPosition();
-	lemmingPos.x = lemmingPos.x + 120;
+	lemmingPos.x = lemmingPos.x + level.offset;
 
 	// TODO: Improve collision detection
 	return (lemmingPos.x > startPoint.x  && lemmingPos.x < endPoint.x && lemmingPos.y > startPoint.y && lemmingPos.y < endPoint.y);
@@ -330,7 +373,7 @@ void Scene::resetLemmings() {
 }
 
 void Scene::clearLemmings() {
-	for (int i = 0; i < lemmings.size(); ++i) {
+	for (int i = 0; i < int(lemmings.size()); ++i) {
 		if (lemmings[i]) removeLemming(i);
 	}
 	lemmings.clear();

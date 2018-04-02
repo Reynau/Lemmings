@@ -37,6 +37,9 @@ private:
 	void changeLevel(int level);
 	void finishLevel();
 
+	void checkSelecting();
+	void applySkill(Lemming::LemmingState skill);
+
 	void checkIfLemmingSafe(int lemmingId);
 	bool lemmingHasToSpawn();
 	bool lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint);
@@ -65,17 +68,21 @@ private:
 		glm::vec2 savePosition;
 		string colorTextureFile;
 		string maskTextureFile;
+		float offset;
 	};
 	vector<Level> levels;
 	int currentLevel;
 
 	// Lemming related
 	Texture lemmingTexture;
-	vector<Lemming *> lemmings;
-	cursor * cur;
+	vector<Lemming *> lemmings;	
 	int spawnedLemmings;
 	int aliveLemmings;
 	int safeLemmings;
+
+	// Cursor related
+	cursor * cur;
+	int index_selected_lem;
 
 	// Scene Speed
 	enum SceneSpeed {
