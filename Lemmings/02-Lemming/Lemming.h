@@ -55,6 +55,11 @@ private:
 	bool pending_floater;
 	float fallSpeed;
 
+	enum LemmingAnims
+	{
+		WALKING_LEFT, WALKING_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING, FLOATER_INI_RIGHT, FLOATER_INI_LEFT, FLOATER_RIGHT, FLOATER_LEFT, FALL_DIE, BLOCKER_ANIM
+	};
+
 private:
 	void dig();
 
