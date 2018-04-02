@@ -76,8 +76,6 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 void Lemming::update(int deltaTime)
 {
-	int fall;
-
 	if (sprite->update(deltaTime) == 0)
 		return;
 

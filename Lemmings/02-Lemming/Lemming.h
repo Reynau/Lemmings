@@ -73,8 +73,6 @@ private:
 	bool isGoingLeft();
 	bool isGoingRight();
 
-	bool changeToPendingState();
-
 	LemmingState getStateFromSkill(LemmingSkill skill);
 
 	void changeDirection();
