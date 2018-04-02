@@ -289,7 +289,6 @@ void Scene::finishLevel() {
 
 void Scene::checkSelecting()
 {
-	bool selected = false;
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
 
@@ -300,15 +299,14 @@ void Scene::checkSelecting()
 				if (glm::vec2(int(lemPos.x) + 7, int(lemPos.y) + 7) == glm::vec2(x, y)) {
 					cursor->setSelect(Cursor::SELECT);
 					index_selected_lem = i+1;
-					selected = true;
+					return;
 				}
 			}
 		}
 	}
-	if (!selected) {
-		cursor->setSelect(Cursor::NORMAL);
-		index_selected_lem = NULL;
-	}
+
+	cursor->setSelect(Cursor::NORMAL);
+	index_selected_lem = NULL;
 }
 
 void Scene::applySkill(Lemming::LemmingState skill)
