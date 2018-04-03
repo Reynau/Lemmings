@@ -74,16 +74,18 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	fallSpeed = 2.0f;
 }
 
-void Lemming::update(int deltaTime)
+void Lemming::update(int deltaTime, int offset)
 {
 	if (sprite->update(deltaTime) == 0)
 		return;
+
+	lem_offset = offset;
 
 	switch (state)
 	{
 	case BLOCKER_LEFT_STATE:
 		/*int posX, posY;
-		posX = (sprite->position()).x + 127;
+		posX = (sprite->position()).x + lem_offset + 7;
 		posY = (sprite->position()).y + 7;
 		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
 			for (int x = max(0, posX - 5); x <= min(mask->width() - 1, posX -5); x++)
@@ -95,7 +97,7 @@ void Lemming::update(int deltaTime)
 
 	case BLOCKER_RIGHT_STATE:
 		/*int posX, posY;
-		posX = (sprite->position()).x + 127;
+		posX = (sprite->position()).x + lem_offset + 7;
 		posY = (sprite->position()).y + 7;
 		for (int y = max(0, posY - 8); y <= min(mask->height() - 1, posY + 8); y++)
 		for (int x = max(0, posX - 5); x <= min(mask->width() - 1, posX -5); x++)
@@ -263,7 +265,7 @@ void Lemming::_dig(LemmingAnims fallAnim, LemmingState fallState)
 	if (sprite->keyFrame() % 5 == 0) {
 		sprite->position() += glm::vec2(0, 1);
 
-		posX = int(sprite->position().x) + 127;
+		posX = int(sprite->position().x) + lem_offset + 7;
 		posY = int(sprite->position().y) + 15;
 		for (int y = max(0, posY); y <= min(mask->height() - 1, posY); y++)
 			for (int x = max(0, posX - 3); x <= min(mask->width() - 1, posX + 4); x++)
@@ -309,11 +311,11 @@ void Lemming::_float(LemmingAnims walkAnimation, LemmingState walkState)
 void Lemming::_fall(LemmingAnims walkAnimation, LemmingState walkState) 
 {
 	int fall = collisionFloor(3);
-	if (fall > 1) {
+	if (fall == 3) {
 		sprite->position() += glm::vec2(0, fallSpeed);
 		incrementFallSpeed();
 	}
-	else {
+	else if (fall == 0) { 
 		if (fallSpeed == 3.0f) {
 			sprite->changeAnimation(LemmingAnims::FALL_DIE);
 			state = FALL_DIE_STATE;
@@ -324,13 +326,16 @@ void Lemming::_fall(LemmingAnims walkAnimation, LemmingState walkState)
 			state = walkState;
 		}
 	}
+	else {
+		sprite->position() += glm::vec2(0, fall);
+	}
 }
 
 int Lemming::collisionFloor(int maxFall)
 {
 	bool bContact = false;
 	int fall = 0;
-	glm::ivec2 posBase = sprite->position() + glm::vec2(120, 0); // Add the map displacement
+	glm::ivec2 posBase = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
 	
 	posBase += glm::ivec2(7, 16);
 	while((fall < maxFall) && !bContact)
@@ -346,7 +351,7 @@ int Lemming::collisionFloor(int maxFall)
 
 bool Lemming::collision()
 {
-	glm::ivec2 posBase = sprite->position() + glm::vec2(120, 0); // Add the map displacement
+	glm::ivec2 posBase = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
 	
 	posBase += glm::ivec2(7, 15);
 	if((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x+1, posBase.y) == 0))

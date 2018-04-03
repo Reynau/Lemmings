@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 0;
+	currentLevel = 2;
 
 	initLevels();
 
@@ -52,6 +52,10 @@ void Scene::init()
 	cursor = new Cursor();
 	cursor->initCursor(simpleTexProgram);
 	index_selected_lem = NULL;
+
+	door = new Door();
+	door->initDoor(simpleTexProgram);
+	door->setPos(glm::vec2(level.savePosition.x/* + level.offset*/, level.savePosition.y));
 }
 
 unsigned int x = 0;
@@ -60,6 +64,7 @@ void Scene::update(int deltaTime)
 {
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
+	Level level = levels[currentLevel];
 
 	// Spawn lemmings
 	if (lemmingHasToSpawn()) ++spawnedLemmings;
@@ -68,7 +73,7 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
 			
-		lemmings[i]->update(deltaTime);
+		lemmings[i]->update(deltaTime, int(level.offset));
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else checkIfLemmingSafe(i);
 	}
@@ -83,6 +88,7 @@ void Scene::update(int deltaTime)
 
 void Scene::render()
 {
+
 	glm::mat4 modelview;
 
 	maskedTexProgram.use();
@@ -97,6 +103,8 @@ void Scene::render()
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+
+	door->render();
 
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (lemmings[i]) lemmings[i]->render();
@@ -215,7 +223,7 @@ void Scene::initLevels()
 {
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
-	firstLevel.lemmingsToSpawn = 1;
+	firstLevel.lemmingsToSpawn = 10;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(60, 40);
@@ -242,8 +250,8 @@ void Scene::initLevels()
 	thirdLevel.lemmingsToSpawn = 50;
 	thirdLevel.lemmingsToSecure = 5;
 	thirdLevel.availableTime = 5 * 60;
-	thirdLevel.spawnPosition = glm::vec2(50, 15);
-	thirdLevel.savePosition = glm::vec2(100, 50); // TODO: Must adjust this position (randomly selected)
+	thirdLevel.spawnPosition = glm::vec2(140, 10); // Correct
+	thirdLevel.savePosition = glm::vec2(85, 105); // Correct
 	thirdLevel.colorTextureFile = "images/fun3.png";
 	thirdLevel.maskTextureFile = "images/fun3_mask.png";
 	thirdLevel.offset = 22.f;
@@ -320,11 +328,18 @@ void Scene::applySkill(Lemming::LemmingSkill skill)
 void Scene::checkIfLemmingSafe(int lemmingId) {
 	Level level = levels[currentLevel];
 
-	glm::vec2 safeSquare = glm::vec2(20, 20); // TODO: Adjust safe square
+	glm::vec2 safeSquare = glm::vec2(2, 2); // TODO: Adjust safe square
 
 	glm::vec2 initialPoint = level.savePosition - safeSquare;
 	glm::vec2 endingPoint = level.savePosition + safeSquare;
 
+	// Set the safeSquare into the door
+	initialPoint.x += 24 - safeSquare.x / 2;
+	endingPoint.x += 24 - safeSquare.x / 2;
+	initialPoint.y += 48 - safeSquare.y / 2;
+	endingPoint.y += 48 - safeSquare.y / 2;
+
+	//if (!lemmings[lemmingId]) return; NO ARREGLA EL ERROR
 	Lemming * lemming = lemmings[lemmingId];
 	if (lemmingColideWith(lemming, initialPoint, endingPoint)) {
 		removeLemming(lemmingId);
@@ -343,9 +358,8 @@ bool Scene::lemmingHasToSpawn() {
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
 	Level level = levels[currentLevel];
 
-	glm::vec2 lemmingPos = lemming->getPosition();
-	lemmingPos.x = lemmingPos.x + level.offset;
-
+	glm::vec2 lemmingPos = glm::vec2(lemming->getPosition().x, lemming->getPosition().y);
+	lemmingPos += glm::ivec2(7, 15);
 	// TODO: Improve collision detection
 	return (lemmingPos.x > startPoint.x  && lemmingPos.x < endPoint.x && lemmingPos.y > startPoint.y && lemmingPos.y < endPoint.y);
 }
@@ -390,7 +404,7 @@ int Scene::considerSceneSpeed(int deltaTime) {
 	case NORMAL:
 		return deltaTime;
 	case FAST:
-		return 2 * deltaTime;
+		return 3 * deltaTime;
 	}
 	return deltaTime;
 }

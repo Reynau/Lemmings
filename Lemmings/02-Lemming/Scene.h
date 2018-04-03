@@ -7,6 +7,7 @@
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
 #include "cursor.h"
+#include "door.h"
 
 
 // Scene contains all the entities of our game.
@@ -83,6 +84,9 @@ private:
 	// Cursor related
 	Cursor * cursor;
 	int index_selected_lem;
+
+	// Door related
+	Door * door;
 
 	// Scene Speed
 	enum SceneSpeed {

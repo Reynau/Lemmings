@@ -27,7 +27,7 @@ public:
 
 public:
 	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture);
-	void update(int deltaTime);
+	void update(int deltaTime, int offset);
 	void render();
 
 	bool isDead();
@@ -54,6 +54,7 @@ private:
 	LemmingState pending_state;
 	bool pending_floater;
 	float fallSpeed;
+	int lem_offset;
 
 	enum LemmingAnims
 	{
