@@ -268,7 +268,7 @@ void Lemming::_dig(LemmingAnims fallAnim, LemmingState fallState)
 		posX = int(sprite->position().x) + lem_offset + 7;
 		posY = int(sprite->position().y) + 15;
 		for (int y = max(0, posY); y <= min(mask->height() - 1, posY); y++)
-			for (int x = max(0, posX - 3); x <= min(mask->width() - 1, posX + 4); x++)
+			for (int x = max(0, posX - 4); x <= min(mask->width() - 1, posX + 5); x++)
 				mask->setPixel(x, y, 0);
 	}
 

@@ -70,6 +70,8 @@ private:
 		string colorTextureFile;
 		string maskTextureFile;
 		float offset;
+		int spawnTime;
+		Door::doorState door;
 	};
 	vector<Level> levels;
 	int currentLevel;
