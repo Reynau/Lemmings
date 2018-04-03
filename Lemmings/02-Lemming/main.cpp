@@ -86,10 +86,11 @@ int main(int argc, char **argv)
 	// GLUT initialization
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(960, 480);
+	/*glutInitWindowPosition(100, 100);
+	glutInitWindowSize(960, 480);*/
 
 	glutCreateWindow(argv[0]);
+	glutFullScreen();
 	glutDisplayFunc(drawCallback);
 	glutIdleFunc(idleCallback);
 	glutKeyboardFunc(keyboardDownCallback);
@@ -99,6 +100,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
 	glutPassiveMotionFunc(motionCallback);
+	//glutSetCursor(GLUT_CURSOR_NONE);
 
 	// GLEW will take care of OpenGL extension functions
 	glewExperimental = GL_TRUE;

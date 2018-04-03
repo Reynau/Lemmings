@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 2;
+	currentLevel = 0;
 
 	initLevels();
 
@@ -38,7 +38,9 @@ void Scene::init()
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
-	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
+	cout << CAMERA_WIDTH << ", " << CAMERA_HEIGHT << endl;
+
+	projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
 
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -124,11 +126,12 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 {
 	if(bLeftButton)
 		applySkill(Lemming::DIGGER); // TESTING
-	/*else if(bRightButton)
-		applyMask(mouseX, mouseY);*/
 	cursor->setPos(mouseX, mouseY);
 }
 
+//
+/* ENS HO GUARDEM PER QUAN FEM LES EXPLOSIONS DELS LEMMINGS QUAN FEM SURRENDER*/
+//
 /*void Scene::eraseMask(int mouseX, int mouseY)
 {
 	int posX, posY;
@@ -145,27 +148,6 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 			if ((dx*dx + dy * dy) <= (r*r))
 			{
 				maskTexture.setPixel(x, y, 0);
-			}
-		}
-	}
-}
-
-void Scene::applyMask(int mouseX, int mouseY)
-{
-	int posX, posY;
-
-	posX = mouseX / 3 + 120;
-	posY = mouseY / 3;
-	int r = 10;
-	int dx;
-	int dy;
-	for (int y = max(0, posY - r); y <= min(maskTexture.height() - 1, posY + r); y++) {
-		for (int x = max(0, posX - r); x <= min(maskTexture.width() - 1, posX + r); x++) {
-			dx = posX - x; // horizontal offset
-			dy = posY - y; // vertical offset
-			if ((dx*dx + dy * dy) <= (r*r))
-			{
-				maskTexture.setPixel(x, y, 255);
 			}
 		}
 	}
@@ -348,7 +330,7 @@ void Scene::applySkill(Lemming::LemmingSkill skill)
 void Scene::checkIfLemmingSafe(int lemmingId) {
 	Level level = levels[currentLevel];
 
-	glm::vec2 safeSquare = glm::vec2(2, 2); // TODO: Adjust safe square
+	glm::vec2 safeSquare = glm::vec2(3, 3); // TODO: Adjust safe square
 
 	glm::vec2 initialPoint = level.savePosition - safeSquare;
 	glm::vec2 endingPoint = level.savePosition + safeSquare;
@@ -363,7 +345,6 @@ void Scene::checkIfLemmingSafe(int lemmingId) {
 	Lemming * lemming = lemmings[lemmingId];
 	if (lemmingColideWith(lemming, initialPoint, endingPoint)) {
 		removeLemming(lemmingId);
-		--aliveLemmings;
 		++safeLemmings;
 	}
 }
@@ -415,6 +396,7 @@ void Scene::removeLemming(int lemmingId) {
 	lemmings[lemmingId]->remove();
 	delete (lemmings[lemmingId]);
 	lemmings[lemmingId] = NULL;
+	--aliveLemmings;
 }
 
 int Scene::considerSceneSpeed(int deltaTime) {

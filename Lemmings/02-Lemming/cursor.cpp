@@ -30,8 +30,8 @@ glm::vec2 Cursor::getPos()
 }
 
 void Cursor::setPos(int mouseX, int mouseY)
-{
-	sprite->setPosition(glm::vec2((mouseX / 3) - 7, (mouseY / 3) - 7));
+{	// QUEDA PENDENT DE MILLORAR JA QUE AMB ALTRES RESOLUCIONS QUE NO SIGUIN 1080p NO ES CORRECTE
+	sprite->setPosition(glm::vec2((mouseX * ((320.f - 1.f)/(glutGet(GLUT_WINDOW_WIDTH) - (40.f * ((glutGet(GLUT_WINDOW_WIDTH) - 160.f) / 320.f))))) - 27, (mouseY * ((160.f - 1.f)/(glutGet(GLUT_WINDOW_HEIGHT) - (40.f * ((glutGet(GLUT_WINDOW_HEIGHT) - 190.f) / 160.f))))) - 7));
 }
 
 void Cursor::update(int deltaTime)
