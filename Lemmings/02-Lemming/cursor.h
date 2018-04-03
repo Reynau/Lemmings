@@ -25,6 +25,8 @@ public:
 	};
 
 private:
+	const float SPRITE_HEIGHT = 176.0f;
+
 	Texture spritesheet;
 	Sprite *sprite;
 	float sprite_h;

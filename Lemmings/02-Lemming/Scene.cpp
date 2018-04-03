@@ -82,6 +82,10 @@ void Scene::update(int deltaTime)
 			
 		lemmings[i]->update(deltaTime, int(level.offset));
 		if (lemmings[i]->isDead()) removeLemming(i);
+		else if (lemmings[i]->isSafe()) {
+			removeLemming(i);
+			++safeLemmings;
+		}
 		else checkIfLemmingSafe(i);
 	}
 
@@ -89,7 +93,7 @@ void Scene::update(int deltaTime)
 	if (aliveLemmings == 0) {
 		finishLevel();
 	}
-	spawnDoor->update(deltaTime, currentTime/1000);
+	spawnDoor->update(deltaTime, int(currentTime/1000));
 	door->update(deltaTime, 0);
 	checkSelecting();
 }
@@ -341,11 +345,11 @@ void Scene::checkIfLemmingSafe(int lemmingId) {
 	initialPoint.y += 48 - safeSquare.y / 2;
 	endingPoint.y += 48 - safeSquare.y / 2;
 
-	//if (!lemmings[lemmingId]) return; NO ARREGLA EL ERROR
 	Lemming * lemming = lemmings[lemmingId];
-	if (lemmingColideWith(lemming, initialPoint, endingPoint)) {
-		removeLemming(lemmingId);
-		++safeLemmings;
+	if (!lemmings[lemmingId]->isArriving()) {
+		if (lemmingColideWith(lemming, initialPoint, endingPoint)) {
+			lemmings[lemmingId]->lemmingArrived();
+		}
 	}
 }
 

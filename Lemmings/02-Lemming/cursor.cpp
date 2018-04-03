@@ -9,16 +9,15 @@ void Cursor::initCursor(ShaderProgram &shaderProgram)
 {
 	spritesheet.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMinFilter(GL_NEAREST);
-	spritesheet.setMagFilter(GL_NEAREST);
-	sprite_h = 160.0f;
-	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / sprite_h), &spritesheet, &shaderProgram);
+	spritesheet.setMagFilter(GL_NEAREST);	
+	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(2);
 
 		sprite->setAnimationSpeed(NORMAL, 12);	// NORMAL
-		sprite->addKeyframe(NORMAL, glm::vec2(float(1) / 10, 48.0f / sprite_h));
+		sprite->addKeyframe(NORMAL, glm::vec2(float(1) / 10, 48.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(SELECT, 12);	// SELECTED
-		sprite->addKeyframe(SELECT, glm::vec2(float(0) / 10, 48.0f / sprite_h));
+		sprite->addKeyframe(SELECT, glm::vec2(float(0) / 10, 48.0f / SPRITE_HEIGHT));
 
 	sprite->changeAnimation(0);
 	sprite->setPosition(glm::vec2(0, 0));
