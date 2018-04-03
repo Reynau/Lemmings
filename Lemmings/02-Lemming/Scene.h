@@ -88,7 +88,9 @@ private:
 	int index_selected_lem;
 
 	// Door related
+	Door * spawnDoor;
 	Door * door;
+	bool lemmingsNotUpdated;
 
 	// Scene Speed
 	enum SceneSpeed {

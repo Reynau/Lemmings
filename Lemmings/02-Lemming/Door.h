@@ -12,18 +12,18 @@ class Door
 public:
 	void initDoor(ShaderProgram &shaderProgram);
 	void setPos(glm::vec2 pos);
-	void update(int deltaTime);
+	void update(int deltaTime, int currentTime);
 	void render();
 
 	enum doorState
 	{
-		FIRST_DOOR, SECOND_DOOR
+		FIRST_DOOR, SECOND_DOOR, SPAWN_DOOR_CLOSE, SPAWN_DOOR, SPAWN_DOOR_OPEN
 	};
 
 	void setState(doorState door_state);
 
 private:
-	const float SPRITE_HEIGHT = 96.0f;
+	const float SPRITE_HEIGHT = 144.0f;
 
 	Texture spritesheet;
 	Sprite *sprite;

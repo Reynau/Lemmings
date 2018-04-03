@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 0;
+	currentLevel = 2;
 
 	initLevels();
 
@@ -47,16 +47,20 @@ void Scene::init()
 
 	initLemmings();
 
-	sceneSpeed = FAST;
+	sceneSpeed = NORMAL;
 
 	cursor = new Cursor();
 	cursor->initCursor(simpleTexProgram);
 	index_selected_lem = NULL;
 
+	spawnDoor = new Door();
+	spawnDoor->initDoor(simpleTexProgram);
+	spawnDoor->setState(Door::doorState::SPAWN_DOOR_CLOSE);
+	spawnDoor->setPos(glm::vec2(level.spawnPosition.x - (24 - 7), level.spawnPosition.y - (24 - 7)));
 	door = new Door();
 	door->initDoor(simpleTexProgram);
 	door->setState(level.door);
-	door->setPos(glm::vec2(level.savePosition.x/* + level.offset*/, level.savePosition.y));
+	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
 }
 
 unsigned int x = 0;
@@ -83,8 +87,8 @@ void Scene::update(int deltaTime)
 	if (aliveLemmings == 0) {
 		finishLevel();
 	}
-
-	door->update(deltaTime);
+	spawnDoor->update(deltaTime, currentTime/1000);
+	door->update(deltaTime, 0);
 	checkSelecting();
 }
 
@@ -93,6 +97,7 @@ void Scene::render()
 
 	glm::mat4 modelview;
 
+	spawnDoor->render();
 	door->render();
 
 	maskedTexProgram.use();
@@ -228,8 +233,8 @@ void Scene::initLevels()
 	firstLevel.lemmingsToSpawn = 10;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
-	firstLevel.spawnPosition = glm::vec2(60, 40);
-	firstLevel.savePosition = glm::vec2(216, 85); // TODO: Must adjust this position (randomly selected)
+	firstLevel.spawnPosition = glm::vec2(90, 30); // Correct
+	firstLevel.savePosition = glm::vec2(216, 85); // Correct
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
 	firstLevel.offset = 120.f;
@@ -242,7 +247,7 @@ void Scene::initLevels()
 	secondLevel.lemmingsToSpawn = 10;
 	secondLevel.lemmingsToSecure = 1;
 	secondLevel.availableTime = 5 * 60;
-	secondLevel.spawnPosition = glm::vec2(28, 15); // Correct
+	secondLevel.spawnPosition = glm::vec2(28, 10); // Correct
 	secondLevel.savePosition = glm::vec2(257, 101); // Correct
 	secondLevel.colorTextureFile = "images/fun2.png";
 	secondLevel.maskTextureFile = "images/fun2_mask.png";
@@ -256,7 +261,7 @@ void Scene::initLevels()
 	thirdLevel.lemmingsToSpawn = 50;
 	thirdLevel.lemmingsToSecure = 5;
 	thirdLevel.availableTime = 5 * 60;
-	thirdLevel.spawnPosition = glm::vec2(129, 10); // Correct
+	thirdLevel.spawnPosition = glm::vec2(129, 3); // Correct
 	thirdLevel.savePosition = glm::vec2(95, 105); // Correct
 	thirdLevel.colorTextureFile = "images/fun3.png";
 	thirdLevel.maskTextureFile = "images/fun3_mask.png";
@@ -288,8 +293,10 @@ void Scene::changeLevel(int newLevel)
 
 	level.spawnTime = 2;
 
+	spawnDoor->setState(Door::doorState::SPAWN_DOOR_CLOSE);
+	spawnDoor->setPos(glm::vec2(level.spawnPosition.x - (24 - 7), level.spawnPosition.y - (24 - 7)));
 	door->setState(level.door);
-	door->setPos(glm::vec2(level.savePosition.x/* + level.offset*/, level.savePosition.y));
+	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
 
 	currentTime = 0;
 }
@@ -363,7 +370,7 @@ void Scene::checkIfLemmingSafe(int lemmingId) {
 
 bool Scene::lemmingHasToSpawn() {
 	Level level = levels[currentLevel];
-	int sec = int(currentTime / 1000 / level.spawnTime);
+	int sec = int(currentTime / 1000 / level.spawnTime) - 2;
 
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec;
 }
