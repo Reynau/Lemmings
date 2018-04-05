@@ -38,8 +38,7 @@ void Scene::init()
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
-	//projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
-	projection = glm::ortho(0.f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.f);
+	projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
 
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -62,8 +61,6 @@ void Scene::init()
 	door->initDoor(simpleTexProgram);
 	door->setState(level.door);
 	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
-	leftQuad = Quad::createQuad(0.f, 0.f, 20.f, 160.f, simpleTexProgram);
-	rightQuad = Quad::createQuad(0.f, float(CAMERA_HEIGHT), 20.f, 160.f, simpleTexProgram);
 }
 
 unsigned int x = 0;
@@ -128,9 +125,6 @@ void Scene::render()
 	}
 
 	cursor->render();
-
-	leftQuad->render();
-	rightQuad->render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)

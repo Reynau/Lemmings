@@ -8,7 +8,6 @@
 #include "Lemming.h"
 #include "cursor.h"
 #include "Door.h"
-#include "Quad.h"
 
 
 // Scene contains all the entities of our game.
@@ -78,7 +77,6 @@ private:
 	};
 	vector<Level> levels;
 	int currentLevel;
-	Quad * leftQuad, * rightQuad;
 
 	// Lemming related
 	Texture lemmingTexture;
