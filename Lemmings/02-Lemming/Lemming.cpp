@@ -71,6 +71,8 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(LemmingAnims::SAFE, 12);
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::SAFE, glm::vec2(float(i) / 10, 160.0f / SPRITE_HEIGHT));
+
+
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
@@ -226,6 +228,11 @@ void Lemming::render()
 void Lemming::setMapMask(VariableTexture *mapMask)
 {
 	mask = mapMask;
+}
+
+void Lemming::setPos(glm::vec2 pos)
+{
+	sprite->setPosition(pos);
 }
 
 glm::vec2 Lemming::getPosition() {

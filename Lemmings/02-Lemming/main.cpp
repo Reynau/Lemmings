@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
 	glutPassiveMotionFunc(motionCallback);
-	//glutSetCursor(GLUT_CURSOR_NONE);
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// GLEW will take care of OpenGL extension functions
 	glewExperimental = GL_TRUE;

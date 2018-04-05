@@ -38,6 +38,7 @@ public:
 	void remove();
 
 	void setMapMask(VariableTexture *mapMask);
+	void setPos(glm::vec2 pos);
 
 	glm::vec2 getPosition();
 	bool setSkill(LemmingSkill newSkill);

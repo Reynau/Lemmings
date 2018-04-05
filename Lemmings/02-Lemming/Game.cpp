@@ -29,11 +29,15 @@ void Game::keyPressed(int key)
 {
 	if(key == 27) // Escape code
 		bPlay = false;
+	if (key == 68 || key == 100) // D
+		scene.moveMap(true);
+	else if (key == 65 || key == 97) // A
+		scene.moveMap(false);
 	keys[key] = true;
 }
 
 void Game::keyReleased(int key)
-{
+{		
 	keys[key] = false;
 }
 

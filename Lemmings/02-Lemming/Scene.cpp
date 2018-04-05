@@ -26,7 +26,7 @@ void Scene::init()
 	Level level = levels[currentLevel];
 
 	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
-	glm::vec2 texCoords[2] = {glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f)};
+	glm::vec2 texCoords[2] = {glm::vec2(level.offset / 512.0f, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f)};
 
 	initShaders();
 
@@ -38,9 +38,8 @@ void Scene::init()
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
-	cout << CAMERA_WIDTH << ", " << CAMERA_HEIGHT << endl;
-
-	projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
+	//projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
+	projection = glm::ortho(0.f, float(CAMERA_WIDTH), float(CAMERA_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -63,6 +62,8 @@ void Scene::init()
 	door->initDoor(simpleTexProgram);
 	door->setState(level.door);
 	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
+	leftQuad = Quad::createQuad(0.f, 0.f, 20.f, 160.f, simpleTexProgram);
+	rightQuad = Quad::createQuad(0.f, float(CAMERA_HEIGHT), 20.f, 160.f, simpleTexProgram);
 }
 
 unsigned int x = 0;
@@ -93,6 +94,9 @@ void Scene::update(int deltaTime)
 	if (aliveLemmings == 0) {
 		finishLevel();
 	}
+
+	if (cursor->getPos().x < -4.f) moveMap(0);
+	else if (cursor->getPos().x > 307.f) moveMap(1);
 	spawnDoor->update(deltaTime, int(currentTime/1000));
 	door->update(deltaTime, 0);
 	checkSelecting();
@@ -124,6 +128,9 @@ void Scene::render()
 	}
 
 	cursor->render();
+
+	leftQuad->render();
+	rightQuad->render();
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
@@ -131,6 +138,53 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 	if(bLeftButton)
 		applySkill(Lemming::DIGGER); // TESTING
 	cursor->setPos(mouseX, mouseY);
+}
+
+void Scene::moveMap(bool right)
+{
+	if (right && levels[currentLevel].offset <= 186.f) {
+		levels[currentLevel].offset += 6.0f;
+		levels[currentLevel].spawnPosition.x -= 6;
+		levels[currentLevel].savePosition.x -= 6;
+
+		Level level = levels[currentLevel];
+
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+
+		initShaders();
+
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+
+		spawnDoor->setPos(glm::vec2(level.spawnPosition.x - (24 - 7), level.spawnPosition.y - (24 - 7)));
+		door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
+		for (int i = 0; i < level.lemmingsToSpawn; ++i) {
+			if (!lemmings[i]) continue;
+			lemmings[i]->setPos(glm::vec2(lemmings[i]->getPosition().x - 6.f, lemmings[i]->getPosition().y));
+		}
+	}
+	else if (!right && levels[currentLevel].offset >= 6.f) {
+		levels[currentLevel].offset -= 6.0f;
+		levels[currentLevel].spawnPosition.x += 6;
+		levels[currentLevel].savePosition.x += 6;
+
+		Level level = levels[currentLevel];
+
+		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
+		glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+
+		initShaders();
+
+		map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
+
+		spawnDoor->setPos(glm::vec2(level.spawnPosition.x - (24 - 7), level.spawnPosition.y - (24 - 7)));
+		door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
+
+		for (int i = 0; i < level.lemmingsToSpawn; ++i) {
+			if (!lemmings[i]) continue;
+			lemmings[i]->setPos(glm::vec2(lemmings[i]->getPosition().x + 6.f, lemmings[i]->getPosition().y));
+		}
+	}
 }
 
 //
@@ -261,6 +315,8 @@ void Scene::changeLevel(int newLevel)
 {
 	currentLevel = newLevel;
 
+	resetOffsets();
+
 	Level level = levels[currentLevel];
 
 	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
@@ -299,6 +355,19 @@ void Scene::finishLevel() {
 		// Lose
 		changeLevel(currentLevel);
 	}
+}
+
+void Scene::resetOffsets()
+{
+	levels[0].offset = 120.f;
+	levels[0].spawnPosition = glm::vec2(90, 30);
+	levels[0].savePosition = glm::vec2(216, 85);
+	levels[1].offset = 69.f;
+	levels[1].spawnPosition = glm::vec2(28, 10);
+	levels[1].savePosition = glm::vec2(257, 101);
+	levels[2].offset = 22.f;
+	levels[2].spawnPosition = glm::vec2(129, 3);
+	levels[2].savePosition = glm::vec2(95, 105);
 }
 
 void Scene::checkSelecting()
@@ -414,3 +483,4 @@ int Scene::considerSceneSpeed(int deltaTime) {
 	}
 	return deltaTime;
 }
+

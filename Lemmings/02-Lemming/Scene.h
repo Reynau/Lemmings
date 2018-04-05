@@ -7,7 +7,8 @@
 #include "MaskedTexturedQuad.h"
 #include "Lemming.h"
 #include "cursor.h"
-#include "door.h"
+#include "Door.h"
+#include "Quad.h"
 
 
 // Scene contains all the entities of our game.
@@ -26,6 +27,7 @@ public:
 	void render();
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
+	void moveMap(bool right);
 
 public:
 	VariableTexture maskTexture;
@@ -37,6 +39,7 @@ private:
 	//void applyMask(int mouseX, int mouseY);
 	void changeLevel(int level);
 	void finishLevel();
+	void resetOffsets();
 
 	void checkSelecting();
 	void applySkill(Lemming::LemmingSkill skill);
@@ -75,6 +78,7 @@ private:
 	};
 	vector<Level> levels;
 	int currentLevel;
+	Quad * leftQuad, * rightQuad;
 
 	// Lemming related
 	Texture lemmingTexture;
