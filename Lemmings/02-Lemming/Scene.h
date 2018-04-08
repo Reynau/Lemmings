@@ -34,8 +34,12 @@ public:
 private:
 	void initShaders();
 	void initLevels();
+
+	void updateColliders();
+
 	//void eraseMask(int mouseX, int mouseY);
 	//void applyMask(int mouseX, int mouseY);
+
 	void changeLevel(int level);
 	void finishLevel();
 	void resetOffsets();
@@ -80,7 +84,8 @@ private:
 
 	// Lemming related
 	Texture lemmingTexture;
-	vector<Lemming *> lemmings;	
+	vector<Lemming *> lemmings;
+	vector<glm::vec2> colliders;
 	int spawnedLemmings;
 	int aliveLemmings;
 	int safeLemmings;

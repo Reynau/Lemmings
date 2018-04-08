@@ -27,13 +27,14 @@ public:
 
 public:
 	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture);
-	void update(int deltaTime, int offset);
+	void update(int deltaTime, int offset, vector<glm::vec2> colliders);
 	void render();
 
 	bool isDead();
 	bool isArriving();
 	bool isSafe();
 	bool isBusy();
+	bool isBlocker();
 
 	void remove();
 
@@ -51,14 +52,17 @@ private:
 	const float MAXIMUM_FALL_SPEED = 3.0f;
 	const float MINIMUM_FALL_SPEED = 2.0f;
 
-	LemmingState state;
 	Texture spritesheet;
 	Sprite *sprite;
 	VariableTexture *mask;
+
+	LemmingState state;
 	LemmingState pending_state;
 	bool pending_floater;
 	float fallSpeed;
 	int lem_offset;
+
+	vector<glm::vec2> colliders;
 
 	enum LemmingAnims
 	{
@@ -71,8 +75,13 @@ private:
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
 
+	int collisionAny(int maxFall);
 	int collisionFloor(int maxFall);
-	bool collision();
+	int collisionCollider(int maxFall);
+	bool collisionAny();
+	bool collisionFloor();
+	bool collisionCollider();
+	bool collideWithBlocker(glm::vec2 startBox1, glm::vec2 endBox1, glm::vec2 startBox2, glm::vec2 endBox2);
 
 	bool isSameSkill(LemmingSkill newState);
 	bool isGoingLeft();
@@ -82,6 +91,7 @@ private:
 
 	void changeDirection();
 	void incrementFallSpeed();
+
 };
 
 

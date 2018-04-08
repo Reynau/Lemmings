@@ -47,7 +47,7 @@ void Scene::init()
 
 	initLemmings();
 
-	sceneSpeed = NORMAL;
+	sceneSpeed = FAST;
 
 	cursor = new Cursor();
 	cursor->initCursor(simpleTexProgram);
@@ -71,6 +71,8 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	Level level = levels[currentLevel];
 
+	updateColliders();
+
 	// Spawn lemmings
 	if (lemmingHasToSpawn()) ++spawnedLemmings;
 
@@ -78,7 +80,7 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
 			
-		lemmings[i]->update(deltaTime, int(level.offset));
+		lemmings[i]->update(deltaTime, int(level.offset), colliders);
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else if (lemmings[i]->isSafe()) {
 			removeLemming(i);
@@ -129,8 +131,12 @@ void Scene::render()
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
-	if(bLeftButton)
-		applySkill(Lemming::DIGGER); // TESTING
+	if (bLeftButton) {
+		applySkill(Lemming::LemmingSkill::DIGGER); // TESTING
+	}
+	if (bRightButton) {
+		applySkill(Lemming::LemmingSkill::BLOCKER);
+	}
 	cursor->setPos(mouseX, mouseY);
 }
 
@@ -264,7 +270,7 @@ void Scene::initLevels()
 {
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
-	firstLevel.lemmingsToSpawn = 10;
+	firstLevel.lemmingsToSpawn = 2;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(90, 30); // Correct
@@ -303,6 +309,22 @@ void Scene::initLevels()
 	thirdLevel.spawnTime = 2;
 	thirdLevel.door = Door::SECOND_DOOR;
 	levels.push_back(thirdLevel);
+}
+
+
+void Scene::updateColliders() {
+	Level level = levels[currentLevel];
+	// Lemmings
+	colliders.clear();
+	for (int i = 0; i < spawnedLemmings; ++i) {
+		if (!lemmings[i]) continue;
+
+		if (lemmings[i]->isBlocker()) {
+			glm::vec2 position = lemmings[i]->getPosition();
+			colliders.push_back(position + glm::vec2(2 + level.offset, 4));
+			colliders.push_back(position + glm::vec2(13 + level.offset, 11));
+		}
+	}
 }
 
 void Scene::changeLevel(int newLevel)
@@ -426,7 +448,7 @@ bool Scene::lemmingHasToSpawn() {
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
 	Level level = levels[currentLevel];
 
-	glm::vec2 lemmingPos = glm::vec2(lemming->getPosition().x, lemming->getPosition().y);
+	glm::vec2 lemmingPos = lemming->getPosition();
 	lemmingPos += glm::ivec2(7, 15);
 	// TODO: Improve collision detection
 	return (lemmingPos.x > startPoint.x  && lemmingPos.x < endPoint.x && lemmingPos.y > startPoint.y && lemmingPos.y < endPoint.y);
