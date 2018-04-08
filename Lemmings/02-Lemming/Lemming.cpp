@@ -91,17 +91,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 	switch (state)
 	{
 	case BLOCKER_LEFT_STATE:
-		if (collisionFloor(3) > 0) {
-			sprite->changeAnimation(Lemming::LemmingAnims::FALLING_LEFT);
-			state = Lemming::LemmingState::FALLING_LEFT_STATE;
-		}
+		_block(Lemming::LemmingAnims::FALLING_LEFT, Lemming::LemmingState::FALLING_LEFT_STATE);
 		break;
 
 	case BLOCKER_RIGHT_STATE:
-		if (collisionFloor(3) > 0) {
-			sprite->changeAnimation(Lemming::LemmingAnims::FALLING_RIGHT);
-			state = Lemming::LemmingState::FALLING_RIGHT_STATE;
-		}
+		_block(Lemming::LemmingAnims::FALLING_RIGHT, Lemming::LemmingState::FALLING_RIGHT_STATE);
 		break;
 
 	case DIGGER_LEFT_STATE:
@@ -284,6 +278,15 @@ bool Lemming::isSameSkill(LemmingSkill newSkill)
 	if (newSkill == DIGGER && (state == DIGGER_RIGHT_STATE || state == DIGGER_LEFT_STATE)) return true;
 	if (newSkill == FLOATER && (state == FLOATER_RIGHT_STATE || state == FLOATER_LEFT_STATE)) return true;
 	return false;
+}
+
+
+void Lemming::_block(LemmingAnims fallAnim, LemmingState fallState) {
+	int fall = collisionFloor(3);
+	if (fall > 0) {
+		sprite->changeAnimation(fallAnim);
+		state = fallState;
+	}
 }
 
 void Lemming::_dig(LemmingAnims fallAnim, LemmingState fallState)

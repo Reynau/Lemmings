@@ -70,6 +70,7 @@ private:
 	};
 
 private:
+	void _block(LemmingAnims fallAnim, LemmingState fallState);
 	void _dig(LemmingAnims fallAnim, LemmingState fallState);
 	void _walk(LemmingAnims fallAnimation, LemmingState fallState);
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
