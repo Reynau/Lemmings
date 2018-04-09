@@ -8,6 +8,7 @@
 #include "Lemming.h"
 #include "cursor.h"
 #include "Door.h"
+#include "Quad.h"
 
 
 // Scene contains all the entities of our game.
@@ -62,6 +63,7 @@ private:
 	Texture colorTexture;
 	MaskedTexturedQuad *map;
 	ShaderProgram simpleTexProgram, maskedTexProgram;
+	ShaderProgramQuad program;
 	float currentTime;
 	glm::mat4 projection;
 
@@ -106,6 +108,8 @@ private:
 		FAST,
 	};
 	SceneSpeed sceneSpeed;
+
+	Quad *quad;
 };
 
 

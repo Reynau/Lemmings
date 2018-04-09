@@ -38,6 +38,9 @@ void Scene::init()
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
+
+	quad = Quad::createQuad(-20.f, 0.f, 20.f, float(CAMERA_HEIGHT + 40), program);
+
 	projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
 
@@ -47,7 +50,7 @@ void Scene::init()
 
 	initLemmings();
 
-	sceneSpeed = FAST;
+	sceneSpeed = NORMAL;
 
 	cursor = new Cursor();
 	cursor->initCursor(simpleTexProgram);
@@ -106,9 +109,6 @@ void Scene::render()
 
 	glm::mat4 modelview;
 
-	spawnDoor->render();
-	door->render();
-
 	maskedTexProgram.use();
 	maskedTexProgram.setUniformMatrix4f("projection", projection);
 	maskedTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -122,11 +122,28 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 
+	spawnDoor->render();
+	door->render();
+
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (lemmings[i]) lemmings[i]->render();
 	}
 
 	cursor->render();
+
+	program.use();
+	program.setUniformMatrix4f("projection", projection);
+	program.setUniform4f("color", 0.f, 0.f, 0.f, 1.0f);
+
+	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, 0.f));
+	program.setUniformMatrix4f("modelview", modelview);
+	quad->render();
+
+	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(float(CAMERA_WIDTH + 20), 0.f, 0.f));
+	program.setUniformMatrix4f("modelview", modelview);
+	quad->render();
+
+	
 }
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
@@ -215,6 +232,33 @@ void Scene::initShaders()
 {
 	Shader vShader, fShader;
 
+	/////
+	vShader.initFromFile(VERTEX_SHADER, "shaders/simple.vert");
+	if (!vShader.isCompiled())
+	{
+		cout << "Vertex Shader Error" << endl;
+		cout << "" << vShader.log() << endl << endl;
+	}
+	fShader.initFromFile(FRAGMENT_SHADER, "shaders/simple.frag");
+	if (!fShader.isCompiled())
+	{
+		cout << "Fragment Shader Error" << endl;
+		cout << "" << fShader.log() << endl << endl;
+	}
+	program.init();
+	program.addShader(vShader);
+	program.addShader(fShader);
+	program.link();
+	if (!program.isLinked())
+	{
+		cout << "Shader Linking Error" << endl;
+		cout << "" << program.log() << endl << endl;
+	}
+	program.bindFragmentOutput("outColor");	
+	vShader.free();
+	fShader.free();
+	//////
+
 	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
 	if(!vShader.isCompiled())
 	{
@@ -270,7 +314,7 @@ void Scene::initLevels()
 {
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
-	firstLevel.lemmingsToSpawn = 2;
+	firstLevel.lemmingsToSpawn = 10;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(90, 30); // Correct
