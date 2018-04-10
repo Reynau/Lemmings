@@ -18,7 +18,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	pending_state = NULL_STATE;
 	pending_floater = false;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
-	sprite->setNumberAnimations(12);
+	sprite->setNumberAnimations(14);
 	
 		sprite->setAnimationSpeed(LemmingAnims::WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -71,6 +71,16 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(LemmingAnims::SAFE, 12);
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::SAFE, glm::vec2(float(i) / 10, 160.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::SURRENDER, 12);
+		for (int i = 0; i<8; i++)
+			sprite->addKeyframe(LemmingAnims::SURRENDER, glm::vec2(float(i) / 10, 176.0f / SPRITE_HEIGHT));
+		for (int i = 0; i<8; i++)
+			sprite->addKeyframe(LemmingAnims::SURRENDER, glm::vec2(float(i) / 10, 192.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::EXPLOSION, 12);
+		for (int i = 0; i<8; i++)
+			sprite->addKeyframe(LemmingAnims::EXPLOSION, glm::vec2(float(i) / 10, 112.0f / SPRITE_HEIGHT));
 
 
 		
@@ -135,7 +145,12 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		break;
 
 	case WALKING_LEFT_STATE:
-		if (pending_state == DIGGER_LEFT_STATE) {
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIGGER_LEFT_STATE) {
 			sprite->changeAnimation(LemmingAnims::DIGGING);
 			state = pending_state;
 			pending_state = NULL_STATE;
@@ -153,7 +168,12 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		break;
 
 	case WALKING_RIGHT_STATE:
-		if (pending_state == DIGGER_RIGHT_STATE) {
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIGGER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::DIGGING);
 			state = pending_state;
 			pending_state = NULL_STATE;
@@ -169,7 +189,18 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			else _walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
 		}
 		break;
-
+	case SURRENDER_STATE:
+		if (sprite->keyFrame() == 15) {
+			sprite->changeAnimation(LemmingAnims::EXPLOSION);
+			_explote();
+			state = EXPLOSION_STATE;
+		}
+		break;
+	case EXPLOSION_STATE:
+		if (sprite->keyFrame() == 7) {
+			state = DEAD_STATE;
+		}
+		break;
 	case FALL_DIE_STATE:
 		if (sprite->keyFrame() == 15) {
 			state = DEAD_STATE;
@@ -252,7 +283,7 @@ void Lemming::lemmingArrived()
 
 Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill) 
 {
-
+	if (skill == SURREND) return SURRENDER_STATE;
 	if (isGoingLeft()) {
 		if (skill == BLOCKER) return BLOCKER_LEFT_STATE;
 		if (skill == DIGGER) return DIGGER_LEFT_STATE;
@@ -358,6 +389,27 @@ void Lemming::_fall(LemmingAnims walkAnimation, LemmingState walkState)
 	}
 	else {
 		sprite->position() += glm::vec2(0, fall);
+	}
+}
+
+void Lemming::_explote()
+{
+	int posX, posY;
+
+	posX = sprite->position().x + lem_offset + 7;
+	posY = sprite->position().y + 12;
+	int r = 9;
+	int dx;
+	int dy;
+	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
+		for (int x = max(0, posX - r); x <= min(mask->width() - 1, posX + r); x++) {
+			dx = posX - x; // horizontal offset
+			dy = posY - y; // vertical offset
+			if ((dx*dx + dy * dy) <= (r*r))
+			{
+				mask->setPixel(x, y, 0);
+			}
+		}
 	}
 }
 

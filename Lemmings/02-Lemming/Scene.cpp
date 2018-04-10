@@ -38,8 +38,10 @@ void Scene::init()
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
+	maskTexture2 = &maskTexture;
 
 	quad = Quad::createQuad(-20.f, 0.f, 20.f, float(CAMERA_HEIGHT + 40), program);
+	quadui = Quad::createQuad(0.f, 0.f, float(CAMERA_WIDTH), 41.f, program);
 
 	projection = glm::ortho(-20.f, float(CAMERA_WIDTH + 20), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
@@ -73,7 +75,7 @@ void Scene::update(int deltaTime)
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
 	Level level = levels[currentLevel];
-
+	cout << int(currentTime / 100) << endl;
 	updateColliders();
 
 	// Spawn lemmings
@@ -82,7 +84,10 @@ void Scene::update(int deltaTime)
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
-			
+		if (int(currentTime / 100) == 100) {
+			if (!lemmings[i]->setSkill(Lemming::LemmingSkill::SURREND))
+				continue; // TESTING
+		}
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else if (lemmings[i]->isSafe()) {
@@ -109,6 +114,14 @@ void Scene::render()
 
 	glm::mat4 modelview;
 
+	simpleTexProgram.use();
+	simpleTexProgram.setUniformMatrix4f("projection", projection);
+	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	modelview = glm::mat4(1.0f);
+	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+	spawnDoor->render();
+	door->render();
+
 	maskedTexProgram.use();
 	maskedTexProgram.setUniformMatrix4f("projection", projection);
 	maskedTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -122,13 +135,23 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 
-	spawnDoor->render();
-	door->render();
-
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (lemmings[i]) lemmings[i]->render();
 	}
 
+	program.use();
+	program.setUniformMatrix4f("projection", projection);
+	program.setUniform4f("color", 0.f, 0.f, 0.f, 1.0f);
+
+	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, float(CAMERA_HEIGHT - 1), 0.f));
+	program.setUniformMatrix4f("modelview", modelview);
+	quadui->render();
+
+	simpleTexProgram.use();
+	simpleTexProgram.setUniformMatrix4f("projection", projection);
+	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	modelview = glm::mat4(1.0f);
+	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	cursor->render();
 
 	program.use();
@@ -203,30 +226,6 @@ void Scene::moveMap(bool right)
 		}
 	}
 }
-
-//
-/* ENS HO GUARDEM PER QUAN FEM LES EXPLOSIONS DELS LEMMINGS QUAN FEM SURRENDER*/
-//
-/*void Scene::eraseMask(int mouseX, int mouseY)
-{
-	int posX, posY;
-
-	posX = mouseX / 3 + 120;
-	posY = mouseY / 3;
-	int r = 10;
-	int dx;
-	int dy;
-	for (int y = max(0, posY - r); y <= min(maskTexture.height() - 1, posY + r); y++) {
-		for (int x = max(0, posX - r); x <= min(maskTexture.width() - 1, posX + r); x++) {
-			dx = posX - x; // horizontal offset
-			dy = posY - y; // vertical offset
-			if ((dx*dx + dy * dy) <= (r*r))
-			{
-				maskTexture.setPixel(x, y, 0);
-			}
-		}
-	}
-}*/
 
 void Scene::initShaders()
 {
@@ -318,7 +317,7 @@ void Scene::initLevels()
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
 	firstLevel.spawnPosition = glm::vec2(90, 30); // Correct
-	firstLevel.savePosition = glm::vec2(216, 85); // Correct
+	firstLevel.savePosition = glm::vec2(216, 84); // Correct
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
 	firstLevel.offset = 120.f;

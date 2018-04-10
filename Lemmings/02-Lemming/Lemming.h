@@ -15,14 +15,14 @@ class Lemming
 public:
 	enum LemmingSkill 
 	{
-		BLOCKER, DIGGER, FLOATER
+		BLOCKER, DIGGER, FLOATER, SURREND
 	};
 
 	enum LemmingState
 	{
 		NULL_STATE, WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, FALL_DIE_STATE,
 		BLOCKER_RIGHT_STATE, BLOCKER_LEFT_STATE, DIGGER_RIGHT_STATE, DIGGER_LEFT_STATE, FLOATER_RIGHT_STATE, FLOATER_LEFT_STATE,
-		DEAD_STATE, ARRIVE_STATE, SAFE_STATE
+		DEAD_STATE, ARRIVE_STATE, SAFE_STATE, SURRENDER_STATE, EXPLOSION_STATE
 	};
 
 public:
@@ -46,7 +46,7 @@ public:
 	void lemmingArrived();
 	
 private:
-	const float SPRITE_HEIGHT = 176.0f;
+	const float SPRITE_HEIGHT = 208.0f;
 
 	const float GRAVITY = 0.05f;
 	const float MAXIMUM_FALL_SPEED = 3.0f;
@@ -66,7 +66,7 @@ private:
 
 	enum LemmingAnims
 	{
-		WALKING_LEFT, WALKING_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING, FLOATER_INI_RIGHT, FLOATER_INI_LEFT, FLOATER_RIGHT, FLOATER_LEFT, FALL_DIE, BLOCKER_ANIM, SAFE
+		WALKING_LEFT, WALKING_RIGHT, FALLING_LEFT, FALLING_RIGHT, DIGGING, FLOATER_INI_RIGHT, FLOATER_INI_LEFT, FLOATER_RIGHT, FLOATER_LEFT, FALL_DIE, BLOCKER_ANIM, SAFE, SURRENDER, EXPLOSION
 	};
 
 private:
@@ -75,6 +75,7 @@ private:
 	void _walk(LemmingAnims fallAnimation, LemmingState fallState);
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
+	void _explote();
 
 	int collisionAny(int maxFall);
 	int collisionFloor(int maxFall);

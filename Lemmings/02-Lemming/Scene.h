@@ -61,6 +61,7 @@ private:
 
 private:
 	Texture colorTexture;
+	VariableTexture *maskTexture2;
 	MaskedTexturedQuad *map;
 	ShaderProgram simpleTexProgram, maskedTexProgram;
 	ShaderProgramQuad program;
@@ -110,6 +111,7 @@ private:
 	SceneSpeed sceneSpeed;
 
 	Quad *quad;
+	Quad *quadui;
 };
 
 
