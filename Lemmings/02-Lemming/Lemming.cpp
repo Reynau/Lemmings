@@ -101,6 +101,26 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 416.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 432.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::CLIMBER_RIGHT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 448.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 464.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 480.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 496.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::CLIMBER_LEFT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 512.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 528.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 544.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 560.0f / SPRITE_HEIGHT));
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
