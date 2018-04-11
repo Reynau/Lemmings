@@ -36,10 +36,6 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 4; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::FALLING_LEFT, glm::vec2(float(i) / 10, 32.0f / SPRITE_HEIGHT));
 
-		sprite->setAnimationSpeed(LemmingAnims::DIGGING, 10);
-		for (int i = 0; i<10; i++)
-			sprite->addKeyframe(LemmingAnims::DIGGING, glm::vec2(float(i) / 10, 64.0f / SPRITE_HEIGHT));
-
 		sprite->setAnimationSpeed(LemmingAnims::FLOATER_INI_RIGHT, 10);
 		for (int i = 2; i<6; i++)
 			sprite->addKeyframe(LemmingAnims::FLOATER_INI_RIGHT, glm::vec2(float(i) / 10, 48.0f / SPRITE_HEIGHT));
@@ -47,6 +43,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(LemmingAnims::FLOATER_INI_LEFT, 10);
 		for (int i = 6; i<10; i++)
 			sprite->addKeyframe(LemmingAnims::FLOATER_INI_LEFT, glm::vec2(float(i) / 10, 48.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::DIGGING, 10);
+		for (int i = 0; i<10; i++)
+			sprite->addKeyframe(LemmingAnims::DIGGING, glm::vec2(float(i) / 10, 64.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(LemmingAnims::FLOATER_RIGHT, 8);
 		for (int i = 0; i<4; i++)
@@ -61,6 +61,10 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 			sprite->addKeyframe(LemmingAnims::FALL_DIE, glm::vec2(float(i) / 10, 96.0f / SPRITE_HEIGHT));
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::FALL_DIE, glm::vec2(float(i) / 10, 112.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::EXPLOSION, 12);
+		for (int i = 0; i<8; i++)
+			sprite->addKeyframe(LemmingAnims::EXPLOSION, glm::vec2(float(i) / 10, 112.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(LemmingAnims::BLOCKER_ANIM, 12);
 		for (int i = 0; i<8; i++)
@@ -78,12 +82,25 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::SURRENDER, glm::vec2(float(i) / 10, 192.0f / SPRITE_HEIGHT));
 
-		sprite->setAnimationSpeed(LemmingAnims::EXPLOSION, 12);
-		for (int i = 0; i<8; i++)
-			sprite->addKeyframe(LemmingAnims::EXPLOSION, glm::vec2(float(i) / 10, 112.0f / SPRITE_HEIGHT));
+		sprite->setAnimationSpeed(LemmingAnims::BASHER_RIGHT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 320.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 336.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 352.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 368.0f / SPRITE_HEIGHT));
 
-
-
+		sprite->setAnimationSpeed(LemmingAnims::BASHER_LEFT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 384.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 400.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 416.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 432.0f / SPRITE_HEIGHT));
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
