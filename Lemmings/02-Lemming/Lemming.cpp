@@ -84,43 +84,43 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 		sprite->setAnimationSpeed(LemmingAnims::BASHER_RIGHT, 12);
 		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 304.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 320.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 336.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 352.0f / SPRITE_HEIGHT));
-		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::BASHER_RIGHT, glm::vec2(float(i) / 10, 368.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(LemmingAnims::BASHER_LEFT, 12);
 		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 384.0f / SPRITE_HEIGHT));
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 368.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 484.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 400.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 416.0f / SPRITE_HEIGHT));
-		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 432.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(LemmingAnims::CLIMBER_RIGHT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 432.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 448.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 464.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 480.0f / SPRITE_HEIGHT));
-		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::CLIMBER_RIGHT, glm::vec2(float(i) / 10, 496.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(LemmingAnims::CLIMBER_LEFT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 596.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 512.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 528.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 544.0f / SPRITE_HEIGHT));
-		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::CLIMBER_LEFT, glm::vec2(float(i) / 10, 560.0f / SPRITE_HEIGHT));
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
@@ -218,6 +218,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		else {
 			sprite->position() += glm::vec2(-1, -1);
 			if (collisionAny()) changeDirection();
@@ -236,8 +241,13 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		else if (pending_state == BLOCKER_LEFT_STATE || pending_state == BLOCKER_RIGHT_STATE) {
+		else if (pending_state == BLOCKER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::BLOCKER_ANIM);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -247,6 +257,21 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			else _walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
 		}
 		break;
+
+	case BASHER_RIGHT_STATE:
+		// 1,2,3,4,7,8,9,10,15,18,19,20,23,24,25,26,31
+		if (sprite->keyFrame() > 0 && sprite->keyFrame() < 5 ||
+			sprite->keyFrame() > 6 && sprite->keyFrame() < 11 || 
+			sprite->keyFrame() == 15 || sprite->keyFrame() == 31 ||
+			sprite->keyFrame() > 17 && sprite->keyFrame() < 21 || 
+			sprite->keyFrame() > 22 && sprite->keyFrame() < 27) {
+			sprite->position() += glm::vec2(1, 0);
+		}
+		break;
+
+	case BASHER_LEFT_STATE:
+		break;
+
 	case SURRENDER_STATE:
 		if (sprite->keyFrame() == 15) {
 			sprite->changeAnimation(LemmingAnims::EXPLOSION);
@@ -259,11 +284,13 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = DEAD_STATE;
 		}
 		break;
+
 	case FALL_DIE_STATE:
 		if (sprite->keyFrame() == 15) {
 			state = DEAD_STATE;
 		}
 		break;
+
 	case ARRIVE_STATE:
 		if (sprite->keyFrame() == 7) {
 			state = SAFE_STATE;
@@ -345,11 +372,13 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 		if (skill == BLOCKER) return BLOCKER_LEFT_STATE;
 		if (skill == DIGGER) return DIGGER_LEFT_STATE;
 		if (skill == FLOATER) return FLOATER_LEFT_STATE;
+		if (skill == BASHER) return BASHER_LEFT_STATE;
 	}
 	else {
 		if (skill == BLOCKER) return BLOCKER_RIGHT_STATE;
 		if (skill == DIGGER) return DIGGER_RIGHT_STATE;
 		if (skill == FLOATER) return FLOATER_RIGHT_STATE;
+		if (skill == BASHER) return BASHER_RIGHT_STATE;
 	}
 }
 

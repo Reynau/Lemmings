@@ -178,7 +178,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		applySkill(Lemming::LemmingSkill::DIGGER); // TESTING
 	}
 	if (bRightButton) {
-		applySkill(Lemming::LemmingSkill::BLOCKER);
+		applySkill(Lemming::LemmingSkill::BASHER);
 	}
 	cursor->setPos(mouseX, mouseY);
 }
