@@ -18,7 +18,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	pending_state = NULL_STATE;
 	pending_floater = false;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
-	sprite->setNumberAnimations(14);
+	sprite->setNumberAnimations(24);
 	
 		sprite->setAnimationSpeed(LemmingAnims::WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -83,6 +83,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 			sprite->addKeyframe(LemmingAnims::EXPLOSION, glm::vec2(float(i) / 10, 112.0f / SPRITE_HEIGHT));
 
 
+
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
@@ -101,18 +102,38 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 	switch (state)
 	{
 	case BLOCKER_LEFT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		_block(Lemming::LemmingAnims::FALLING_LEFT, Lemming::LemmingState::FALLING_LEFT_STATE);
 		break;
 
 	case BLOCKER_RIGHT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		_block(Lemming::LemmingAnims::FALLING_RIGHT, Lemming::LemmingState::FALLING_RIGHT_STATE);
 		break;
 
 	case DIGGER_LEFT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		_dig(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
 		break;
 
 	case DIGGER_RIGHT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		_dig(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
 		break;
 
@@ -259,7 +280,6 @@ void Lemming::setPos(glm::vec2 pos)
 glm::vec2 Lemming::getPosition() {
 	return sprite->position();
 }
-
 
 bool Lemming::setSkill(LemmingSkill newSkill)
 {

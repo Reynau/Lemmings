@@ -2,6 +2,7 @@
 #define _CURSOR_INCLUDE
 
 #include "Sprite.h"
+#include "Lemming.h"
 
 
 // Cursor is basically a Sprite that represents the cursor. As such it has
@@ -11,7 +12,7 @@
 class Cursor
 {
 public:
-	void initCursor(ShaderProgram &shaderProgram);
+	void initCursor(ShaderProgram &shaderProgram, Texture * lemmingTexture);
 	glm::vec2 getPos();
 	void setPos(int mouseX, int mouseY);
 	void update(int deltaTime);
@@ -25,7 +26,7 @@ public:
 	};
 
 private:
-	const float SPRITE_HEIGHT = 208.0f;
+	const float SPRITE_HEIGHT = 624.0f;
 
 	Texture spritesheet;
 	Sprite *sprite;

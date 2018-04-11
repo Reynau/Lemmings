@@ -5,12 +5,9 @@
 
 
 
-void Cursor::initCursor(ShaderProgram &shaderProgram)
+void Cursor::initCursor(ShaderProgram &shaderProgram, Texture * lemmingTexture)
 {
-	spritesheet.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheet.setMinFilter(GL_NEAREST);
-	spritesheet.setMagFilter(GL_NEAREST);	
-	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
 	sprite->setNumberAnimations(2);
 
 		sprite->setAnimationSpeed(NORMAL, 12);	// NORMAL

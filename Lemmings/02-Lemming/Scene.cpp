@@ -55,7 +55,7 @@ void Scene::init()
 	sceneSpeed = NORMAL;
 
 	cursor = new Cursor();
-	cursor->initCursor(simpleTexProgram);
+	cursor->initCursor(simpleTexProgram, &lemmingTexture);
 	index_selected_lem = NULL;
 
 	spawnDoor = new Door();
@@ -75,20 +75,22 @@ void Scene::update(int deltaTime)
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
 	Level level = levels[currentLevel];
-	cout << int(currentTime / 100) << endl;
 	updateColliders();
 
 	// Spawn lemmings
 	if (lemmingHasToSpawn()) ++spawnedLemmings;
 
+	if (int(currentTime / 100) == 100 && !surrStarted) setSurrender();
+
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
-		if (!lemmings[i]) continue;
-		if (int(currentTime / 100) == 100) {
-			if (!lemmings[i]->setSkill(Lemming::LemmingSkill::SURREND))
-				continue; // TESTING
-		}
+		if (!lemmings[i]) continue;		
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
+		if (surrStarted) {
+			if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) {
+				setSurrender();
+			}
+		}
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else if (lemmings[i]->isSafe()) {
 			removeLemming(i);
@@ -137,6 +139,7 @@ void Scene::render()
 
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (lemmings[i]) lemmings[i]->render();
+		if (countds[i]) countds[i]->render();
 	}
 
 	program.use();
@@ -376,6 +379,8 @@ void Scene::changeLevel(int newLevel)
 
 	resetOffsets();
 
+	surrStarted = false;
+
 	Level level = levels[currentLevel];
 
 	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
@@ -485,7 +490,7 @@ bool Scene::lemmingHasToSpawn() {
 	Level level = levels[currentLevel];
 	int sec = int(currentTime / 1000 / level.spawnTime) - 2;
 
-	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec;
+	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec && !surrStarted;
 }
 
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
@@ -505,6 +510,10 @@ void Scene::initLemmings() {
 		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);
+
+		Countdown * count = new Countdown();
+		count->initCountdown(level.spawnPosition, simpleTexProgram, &lemmingTexture);
+		countds.push_back(count);
 	}
 
 	spawnedLemmings = 0;
@@ -524,11 +533,24 @@ void Scene::clearLemmings() {
 	lemmings.clear();
 }
 
+void Scene::clearCounts() {
+	for (int i = 0; i < int(countds.size()); ++i) {
+		if (countds[i]) removeCount(i);
+	}
+	countds.clear();
+}
+
 void Scene::removeLemming(int lemmingId) {
 	lemmings[lemmingId]->remove();
 	delete (lemmings[lemmingId]);
 	lemmings[lemmingId] = NULL;
 	--aliveLemmings;
+}
+
+void Scene::removeCount(int countId) {
+	countds[countId]->remove();
+	delete (countds[countId]);
+	countds[countId] = NULL;
 }
 
 int Scene::considerSceneSpeed(int deltaTime) {
@@ -542,4 +564,23 @@ int Scene::considerSceneSpeed(int deltaTime) {
 	}
 	return deltaTime;
 }
-
+void Scene::setSurrender()
+{
+	if (!surrStarted) {
+		surrStarted = true;
+		aliveLemmings = 0;
+		for (int i = 0; i < spawnedLemmings; ++i) {
+			if (!lemmings[i]) continue;
+			countds[i]->setOn();
+			aliveLemmings++;
+		}
+	}
+	else {
+		for (int i = 0; i < spawnedLemmings; ++i) {
+			if (!lemmings[i]) continue;
+			if (!lemmings[i]->setSkill(Lemming::LemmingSkill::SURREND))
+				continue;
+		}
+		// aliveLemmings = 0;
+	}	
+}

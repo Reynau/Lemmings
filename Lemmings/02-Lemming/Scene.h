@@ -9,6 +9,7 @@
 #include "cursor.h"
 #include "Door.h"
 #include "Quad.h"
+#include "Countdown.h"
 
 
 // Scene contains all the entities of our game.
@@ -54,10 +55,14 @@ private:
 
 	void initLemmings();
 	void clearLemmings();
+	void clearCounts();
 	void resetLemmings();
 	void removeLemming(int lemmingId);
+	void removeCount(int countId);
 
 	int considerSceneSpeed(int deltaTime);
+
+	void setSurrender();
 
 private:
 	Texture colorTexture;
@@ -110,8 +115,14 @@ private:
 	};
 	SceneSpeed sceneSpeed;
 
+	// Border related
 	Quad *quad;
 	Quad *quadui;
+
+	// Surrender countdown related
+	vector<Countdown *> countds;
+	bool surrStarted;
+	float surrTime;
 };
 
 
