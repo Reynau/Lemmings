@@ -259,19 +259,54 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		break;
 
 	case BASHER_RIGHT_STATE:
-		// 1,2,3,4,7,8,9,10,15,18,19,20,23,24,25,26,31
-		if (sprite->keyFrame() > 0 && sprite->keyFrame() < 5 ||
-			sprite->keyFrame() > 6 && sprite->keyFrame() < 11 || 
-			sprite->keyFrame() == 15 || sprite->keyFrame() == 31 ||
-			sprite->keyFrame() > 17 && sprite->keyFrame() < 21 || 
-			sprite->keyFrame() > 22 && sprite->keyFrame() < 27) {
-			sprite->position() += glm::vec2(1, 0);
+		// 1,2,3,4 // 7,8,9,10 // 15 // 18,19,20 // 23,24,25,26 // 31
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (basherHasToMove()) {
+			sprite->position() += glm::vec2(1, -1);
+			if (collisionFloor()) {
+				sprite->position() -= glm::vec2(0, -1);
+				_bash();
+			}
+			else if (collisionCollider()) changeDirection();
+			else _walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
 		}
 		break;
 
 	case BASHER_LEFT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (basherHasToMove()) {
+			sprite->position() += glm::vec2(-1, -1);
+			if (collisionFloor()) {
+				sprite->position() -= glm::vec2(0, -1);
+				_bash();
+			}
+			else if (collisionCollider()) changeDirection();
+			else _walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+		}
+		break;
+	/*
+	case CLIMBER_LEFT_STATE:
+		if (basherHasToMove()) {
+			sprite->position() += glm::vec2(-1, -1);
+			_walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+		}
 		break;
 
+	case CLIMBER_RIGHT_STATE:
+		if (basherHasToMove()) {
+			sprite->position() += glm::vec2(-1, -1);
+			_walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+		}
+		break;
+	*/
 	case SURRENDER_STATE:
 		if (sprite->keyFrame() == 15) {
 			sprite->changeAnimation(LemmingAnims::EXPLOSION);
@@ -320,6 +355,17 @@ bool Lemming::isBusy()
 bool Lemming::isBlocker()
 {
 	return (state == BLOCKER_RIGHT_STATE || state == BLOCKER_LEFT_STATE);
+}
+
+bool Lemming::basherHasToMove()
+{
+	if (sprite->keyFrame() > 0 && sprite->keyFrame() < 5 ||
+		sprite->keyFrame() > 6 && sprite->keyFrame() < 11 ||
+		sprite->keyFrame() == 15 || sprite->keyFrame() == 31 ||
+		sprite->keyFrame() > 17 && sprite->keyFrame() < 21 ||
+		sprite->keyFrame() > 22 && sprite->keyFrame() < 27)
+		return true;
+	return false;
 }
 
 void Lemming::remove() {
@@ -478,6 +524,28 @@ void Lemming::_fall(LemmingAnims walkAnimation, LemmingState walkState)
 	}
 }
 
+void Lemming::_bash()
+{
+
+	int posX, posY;
+
+	posX = sprite->position().x + lem_offset + 7;
+	posY = sprite->position().y + 12;
+	int r = 5;
+	int dx;
+	int dy;
+	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
+		for (int x = max(0, posX - r); x <= min(mask->width() - 1, posX + r); x++) {
+			dx = posX - x; // horizontal offset
+			dy = posY - y; // vertical offset
+			if ((dx*dx + dy * dy) <= (r*r))
+			{
+				mask->setPixel(x, y, 0);
+			}
+		}
+	}
+}
+
 void Lemming::_explote()
 {
 	int posX, posY;
@@ -589,10 +657,20 @@ void Lemming::changeDirection() {
 		sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
 		state = WALKING_RIGHT_STATE;
 	}
-	else {
+	else if (state == WALKING_RIGHT_STATE) {
 		sprite->position() -= glm::vec2(1, -1);
 		sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
 		state = WALKING_LEFT_STATE;
+	}
+	else if (state == BASHER_LEFT_STATE) {
+		sprite->position() -= glm::vec2(-1, -1);
+		sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
+		state = BASHER_RIGHT_STATE;
+	} 
+	else {
+		sprite->position() -= glm::vec2(1, -1);
+		sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
+		state = BASHER_LEFT_STATE;
 	}
 }
 

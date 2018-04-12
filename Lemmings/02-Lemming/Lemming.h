@@ -36,6 +36,7 @@ public:
 	bool isSafe();
 	bool isBusy();
 	bool isBlocker();
+	bool basherHasToMove();
 
 	void remove();
 
@@ -75,6 +76,7 @@ private:
 	void _walk(LemmingAnims fallAnimation, LemmingState fallState);
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
+	void _bash();
 	void _explote();
 
 	int collisionAny(int maxFall);
