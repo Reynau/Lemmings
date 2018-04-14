@@ -10,6 +10,7 @@
 #include "Door.h"
 #include "Quad.h"
 #include "Countdown.h"
+#include "Button.h"
 
 
 // Scene contains all the entities of our game.
@@ -46,8 +47,10 @@ private:
 	void finishLevel();
 	void resetOffsets();
 
-	void checkSelecting();
+	bool checkSelecting();
+	bool checkButtons();
 	void applySkill(Lemming::LemmingSkill skill);
+	void pressButton();
 
 	void checkIfLemmingSafe(int lemmingId);
 	bool lemmingHasToSpawn();
@@ -63,6 +66,8 @@ private:
 	int considerSceneSpeed(int deltaTime);
 
 	void setSurrender();
+
+	void initButtons();
 
 private:
 	Texture colorTexture;
@@ -101,6 +106,7 @@ private:
 	// Cursor related
 	Cursor * cursor;
 	int index_selected_lem;
+	int index_selected_but;
 
 	// Door related
 	Door * spawnDoor;
@@ -123,6 +129,11 @@ private:
 	vector<Countdown *> countds;
 	bool surrStarted;
 	float surrTime;
+
+	// UI related
+	Texture buttonTexture;
+	vector<Button *> buttons;
+	int selected_but;
 };
 
 

@@ -96,7 +96,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 368.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
-			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 484.0f / SPRITE_HEIGHT));
+			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 384.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::BASHER_LEFT, glm::vec2(float(i) / 10, 400.0f / SPRITE_HEIGHT));
 		for (int i = 0; i < 8; i++)

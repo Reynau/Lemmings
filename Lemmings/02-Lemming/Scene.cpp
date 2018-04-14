@@ -52,6 +52,12 @@ void Scene::init()
 
 	initLemmings();
 
+	buttonTexture.loadFromFile("images/lemming_buttons.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	buttonTexture.setMinFilter(GL_NEAREST);
+	buttonTexture.setMagFilter(GL_NEAREST);
+
+	initButtons();
+
 	sceneSpeed = NORMAL;
 
 	cursor = new Cursor();
@@ -80,7 +86,7 @@ void Scene::update(int deltaTime)
 	// Spawn lemmings
 	if (lemmingHasToSpawn()) ++spawnedLemmings;
 
-	if (int(currentTime / 100) == 100 && !surrStarted) setSurrender();
+	//if (int(currentTime / 100) == 100 && !surrStarted) setSurrender();
 
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
@@ -108,7 +114,8 @@ void Scene::update(int deltaTime)
 	else if (cursor->getPos().x > 307.f) moveMap(1);
 	spawnDoor->update(deltaTime, int(currentTime/1000));
 	door->update(deltaTime, 0);
-	checkSelecting();
+	if (!checkSelecting() && !checkButtons()) cursor->setSelect(Button::NORMAL);
+	
 }
 
 void Scene::render()
@@ -155,6 +162,10 @@ void Scene::render()
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+
+	for (int i = 0; i < 12; ++i) {
+		if (buttons[i]) buttons[i]->render();
+	}
 	cursor->render();
 
 	program.use();
@@ -175,7 +186,8 @@ void Scene::render()
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
 	if (bLeftButton) {
-		applySkill(Lemming::LemmingSkill::DIGGER); // TESTING
+		if (index_selected_but == 0) applySkill(Lemming::LemmingSkill::DIGGER); // TESTING
+		else pressButton();
 	}
 	if (bRightButton) {
 		applySkill(Lemming::LemmingSkill::BASHER);
@@ -234,7 +246,6 @@ void Scene::initShaders()
 {
 	Shader vShader, fShader;
 
-	/////
 	vShader.initFromFile(VERTEX_SHADER, "shaders/simple.vert");
 	if (!vShader.isCompiled())
 	{
@@ -259,7 +270,6 @@ void Scene::initShaders()
 	program.bindFragmentOutput("outColor");	
 	vShader.free();
 	fShader.free();
-	//////
 
 	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
 	if(!vShader.isCompiled())
@@ -434,7 +444,7 @@ void Scene::resetOffsets()
 	levels[2].savePosition = glm::vec2(95, 105);
 }
 
-void Scene::checkSelecting()
+bool Scene::checkSelecting()
 {
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;
@@ -446,22 +456,53 @@ void Scene::checkSelecting()
 				if (glm::vec2(int(lemPos.x) + 7, int(lemPos.y) + 10) == glm::vec2(x, y)) {
 					cursor->setSelect(Cursor::SELECT);
 					index_selected_lem = i+1;
-					return;
+					return true;
 				}
 			}
 		}
 	}
+	index_selected_lem = 0;
+	return false;
+}
 
-	cursor->setSelect(Cursor::NORMAL);
-	index_selected_lem = NULL;
+bool Scene::checkButtons()
+{
+	for (int i = 0; i < 12; ++i) {
+		if (!buttons[i]) continue;
+
+		glm::vec2 curPos = cursor->getPos();
+		curPos += glm::vec2(7, 7);
+		glm::vec2 butPos = buttons[i]->getPos();
+		for (int y = int(curPos.y) - 14; y <= int(curPos.y) + 14; y++) {
+			for (int x = int(curPos.x) - 12; x <= int(curPos.x) + 12; x++) {
+				if (glm::vec2(int(butPos.x) + 12, int(butPos.y) + 14) == glm::vec2(x, y)) {
+					cursor->setSelect(Button::SELECT);
+					index_selected_but = i + 1;
+					selected_but = index_selected_but;
+					return true;
+				}
+			}
+		}
+	}
+	index_selected_but = 0;
+	return false;
 }
 
 void Scene::applySkill(Lemming::LemmingSkill skill)
 {
-	if (!index_selected_lem) return;
+	if (index_selected_lem == 0) return;
 	// TESTING
 	if (!lemmings[index_selected_lem-1]->setSkill(skill)) return;
 	//--availableSkills[skill]; 
+}
+
+void Scene::pressButton()
+{
+	if (index_selected_but == 0) return;
+	for (int i = 0; i < 12; i++) {
+		if (i == (index_selected_but - 1)) buttons[i]->setSelect(true);
+		else buttons[i]->setSelect(false);
+	}
 }
 
 void Scene::checkIfLemmingSafe(int lemmingId) {
@@ -583,4 +624,13 @@ void Scene::setSurrender()
 		}
 		// aliveLemmings = 0;
 	}	
+}
+
+void Scene::initButtons() {
+	for (int i = 0; i < 12; ++i) {
+		Button * but = new Button();
+		but->initButton(simpleTexProgram, &buttonTexture);
+		but->setPos((i / 12.f) * 320.f, float(CAMERA_HEIGHT + 10));
+		buttons.push_back(but);
+	}
 }

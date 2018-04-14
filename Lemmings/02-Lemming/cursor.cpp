@@ -27,7 +27,7 @@ glm::vec2 Cursor::getPos()
 
 void Cursor::setPos(int mouseX, int mouseY) 
 {
-	sprite->setPosition(glm::vec2((mouseX * ((320.f - 1.f)/(glutGet(GLUT_WINDOW_WIDTH)))) - 8, (mouseY * ((160.f - 1.f)/(glutGet(GLUT_WINDOW_HEIGHT) - (40.f * ((glutGet(GLUT_WINDOW_HEIGHT) - 190.f) / 160.f))))) - 8));
+	sprite->setPosition(glm::vec2((mouseX * (319.f/(glutGet(GLUT_WINDOW_WIDTH)))) - 8, (mouseY * (159.f/(glutGet(GLUT_WINDOW_HEIGHT) - (40.f * ((glutGet(GLUT_WINDOW_HEIGHT) - 190.f) / 160.f))))) - 8));
 }
 
 void Cursor::update(int deltaTime)
