@@ -326,6 +326,16 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		}
 		else if (collisionFloor()) {
 			if (sprite->keyFrame() > 4) sprite->position() += glm::vec2(0, -1);
+
+			glm::vec2 pos = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
+			pos += glm::vec2(11, 5);
+			if ((mask->pixel(pos.x, pos.y) == 255) || (mask->pixel(pos.x + 1, pos.y) == 255)) {
+				sprite->position() += glm::vec2(2, 1);
+
+				sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
+				state = LemmingState::FALLING_RIGHT_STATE;
+				pending_state = NULL_STATE;
+			}
 		}
 		else {
 			if (sprite->animation() == LemmingAnims::CLIMBER_LEFT) {
@@ -349,9 +359,9 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			if (sprite->keyFrame() > 4) sprite->position() += glm::vec2(0, -1);
 
 			glm::vec2 pos = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
-			pos += glm::vec2(10, 7);
-			if (mask->pixel(pos.x, pos.y) == 1 || mask->pixel(pos.x-1, pos.y) == 1) {
-				sprite->position() += glm::vec2(0, 1);
+			pos += glm::vec2(5, 5);
+			if ((mask->pixel(pos.x, pos.y) == 255) || (mask->pixel(pos.x - 1, pos.y) == 255)) {
+				sprite->position() += glm::vec2(-2, 1);
 
 				sprite->changeAnimation(LemmingAnims::FALLING_LEFT);
 				state = LemmingState::FALLING_LEFT_STATE;
@@ -693,7 +703,6 @@ bool Lemming::collisionFloor()
 	posBase += glm::ivec2(7, 15);
 	if((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x+1, posBase.y) == 0))
 		return false;
-	cout << "Collision floor" << endl;
 	return true;
 }
 
