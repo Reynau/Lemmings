@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 0;
+	currentLevel = 3;
 
 	initLevels();
 
@@ -190,7 +190,7 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 		else pressButton();
 	}
 	if (bRightButton) {
-		applySkill(Lemming::LemmingSkill::BASHER);
+		applySkill(Lemming::LemmingSkill::CLIMBER);
 	}
 	cursor->setPos(mouseX, mouseY);
 }
@@ -365,6 +365,21 @@ void Scene::initLevels()
 	thirdLevel.spawnTime = 2;
 	thirdLevel.door = Door::SECOND_DOOR;
 	levels.push_back(thirdLevel);
+
+
+	Level fourthLevel;
+	fourthLevel.name = "Tailor-made for blockers";
+	fourthLevel.lemmingsToSpawn = 50;
+	fourthLevel.lemmingsToSecure = 5;
+	fourthLevel.availableTime = 5 * 60;
+	fourthLevel.spawnPosition = glm::vec2(160, 3); // Correct
+	fourthLevel.savePosition = glm::vec2(95, 105); // Correct
+	fourthLevel.colorTextureFile = "images/fun4.png";
+	fourthLevel.maskTextureFile = "images/fun4_mask.png";
+	fourthLevel.offset = 22.f;
+	fourthLevel.spawnTime = 2;
+	fourthLevel.door = Door::SECOND_DOOR;
+	levels.push_back(fourthLevel);
 }
 
 
