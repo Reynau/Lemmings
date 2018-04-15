@@ -17,6 +17,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	state = FALLING_RIGHT_STATE;
 	pending_state = NULL_STATE;
 	pending_floater = false;
+	isBashing = false;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
 	sprite->setNumberAnimations(24);
 	
@@ -270,9 +271,18 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			if (collisionFloor()) {
 				sprite->position() -= glm::vec2(0, -1);
 				_bash();
+				_walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
+				isBashing = true;
 			}
 			else if (collisionCollider()) changeDirection();
-			else _walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
+			else {
+				if (!isBashing && sprite->keyFrame() == 31) {
+					state = LemmingState::WALKING_RIGHT_STATE;
+					sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
+					pending_state = NULL_STATE;
+				}
+				else _walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
+			}
 		}
 		break;
 
@@ -287,12 +297,21 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			if (collisionFloor()) {
 				sprite->position() -= glm::vec2(0, -1);
 				_bash();
+				_walk(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
+				isBashing = true;
 			}
 			else if (collisionCollider()) changeDirection();
-			else _walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+			else {
+				if (!isBashing && sprite->keyFrame() == 31) {
+					state = LemmingState::WALKING_LEFT_STATE;
+					sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
+					pending_state = NULL_STATE;
+				}
+				else _walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+			}
 		}
 		break;
-	/*
+
 	case CLIMBER_LEFT_STATE:
 		if (basherHasToMove()) {
 			sprite->position() += glm::vec2(-1, -1);
@@ -301,12 +320,16 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		break;
 
 	case CLIMBER_RIGHT_STATE:
-		if (basherHasToMove()) {
-			sprite->position() += glm::vec2(-1, -1);
-			_walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else {
+
 		}
 		break;
-	*/
+
 	case SURRENDER_STATE:
 		if (sprite->keyFrame() == 15) {
 			sprite->changeAnimation(LemmingAnims::EXPLOSION);
@@ -443,7 +466,6 @@ bool Lemming::isSameSkill(LemmingSkill newSkill)
 	return false;
 }
 
-
 void Lemming::_block(LemmingAnims fallAnim, LemmingState fallState) {
 	int fall = collisionFloor(3);
 	if (fall > 0) {
@@ -475,6 +497,9 @@ void Lemming::_dig(LemmingAnims fallAnim, LemmingState fallState)
 
 }
 
+void Lemming::_climb(LemmingAnims nextAnim, LemmingState nextState) {
+
+}
 
 void Lemming::_walk(LemmingAnims fallAnimation, LemmingState fallState)
 {
@@ -486,9 +511,9 @@ void Lemming::_walk(LemmingAnims fallAnimation, LemmingState fallState)
 	if (fall > 2) {
 		sprite->changeAnimation(fallAnimation);
 		state = fallState;
+		isBashing = false;
 	}
 }
-
 
 void Lemming::_float(LemmingAnims walkAnimation, LemmingState walkState)
 {
@@ -667,7 +692,7 @@ void Lemming::changeDirection() {
 		sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
 		state = BASHER_RIGHT_STATE;
 	} 
-	else {
+	else if (state == BASHER_RIGHT_STATE) {
 		sprite->position() -= glm::vec2(1, -1);
 		sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
 		state = BASHER_LEFT_STATE;

@@ -60,6 +60,7 @@ private:
 	LemmingState state;
 	LemmingState pending_state;
 	bool pending_floater;
+	bool isBashing;
 	float fallSpeed;
 	int lem_offset;
 
@@ -73,6 +74,7 @@ private:
 private:
 	void _block(LemmingAnims fallAnim, LemmingState fallState);
 	void _dig(LemmingAnims fallAnim, LemmingState fallState);
+	void _climb(LemmingAnims nextAnim, LemmingState nextState);
 	void _walk(LemmingAnims fallAnimation, LemmingState fallState);
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
