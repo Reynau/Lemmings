@@ -48,24 +48,29 @@ private:
 	void resetOffsets();
 
 	bool checkSelecting();
-	bool checkButtons();
+	void checkButtons();
+	void applyButtonPressed(int i);
+	void undoButtonPressed(int i);
 	void applySkill(Lemming::LemmingSkill skill);
 	void pressButton();
 
 	void checkIfLemmingSafe(int lemmingId);
-	bool lemmingHasToSpawn();
+	bool lemmingHasToSpawn(int deltaTime);
 	bool lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint);
 
 	void initLemmings();
 	void clearLemmings();
 	void clearCounts();
 	void resetLemmings();
+	void resetButtons();
 	void removeLemming(int lemmingId);
 	void removeCount(int countId);
 
 	int considerSceneSpeed(int deltaTime);
 
 	void setSurrender();
+	void countdownLemming(int i);
+	void exploteLemming(int i);
 
 	void initButtons();
 
@@ -134,6 +139,7 @@ private:
 	Texture buttonTexture;
 	vector<Button *> buttons;
 	int selected_but;
+	Lemming::LemmingSkill selected_lem_state;
 };
 
 

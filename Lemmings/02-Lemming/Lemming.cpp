@@ -491,20 +491,23 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 {
 	if (skill == SURREND) return SURRENDER_STATE;
 	if (isGoingLeft()) {
+		if (skill == LemmingSkill::NO_SKILL) return LemmingState::NULL_STATE;
 		if (skill == LemmingSkill::BLOCKER) return LemmingState::BLOCKER_LEFT_STATE;
 		if (skill == LemmingSkill::DIGGER) return LemmingState::DIGGER_LEFT_STATE;
 		if (skill == LemmingSkill::FLOATER) return LemmingState::FLOATER_LEFT_STATE;
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_LEFT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_LEFT_STATE;
+		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
 	else {
+		if (skill == LemmingSkill::NO_SKILL) return LemmingState::NULL_STATE;
 		if (skill == LemmingSkill::BLOCKER) return LemmingState::BLOCKER_RIGHT_STATE;
 		if (skill == LemmingSkill::DIGGER) return LemmingState::DIGGER_RIGHT_STATE;
 		if (skill == LemmingSkill::FLOATER) return LemmingState::FLOATER_RIGHT_STATE;
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_RIGHT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_RIGHT_STATE;
+		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
-	cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 }
 
 bool Lemming::isGoingLeft() {
@@ -612,13 +615,13 @@ void Lemming::_bash()
 
 	posX = sprite->position().x + lem_offset + 7;
 	posY = sprite->position().y + 12;
-	int r = 5;
+	int r = 4;
 	int dx;
 	int dy;
 	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
 		for (int x = max(0, posX - r); x <= min(mask->width() - 1, posX + r); x++) {
-			dx = posX - x; // horizontal offset
-			dy = posY - y; // vertical offset
+			dx = posX - x + 1; // horizontal offset
+			dy = posY - y + 1; // vertical offset
 			if ((dx*dx + dy * dy) <= (r*r))
 			{
 				mask->setPixel(x, y, 0);

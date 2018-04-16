@@ -63,6 +63,7 @@ void Scene::init()
 	cursor = new Cursor();
 	cursor->initCursor(simpleTexProgram, &lemmingTexture);
 	index_selected_lem = NULL;
+	selected_lem_state = Lemming::NO_SKILL;
 
 	spawnDoor = new Door();
 	spawnDoor->initDoor(simpleTexProgram);
@@ -84,7 +85,7 @@ void Scene::update(int deltaTime)
 	updateColliders();
 
 	// Spawn lemmings
-	if (lemmingHasToSpawn()) ++spawnedLemmings;
+	if (lemmingHasToSpawn(deltaTime)) ++spawnedLemmings;
 
 	//if (int(currentTime / 100) == 100 && !surrStarted) setSurrender();
 
@@ -92,17 +93,22 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;		
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
-		if (surrStarted) {
-			if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) {
+		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) {
+			if (surrStarted)
 				setSurrender();
-			}
+			else exploteLemming(i);
 		}
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else if (lemmings[i]->isSafe()) {
 			removeLemming(i);
+			if (countds[i]) removeCount(i);
 			++safeLemmings;
 		}
 		else checkIfLemmingSafe(i);
+	}
+
+	for (int i = 0; i < 12; ++i) {
+		if (buttons[i]) buttons[i]->update(deltaTime);
 	}
 
 	// A level finishes when all lemmings are not alive
@@ -114,7 +120,8 @@ void Scene::update(int deltaTime)
 	else if (cursor->getPos().x > 307.f) moveMap(1);
 	spawnDoor->update(deltaTime, int(currentTime/1000));
 	door->update(deltaTime, 0);
-	if (!checkSelecting() && !checkButtons()) cursor->setSelect(Button::NORMAL);
+	if (!checkSelecting()) cursor->setSelect(Cursor::NORMAL);
+	checkButtons();
 	
 }
 
@@ -186,11 +193,11 @@ void Scene::render()
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
 	if (bLeftButton) {
-		if (index_selected_but == 0) applySkill(Lemming::LemmingSkill::DIGGER); // TESTING
+		if (index_selected_but == 0) applySkill(selected_lem_state);
 		else pressButton();
 	}
 	if (bRightButton) {
-		applySkill(Lemming::LemmingSkill::CLIMBER);
+		
 	}
 	cursor->setPos(mouseX, mouseY);
 }
@@ -429,6 +436,10 @@ void Scene::changeLevel(int newLevel)
 	door->setState(level.door);
 	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
 
+	resetButtons();
+	sceneSpeed = NORMAL;
+	selected_lem_state = Lemming::NO_SKILL;
+
 	currentTime = 0;
 }
 
@@ -480,7 +491,7 @@ bool Scene::checkSelecting()
 	return false;
 }
 
-bool Scene::checkButtons()
+void Scene::checkButtons()
 {
 	for (int i = 0; i < 12; ++i) {
 		if (!buttons[i]) continue;
@@ -491,32 +502,102 @@ bool Scene::checkButtons()
 		for (int y = int(curPos.y) - 14; y <= int(curPos.y) + 14; y++) {
 			for (int x = int(curPos.x) - 12; x <= int(curPos.x) + 12; x++) {
 				if (glm::vec2(int(butPos.x) + 12, int(butPos.y) + 14) == glm::vec2(x, y)) {
-					cursor->setSelect(Button::SELECT);
 					index_selected_but = i + 1;
 					selected_but = index_selected_but;
-					return true;
+					return;
 				}
 			}
 		}
 	}
 	index_selected_but = 0;
-	return false;
+}
+
+void Scene::applyButtonPressed(int i)
+{
+	if (!(buttons[i]->isSelect())) {
+		if (i == 1) {
+			selected_lem_state = Lemming::CLIMBER;
+		}
+		else if (i == 2) {
+			selected_lem_state = Lemming::FLOATER;
+		}
+		else if (i == 3) {
+			selected_lem_state = Lemming::SURREND;
+		}
+		else if (i == 4) {
+			selected_lem_state = Lemming::BLOCKER;
+		}
+		else if (i == 5) {
+			selected_lem_state = Lemming::NO_SKILL;
+		}
+		else if (i == 6) {
+			selected_lem_state = Lemming::BASHER;
+		}
+		else if (i == 7) {
+			selected_lem_state = Lemming::NO_SKILL;
+		}
+		else if (i == 8) {
+			selected_lem_state = Lemming::DIGGER;
+		}
+		else if (i == 9)			// Pressed Pause
+				sceneSpeed = PAUSE;
+		else if (i == 10) {
+			setSurrender();
+		}
+		else if (i == 11)	// Pressed Fast
+			if (!(buttons[9]->isSelect()))
+				sceneSpeed = FAST;
+	}
+}
+
+void Scene::undoButtonPressed(int i)
+{
+	if (buttons[i]->isSelect()) {
+		if (i == 9)			// Unpressed Pause
+			if (!(buttons[11]->isSelect()))
+				sceneSpeed = NORMAL;
+			else sceneSpeed = FAST;
+		else if (i == 11)	// Unpressed Fast
+			if (!(buttons[9]->isSelect()))
+				sceneSpeed = NORMAL;
+	}
 }
 
 void Scene::applySkill(Lemming::LemmingSkill skill)
 {
 	if (index_selected_lem == 0) return;
-	// TESTING
-	if (!lemmings[index_selected_lem-1]->setSkill(skill)) return;
+	if (skill == Lemming::LemmingSkill::SURREND) countdownLemming(index_selected_lem - 1);
+	else if (!lemmings[index_selected_lem-1]->setSkill(skill)) return;
 	//--availableSkills[skill]; 
 }
 
 void Scene::pressButton()
 {
-	if (index_selected_but == 0) return;
-	for (int i = 0; i < 12; i++) {
-		if (i == (index_selected_but - 1)) buttons[i]->setSelect(true);
-		else buttons[i]->setSelect(false);
+	if (index_selected_but == 0) return;	// IS IT NECESSARY?
+	if (index_selected_but == 1) return;	// CHANGE THIS FOR INCREASE/DECREASE LEMMING SPAWN RATING 
+	else {
+		if ((index_selected_but - 1) < 9) {
+			for (int i = 1; i < 9; i++) {
+				if (i == (index_selected_but - 1)) {
+					applyButtonPressed(i);
+					buttons[i]->setSelect(true);
+				}
+				else buttons[i]->setSelect(false);
+			}
+		}
+		else {
+			for (int i = 9; i < 12; i++) {
+				if (i == (index_selected_but - 1))
+					if (!(buttons[i]->isSelect())) {
+						applyButtonPressed(i);
+						buttons[i]->setSelect(true);
+					}
+					else if ((index_selected_but - 1) != 10) {
+						undoButtonPressed(i);
+						buttons[i]->setSelect(false);
+					}
+			}
+		}
 	}
 }
 
@@ -542,9 +623,18 @@ void Scene::checkIfLemmingSafe(int lemmingId) {
 	}
 }
 
-bool Scene::lemmingHasToSpawn() {
+bool Scene::lemmingHasToSpawn(int deltaTime) {
 	Level level = levels[currentLevel];
-	int sec = int(currentTime / 1000 / level.spawnTime) - 2;
+	int ct = currentTime;
+	int dt = deltaTime;
+	cout << "DT: " << dt;
+	if (sceneSpeed == FAST) {
+		ct -= dt;
+		dt /= 6;
+		cout << " 2n DT: " << dt << endl;
+		ct += dt;
+	}
+	int sec = int(ct / 1000 / level.spawnTime) - 2;
 
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec && !surrStarted;
 }
@@ -580,6 +670,12 @@ void Scene::initLemmings() {
 void Scene::resetLemmings() {
 	clearLemmings();
 	initLemmings();
+}
+
+void Scene::resetButtons() {
+	for (int i = 0; i < 12; ++i) {
+		buttons[i]->setSelect(false);
+	}
 }
 
 void Scene::clearLemmings() {
@@ -641,11 +737,48 @@ void Scene::setSurrender()
 	}	
 }
 
+void Scene::countdownLemming(int i)
+{
+	if (!lemmings[i]) return;
+	countds[i]->setOn();
+}
+
+void Scene::exploteLemming(int i) 
+{
+	if (!lemmings[i]) return;
+	if (!lemmings[i]->setSkill(Lemming::LemmingSkill::SURREND))
+		return;
+}
+
 void Scene::initButtons() {
 	for (int i = 0; i < 12; ++i) {
 		Button * but = new Button();
 		but->initButton(simpleTexProgram, &buttonTexture);
 		but->setPos((i / 12.f) * 320.f, float(CAMERA_HEIGHT + 10));
+		if (i == 0)
+			but->setAnim(Button::INCREASE_DECREASE_RATING);
+		else if (i == 1) 
+			but->setAnim(Button::NORMAL_CLIMBER);
+		else if (i == 2)
+			but->setAnim(Button::NORMAL_FLOATER);
+		else if (i == 3)
+			but->setAnim(Button::NORMAL_EXPLOSIVE);
+		else if (i == 4)
+			but->setAnim(Button::NORMAL_BLOCKER);
+		else if (i == 5)
+			but->setAnim(Button::NORMAL_BUILDER);
+		else if (i == 6)
+			but->setAnim(Button::NORMAL_BASHER);
+		else if (i == 7)
+			but->setAnim(Button::NORMAL_DIAG_BASHER);
+		else if (i == 8) 
+			but->setAnim(Button::NORMAL_DIGGER);
+		else if (i == 9)
+			but->setAnim(Button::NORMAL_PAUSE);
+		else if (i == 10)
+			but->setAnim(Button::NORMAL_SURREND);
+		else if (i == 11)
+			but->setAnim(Button::NORMAL_FAST);
 		buttons.push_back(but);
 	}
 }

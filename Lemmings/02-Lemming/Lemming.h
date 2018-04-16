@@ -15,7 +15,7 @@ class Lemming
 public:
 	enum LemmingSkill 
 	{
-		BLOCKER, DIGGER, FLOATER, BASHER, CLIMBER, SURREND
+		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, CLIMBER, SURREND
 	};
 
 	enum LemmingState
