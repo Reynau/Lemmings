@@ -9,7 +9,7 @@ void Door::initDoor(ShaderProgram & shaderProgram)
 	spritesheet.setMinFilter(GL_NEAREST);
 	spritesheet.setMagFilter(GL_NEAREST);
 	sprite = Sprite::createSprite(glm::ivec2(48, 48), glm::vec2(0.1, 48.0f / SPRITE_HEIGHT), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(6);
+	sprite->setNumberAnimations(7);
 
 		sprite->setAnimationSpeed(FIRST_DOOR, 12);
 		for (int i = 0; i<6; i++)
@@ -22,6 +22,10 @@ void Door::initDoor(ShaderProgram & shaderProgram)
 		sprite->setAnimationSpeed(THIRD_DOOR, 12);
 		for (int i = 0; i<6; i++)
 			sprite->addKeyframe(THIRD_DOOR, glm::vec2(float(i) / 10, 144.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(FOURTH_DOOR, 12);
+		for (int i = 0; i<6; i++)
+			sprite->addKeyframe(FOURTH_DOOR, glm::vec2(float(i) / 10, 192.0f / SPRITE_HEIGHT));
 
 		sprite->setAnimationSpeed(SPAWN_DOOR_CLOSE, 12);
 		sprite->addKeyframe(SPAWN_DOOR_CLOSE, glm::vec2(float(0) / 10, 96.0f / SPRITE_HEIGHT));
