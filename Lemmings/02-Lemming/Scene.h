@@ -45,7 +45,7 @@ private:
 
 	void changeLevel(int level);
 	void finishLevel();
-	void resetOffsets();
+	void resetOffsetsAndReleases();
 
 	bool checkSelecting();
 	void checkButtons();
@@ -56,6 +56,7 @@ private:
 
 	void checkIfLemmingSafe(int lemmingId);
 	bool lemmingHasToSpawn(int deltaTime);
+	float getSpawnTime(int releaseRate);
 	bool lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint);
 
 	void initLemmings();
@@ -94,8 +95,9 @@ private:
 		string colorTextureFile;
 		string maskTextureFile;
 		float offset;
-		int spawnTime;
+		float releaseRate;
 		Door::doorState door;
+		float spriteWidth;
 	};
 	vector<Level> levels;
 	int currentLevel;

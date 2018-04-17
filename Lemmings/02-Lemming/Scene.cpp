@@ -19,14 +19,14 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 3;
+	currentLevel = 0;
 
 	initLevels();
 
 	Level level = levels[currentLevel];
 
 	glm::vec2 geom[2] = {glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT))};
-	glm::vec2 texCoords[2] = {glm::vec2(level.offset / 512.0f, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f)};
+	glm::vec2 texCoords[2] = {glm::vec2(level.offset / level.spriteWidth, 0.f), glm::vec2((level.offset + 320.f) / level.spriteWidth, 160.f / 256.0f)};
 
 	initShaders();
 
@@ -79,6 +79,7 @@ unsigned int x = 0;
 
 void Scene::update(int deltaTime)
 {
+	int auxdeltaTime = deltaTime;
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
 	Level level = levels[currentLevel];
@@ -108,7 +109,7 @@ void Scene::update(int deltaTime)
 	}
 
 	for (int i = 0; i < 12; ++i) {
-		if (buttons[i]) buttons[i]->update(deltaTime);
+		if (buttons[i]) buttons[i]->update(auxdeltaTime);
 	}
 
 	// A level finishes when all lemmings are not alive
@@ -204,7 +205,8 @@ void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButt
 
 void Scene::moveMap(bool right)
 {
-	if (right && levels[currentLevel].offset <= 186.f) {
+	
+	if (right && levels[currentLevel].offset <= levels[currentLevel].spriteWidth - 326.f) {
 		levels[currentLevel].offset += 6.0f;
 		levels[currentLevel].spawnPosition.x -= 6;
 		levels[currentLevel].savePosition.x -= 6;
@@ -212,7 +214,7 @@ void Scene::moveMap(bool right)
 		Level level = levels[currentLevel];
 
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
-		glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+		glm::vec2 texCoords[2] = { glm::vec2(level.offset / level.spriteWidth, 0.f), glm::vec2((level.offset + 320.f) / level.spriteWidth, 160.f / 256.0f) };
 
 		initShaders();
 
@@ -233,7 +235,7 @@ void Scene::moveMap(bool right)
 		Level level = levels[currentLevel];
 
 		glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
-		glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+		glm::vec2 texCoords[2] = { glm::vec2(level.offset / level.spriteWidth, 0.f), glm::vec2((level.offset + 320.f) / level.spriteWidth, 160.f / 256.0f) };
 
 		initShaders();
 
@@ -331,18 +333,20 @@ void Scene::initShaders()
 
 void Scene::initLevels()
 {
+	// FUN
 	Level firstLevel;
 	firstLevel.name = "Just dig!";
 	firstLevel.lemmingsToSpawn = 10;
 	firstLevel.lemmingsToSecure = 1;
 	firstLevel.availableTime = 5 * 60;
-	firstLevel.spawnPosition = glm::vec2(90, 30); // Correct
-	firstLevel.savePosition = glm::vec2(216, 84); // Correct
+	firstLevel.offset = 120.f;
+	firstLevel.spawnPosition = glm::vec2(-30 + firstLevel.offset, 30);
+	firstLevel.savePosition = glm::vec2(96 + firstLevel.offset, 84);
 	firstLevel.colorTextureFile = "images/fun1.png";
 	firstLevel.maskTextureFile = "images/fun1_mask.png";
-	firstLevel.offset = 120.f;
-	firstLevel.spawnTime = 2;
+	firstLevel.releaseRate = 50.f;
 	firstLevel.door = Door::FIRST_DOOR;
+	firstLevel.spriteWidth = 512.f;
 	levels.push_back(firstLevel);
 
 	Level secondLevel;
@@ -350,13 +354,14 @@ void Scene::initLevels()
 	secondLevel.lemmingsToSpawn = 10;
 	secondLevel.lemmingsToSecure = 1;
 	secondLevel.availableTime = 5 * 60;
-	secondLevel.spawnPosition = glm::vec2(28, 10); // Correct
-	secondLevel.savePosition = glm::vec2(257, 101); // Correct
+	secondLevel.offset = 69.f;
+	secondLevel.spawnPosition = glm::vec2(-41 + secondLevel.offset, 10);
+	secondLevel.savePosition = glm::vec2(188 + secondLevel.offset, 101);
 	secondLevel.colorTextureFile = "images/fun2.png";
 	secondLevel.maskTextureFile = "images/fun2_mask.png";
-	secondLevel.offset = 69.f;
-	secondLevel.spawnTime = 2;
+	secondLevel.releaseRate = 50.f;
 	secondLevel.door = Door::SECOND_DOOR;
+	secondLevel.spriteWidth = 512.f;
 	levels.push_back(secondLevel);
 
 	Level thirdLevel;
@@ -364,29 +369,54 @@ void Scene::initLevels()
 	thirdLevel.lemmingsToSpawn = 50;
 	thirdLevel.lemmingsToSecure = 5;
 	thirdLevel.availableTime = 5 * 60;
-	thirdLevel.spawnPosition = glm::vec2(129, 3); // Correct
-	thirdLevel.savePosition = glm::vec2(95, 105); // Correct
+	thirdLevel.offset = 22.f;
+	thirdLevel.spawnPosition = glm::vec2(107 + thirdLevel.offset, 3);
+	thirdLevel.savePosition = glm::vec2(73 + thirdLevel.offset, 105);
 	thirdLevel.colorTextureFile = "images/fun3.png";
 	thirdLevel.maskTextureFile = "images/fun3_mask.png";
-	thirdLevel.offset = 22.f;
-	thirdLevel.spawnTime = 2;
+	thirdLevel.releaseRate = 50.f;
 	thirdLevel.door = Door::SECOND_DOOR;
+	thirdLevel.spriteWidth = 512.f;
 	levels.push_back(thirdLevel);
 
 
 	Level fourthLevel;
-	fourthLevel.name = "Tailor-made for blockers";
-	fourthLevel.lemmingsToSpawn = 50;
-	fourthLevel.lemmingsToSecure = 5;
+	fourthLevel.name = "Now use miners and climbers";
+	fourthLevel.lemmingsToSpawn = 10;
+	fourthLevel.lemmingsToSecure = 10;
 	fourthLevel.availableTime = 5 * 60;
-	fourthLevel.spawnPosition = glm::vec2(160, 3); // Correct
-	fourthLevel.savePosition = glm::vec2(95, 105); // Correct
+	fourthLevel.offset = 122.f;
+	fourthLevel.spawnPosition = glm::vec2(-37 + fourthLevel.offset, 10);
+	fourthLevel.savePosition = glm::vec2(121 + fourthLevel.offset, 0);
 	fourthLevel.colorTextureFile = "images/fun4.png";
 	fourthLevel.maskTextureFile = "images/fun4_mask.png";
-	fourthLevel.offset = 22.f;
-	fourthLevel.spawnTime = 2;
+	fourthLevel.releaseRate = 1.f;
 	fourthLevel.door = Door::SECOND_DOOR;
+	fourthLevel.spriteWidth = 512.f;
 	levels.push_back(fourthLevel);
+
+	// TRICKY
+	Level fifthLevel;
+	fifthLevel.name = "Tailor-made for blockers";
+	fifthLevel.lemmingsToSpawn = 80;
+	fifthLevel.lemmingsToSecure = 40;
+	fifthLevel.availableTime = 4 * 60;
+	fifthLevel.offset = 22.f;
+	fifthLevel.spawnPosition = glm::vec2(70 + fifthLevel.offset, 65);
+	fifthLevel.savePosition = glm::vec2(687 + fifthLevel.offset, 69);
+	fifthLevel.colorTextureFile = "images/tricky1.png";
+	fifthLevel.maskTextureFile = "images/tricky1_mask.png";
+	fifthLevel.releaseRate = 50.f;
+	fifthLevel.door = Door::FIRST_DOOR;
+	fifthLevel.spriteWidth = 924.f;
+	levels.push_back(fifthLevel);
+
+	// TAXING
+
+
+	// MAYHEM
+
+
 }
 
 
@@ -409,14 +439,14 @@ void Scene::changeLevel(int newLevel)
 {
 	currentLevel = newLevel;
 
-	resetOffsets();
+	resetOffsetsAndReleases();
 
 	surrStarted = false;
 
 	Level level = levels[currentLevel];
 
 	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(float(CAMERA_WIDTH), float(CAMERA_HEIGHT)) };
-	glm::vec2 texCoords[2] = { glm::vec2(level.offset / 512.0, 0.f), glm::vec2((level.offset + 320.f) / 512.0f, 160.f / 256.0f) };
+	glm::vec2 texCoords[2] = { glm::vec2(level.offset / level.spriteWidth, 0.f), glm::vec2((level.offset + 320.f) / level.spriteWidth, 160.f / 256.0f) };
 
 	map = MaskedTexturedQuad::createTexturedQuad(geom, texCoords, maskedTexProgram);
 
@@ -428,8 +458,6 @@ void Scene::changeLevel(int newLevel)
 	maskTexture.setMagFilter(GL_NEAREST);
 
 	resetLemmings();
-
-	level.spawnTime = 2;
 
 	spawnDoor->setState(Door::doorState::SPAWN_DOOR_CLOSE);
 	spawnDoor->setPos(glm::vec2(level.spawnPosition.x - (24 - 7), level.spawnPosition.y - (24 - 7)));
@@ -457,17 +485,27 @@ void Scene::finishLevel() {
 	}
 }
 
-void Scene::resetOffsets()
+void Scene::resetOffsetsAndReleases()
 {
 	levels[0].offset = 120.f;
-	levels[0].spawnPosition = glm::vec2(90, 30);
-	levels[0].savePosition = glm::vec2(216, 85);
+	levels[0].spawnPosition = glm::vec2(-30 + levels[0].offset, 30);
+	levels[0].savePosition = glm::vec2(96 + levels[0].offset, 84);
+	levels[0].releaseRate = 50;
 	levels[1].offset = 69.f;
-	levels[1].spawnPosition = glm::vec2(28, 10);
-	levels[1].savePosition = glm::vec2(257, 101);
+	levels[1].spawnPosition = glm::vec2(-41 + levels[1].offset, 10);
+	levels[1].savePosition = glm::vec2(188 + levels[1].offset, 101);
 	levels[2].offset = 22.f;
-	levels[2].spawnPosition = glm::vec2(129, 3);
-	levels[2].savePosition = glm::vec2(95, 105);
+	levels[0].releaseRate = 50;
+	levels[2].spawnPosition = glm::vec2(107 + levels[2].offset, 3);
+	levels[2].savePosition = glm::vec2(73 + levels[2].offset, 105);
+	levels[3].offset = 122.f;
+	levels[0].releaseRate = 1;
+	levels[3].spawnPosition = glm::vec2(-37 + levels[3].offset, 10);
+	levels[3].savePosition = glm::vec2(121 + levels[3].offset, 0);
+	levels[4].offset = 22.f;
+	levels[0].releaseRate = 50;
+	levels[4].spawnPosition = glm::vec2(70 + levels[4].offset, 65);
+	levels[4].savePosition = glm::vec2(687 + levels[4].offset, 69);
 }
 
 bool Scene::checkSelecting()
@@ -627,16 +665,22 @@ bool Scene::lemmingHasToSpawn(int deltaTime) {
 	Level level = levels[currentLevel];
 	int ct = currentTime;
 	int dt = deltaTime;
-	cout << "DT: " << dt;
 	if (sceneSpeed == FAST) {
 		ct -= dt;
 		dt /= 6;
-		cout << " 2n DT: " << dt << endl;
 		ct += dt;
 	}
-	int sec = int(ct / 1000 / level.spawnTime) - 2;
+	float spawnTime = getSpawnTime(level.releaseRate);
+	int sec = int(ct / 1000 / spawnTime) - 2 * (2/round(spawnTime));
+
+	cout << sec << endl;
 
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec && !surrStarted;
+}
+
+float Scene::getSpawnTime(int releaseRate)
+{
+	return (-2.f + (6.f / (1.f + float(pow((releaseRate / 77.f), 1.5f)))));
 }
 
 bool Scene::lemmingColideWith(Lemming * lemming, glm::vec2 startPoint, glm::vec2 endPoint) {
