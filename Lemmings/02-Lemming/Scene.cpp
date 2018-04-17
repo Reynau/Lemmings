@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 0;
+	currentLevel = 3;
 
 	initLevels();
 
@@ -385,13 +385,13 @@ void Scene::initLevels()
 	fourthLevel.colorTextureFile = "images/fun4.png";
 	fourthLevel.maskTextureFile = "images/fun4_mask.png";
 	fourthLevel.releaseRate = 1.f;
-	fourthLevel.door = Door::SECOND_DOOR;
+	fourthLevel.door = Door::THIRD_DOOR;
 	fourthLevel.spriteWidth = 512.f;
 	levels.push_back(fourthLevel);
 
 	// TRICKY
 	Level fifthLevel;
-	fifthLevel.name = "Tailor-made for blockers";
+	fifthLevel.name = "This should be a doddle!";
 	fifthLevel.lemmingsToSpawn = 80;
 	fifthLevel.lemmingsToSecure = 40;
 	fifthLevel.availableTime = 4 * 60;

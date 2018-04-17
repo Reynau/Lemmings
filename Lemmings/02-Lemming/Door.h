@@ -17,13 +17,13 @@ public:
 
 	enum doorState
 	{
-		FIRST_DOOR, SECOND_DOOR, SPAWN_DOOR_CLOSE, SPAWN_DOOR, SPAWN_DOOR_OPEN
+		FIRST_DOOR, SECOND_DOOR, THIRD_DOOR, SPAWN_DOOR_CLOSE, SPAWN_DOOR, SPAWN_DOOR_OPEN
 	};
 
 	void setState(doorState door_state);
 
 private:
-	const float SPRITE_HEIGHT = 144.0f;
+	const float SPRITE_HEIGHT = 192.0f;
 
 	Texture spritesheet;
 	Sprite *sprite;
