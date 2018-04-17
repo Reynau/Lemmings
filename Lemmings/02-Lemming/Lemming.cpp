@@ -740,12 +740,12 @@ bool Lemming::collideWithBlocker(glm::vec2 startBox1, glm::vec2 endBox1, glm::ve
 
 void Lemming::changeDirection() {
 	if (state == WALKING_LEFT_STATE) {
-		sprite->position() -= glm::vec2(-1, -1);
+		sprite->position() -= glm::vec2(-1, -3);
 		sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
 		state = WALKING_RIGHT_STATE;
 	}
 	else if (state == WALKING_RIGHT_STATE) {
-		sprite->position() -= glm::vec2(1, -1);
+		sprite->position() -= glm::vec2(1, -3);
 		sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
 		state = WALKING_LEFT_STATE;
 	}
