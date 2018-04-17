@@ -441,24 +441,20 @@ void Scene::initLevels()
 	levels.push_back(seventhLevel);
 
 	// TAXING
-	Level eightLevel;
-	eightLevel.name = "If at first you don't succeed..";
-	eightLevel.lemmingsToSpawn = 80;
-	eightLevel.lemmingsToSecure = 78;
-	eightLevel.availableTime = 4 * 60;
-	eightLevel.offset = 2.f;
-	eightLevel.spawnPosition = glm::vec2(50 + eightLevel.offset, 30);
-	eightLevel.savePosition = glm::vec2(1100 + eightLevel.offset, 3);
-	eightLevel.colorTextureFile = "images/taxing1.png";
-	eightLevel.maskTextureFile = "images/taxing1_mask.png";
-	eightLevel.releaseRate = 40.f;
-	eightLevel.door = Door::SECOND_DOOR;
-	eightLevel.spriteWidth = 1224.f;
-	levels.push_back(eightLevel);
-
-
-	// MAYHEM
-
+	Level eighthLevel;
+	eighthLevel.name = "If at first you don't succeed..";
+	eighthLevel.lemmingsToSpawn = 80;
+	eighthLevel.lemmingsToSecure = 78;
+	eighthLevel.availableTime = 4 * 60;
+	eighthLevel.offset = 2.f;
+	eighthLevel.spawnPosition = glm::vec2(50 + eighthLevel.offset, 30);
+	eighthLevel.savePosition = glm::vec2(1120 + eighthLevel.offset, 15);
+	eighthLevel.colorTextureFile = "images/taxing1.png";
+	eighthLevel.maskTextureFile = "images/taxing1_mask.png";
+	eighthLevel.releaseRate = 40.f;
+	eighthLevel.door = Door::SECOND_DOOR;
+	eighthLevel.spriteWidth = 1224.f;
+	levels.push_back(eighthLevel);
 
 }
 
@@ -724,9 +720,8 @@ bool Scene::lemmingHasToSpawn(int deltaTime) {
 		ct += dt;
 	}
 	float spawnTime = getSpawnTime(level.releaseRate);
-	int sec = int(ct / 1000 / spawnTime) - 2 * (2/round(spawnTime));
-
-	cout << sec << endl;
+	int sec = int(ct / 100 / (roundf(spawnTime * 10 + 1) / 10.f)) -10 * (1 + roundf(level.releaseRate / 100.f)) * ceilf(2/(roundf(spawnTime * 10 + 1) / 10.f));
+	sec = floor(float(sec) / 10.f);
 
 	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec && !surrStarted;
 }
