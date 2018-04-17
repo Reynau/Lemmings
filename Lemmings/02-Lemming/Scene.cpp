@@ -88,17 +88,11 @@ void Scene::update(int deltaTime)
 	// Spawn lemmings
 	if (lemmingHasToSpawn(deltaTime)) ++spawnedLemmings;
 
-	//if (int(currentTime / 100) == 100 && !surrStarted) setSurrender();
-
 	// Update lemmings
 	for (int i = 0; i < spawnedLemmings; ++i) {
 		if (!lemmings[i]) continue;		
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
-		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) {
-			if (surrStarted)
-				setSurrender();
-			else exploteLemming(i);
-		}
+		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) exploteLemming(i);
 		if (lemmings[i]->isDead()) removeLemming(i);
 		else if (lemmings[i]->isSafe()) {
 			removeLemming(i);
@@ -457,6 +451,7 @@ void Scene::changeLevel(int newLevel)
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
 
+	clearCounts();
 	resetLemmings();
 
 	spawnDoor->setState(Door::doorState::SPAWN_DOOR_CLOSE);
@@ -771,14 +766,6 @@ void Scene::setSurrender()
 			aliveLemmings++;
 		}
 	}
-	else {
-		for (int i = 0; i < spawnedLemmings; ++i) {
-			if (!lemmings[i]) continue;
-			if (!lemmings[i]->setSkill(Lemming::LemmingSkill::SURREND))
-				continue;
-		}
-		// aliveLemmings = 0;
-	}	
 }
 
 void Scene::countdownLemming(int i)

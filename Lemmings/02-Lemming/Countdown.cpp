@@ -18,6 +18,7 @@ void Countdown::initCountdown(glm::vec2 lemPosition, ShaderProgram &shaderProgra
 	sprite->setAnimationSpeed(OFF, 1);
 	sprite->addKeyframe(OFF, glm::vec2(float(9) / 10, 32.0f / SPRITE_HEIGHT));
 
+	state = OFF;
 	sprite->changeAnimation(OFF);
 	sprite->setPosition(glm::vec2(lemPosition.x, lemPosition.y - 16));
 }
@@ -32,7 +33,6 @@ bool Countdown::update(glm::vec2 lemPosition, int deltaTime)
 	{
 	case ON:
 		if (sprite->keyFrame() == 5) {
-			state = OFF;
 			sprite->changeAnimation(OFF);
 			finished = true;
 		}
@@ -52,6 +52,8 @@ void Countdown::remove() {
 
 void Countdown::setOn()
 {
-	state = ON;
-	sprite->changeAnimation(ON);
+	if (state != ON) {
+		state = ON;
+		sprite->changeAnimation(ON);
+	}
 }
