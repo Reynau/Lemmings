@@ -19,7 +19,7 @@ Scene::~Scene()
 void Scene::init()
 {
 	//SELECT LEVEL
-	currentLevel = 7;	// From 1 to NumLevels
+	currentLevel = 8;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
@@ -95,7 +95,10 @@ void Scene::update(int deltaTime)
 		if (!lemmings[i]) continue;		
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
 		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) exploteLemming(i);
-		if (lemmings[i]->isDead()) removeLemming(i);
+		if (lemmings[i]->isDead()) {
+			removeLemming(i);
+			if (countds[i]) removeCount(i);
+		}
 		else if (lemmings[i]->isSafe()) {
 			removeLemming(i);
 			if (countds[i]) removeCount(i);
@@ -429,7 +432,7 @@ void Scene::initLevels()
 	seventhLevel.availableTime = 6 * 60;
 	seventhLevel.offset = 2.f;
 	seventhLevel.spawnPosition = glm::vec2(145 + seventhLevel.offset, 1);
-	seventhLevel.savePosition = glm::vec2(600 + seventhLevel.offset, 5);
+	seventhLevel.savePosition = glm::vec2(626 + seventhLevel.offset, 3);
 	seventhLevel.colorTextureFile = "images/tricky3.png";
 	seventhLevel.maskTextureFile = "images/tricky3_mask.png";
 	seventhLevel.releaseRate = 50.f;
@@ -438,6 +441,20 @@ void Scene::initLevels()
 	levels.push_back(seventhLevel);
 
 	// TAXING
+	Level eightLevel;
+	eightLevel.name = "If at first you don't succeed..";
+	eightLevel.lemmingsToSpawn = 80;
+	eightLevel.lemmingsToSecure = 78;
+	eightLevel.availableTime = 4 * 60;
+	eightLevel.offset = 2.f;
+	eightLevel.spawnPosition = glm::vec2(50 + eightLevel.offset, 30);
+	eightLevel.savePosition = glm::vec2(1100 + eightLevel.offset, 3);
+	eightLevel.colorTextureFile = "images/taxing1.png";
+	eightLevel.maskTextureFile = "images/taxing1_mask.png";
+	eightLevel.releaseRate = 40.f;
+	eightLevel.door = Door::SECOND_DOOR;
+	eightLevel.spriteWidth = 1224.f;
+	levels.push_back(eightLevel);
 
 
 	// MAYHEM
@@ -515,29 +532,33 @@ void Scene::finishLevel() {
 void Scene::resetOffsetsAndReleases()
 {
 	levels[0].offset = 120.f;
-	levels[0].releaseRate = 50;
+	levels[0].releaseRate = 50.f;
 	levels[0].spawnPosition = glm::vec2(-30 + levels[0].offset, 30);
 	levels[0].savePosition = glm::vec2(96 + levels[0].offset, 84);
 	levels[1].offset = 69.f;
-	levels[1].releaseRate = 50;
+	levels[1].releaseRate = 50.f;
 	levels[1].spawnPosition = glm::vec2(-41 + levels[1].offset, 10);
 	levels[1].savePosition = glm::vec2(188 + levels[1].offset, 101);
 	levels[2].offset = 22.f;
-	levels[2].releaseRate = 50;
+	levels[2].releaseRate = 50.f;
 	levels[2].spawnPosition = glm::vec2(107 + levels[2].offset, 3);
 	levels[2].savePosition = glm::vec2(73 + levels[2].offset, 105);
 	levels[3].offset = 122.f;
-	levels[3].releaseRate = 1;
+	levels[3].releaseRate = 1.f;
 	levels[3].spawnPosition = glm::vec2(-37 + levels[3].offset, 10);
 	levels[3].savePosition = glm::vec2(121 + levels[3].offset, 0);
 	levels[4].offset = 22.f;
-	levels[4].releaseRate = 50;
+	levels[4].releaseRate = 50.f;
 	levels[4].spawnPosition = glm::vec2(70 + levels[4].offset, 65);
 	levels[4].savePosition = glm::vec2(687 + levels[4].offset, 69);
 	levels[5].offset = 240.f;
-	levels[5].releaseRate = 1;
+	levels[5].releaseRate = 1.f;
 	levels[5].spawnPosition = glm::vec2(-78 + levels[5].offset, 13);
 	levels[5].savePosition = glm::vec2(512 + levels[5].offset, 72);
+	levels[6].offset = 2.f;
+	levels[6].releaseRate = 50.f;
+	levels[6].spawnPosition = glm::vec2(145 + levels[6].offset, 1);
+	levels[6].savePosition = glm::vec2(626 + levels[6].offset, 3);
 }
 
 bool Scene::checkSelecting()

@@ -221,7 +221,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			pending_state = NULL_STATE;
 		}
 		else {
-			sprite->position() += glm::vec2(-1, -3);
+			sprite->position() += glm::vec2(-1, -4);
 			if (collisionFloor() && pendingClimber) {
 				sprite->changeAnimation(LemmingAnims::CLIMBER_LEFT);
 				state = LemmingState::CLIMBER_LEFT_STATE;
@@ -254,7 +254,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			pending_state = NULL_STATE;
 		}
 		else {
-			sprite->position() += glm::vec2(1, -3);
+			sprite->position() += glm::vec2(1, -4);
 			if (collisionFloor() && pendingClimber) {
 				sprite->changeAnimation(LemmingAnims::CLIMBER_RIGHT);
 				state = LemmingState::CLIMBER_RIGHT_STATE;
@@ -562,20 +562,10 @@ void Lemming::_climb(LemmingAnims nextAnim, LemmingState nextState) {
 
 void Lemming::_walk(LemmingAnims fallAnimation, LemmingState fallState)
 {
-	int fall = collisionAny(7);
+	int fall = collisionAny(9);
 	if (fall > 0)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 1)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 2)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 3)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 4)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 5)
-		sprite->position() += glm::vec2(0, 1);
-	if (fall > 6) {
+		sprite->position() += glm::vec2(0, fall);
+	if (fall > 8) {
 		sprite->changeAnimation(fallAnimation);
 		state = fallState;
 		isBashing = false;
@@ -622,8 +612,8 @@ void Lemming::_bash()
 	int posX, posY;
 
 	posX = sprite->position().x + lem_offset + 7;
-	posY = sprite->position().y + 12;
-	int r = 4;
+	posY = sprite->position().y + 11;
+	int r = 5;
 	int dx;
 	int dy;
 	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
