@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 
@@ -18,8 +20,9 @@ Scene::~Scene()
 
 void Scene::init()
 {
+
 	//SELECT LEVEL
-	currentLevel = 8;	// From 1 to NumLevels
+	currentLevel = 1;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
@@ -75,6 +78,10 @@ void Scene::init()
 	door->initDoor(simpleTexProgram);
 	door->setState(level.door);
 	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
+
+	//TEST
+	if (!text.init("fonts/Pixellari.ttf"))
+		cout << "Could not load font!!!" << endl;
 }
 
 unsigned int x = 0;
@@ -84,6 +91,20 @@ void Scene::update(int deltaTime)
 	int auxdeltaTime = deltaTime;
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
+
+	if (currentTime < 1000) {
+		wid = float(glutGet(GLUT_WINDOW_WIDTH));
+		hei = float(glutGet(GLUT_WINDOW_HEIGHT));
+		xOffsetIn = roundf(wid * 911.f / 1080.f);
+		cout << xOffsetIn << "    //     ";
+		xOffsetOut = roundf(wid * 911.f / 1080.f);
+		cout << xOffsetOut << "    //     ";
+		xOffsetTime = roundf(wid * 911.f / 1080.f);
+		cout << xOffsetTime << endl << endl;
+		yOffset = roundf(hei * 911.f/ 1080.f);
+		sizeFont = roundf(hei * 58.f / 1080.f);
+	}
+
 	Level level = levels[currentLevel];
 	updateColliders();
 
@@ -173,6 +194,47 @@ void Scene::render()
 	for (int i = 0; i < 12; ++i) {
 		if (buttons[i]) buttons[i]->render();
 	}
+
+	program.use();
+	program.setUniformMatrix4f("projection", projection);
+	program.setUniform4f("color", 0.f, 0.f, 0.f, 1.0f);
+	
+
+	Level level = levels[currentLevel];
+	percent = safeLemmings * 100 / level.lemmingsToSpawn;
+	if ((currentTime / 1000) > 1) levelTime = level.availableTime - ((currentTime / 1000) - 2);
+	else levelTime = level.availableTime;
+
+
+	string out, in, dash;
+	if (spawnedLemmings < 10) out = "OUT:  ";
+	else out = "OUT:";
+	if (percent < 10) in = "IN:  ";
+	else in = "IN:";
+
+	int minutes = levelTime / 60;
+	int seconds = levelTime % 60;
+	if (seconds < 10) dash = "-0";
+	else dash = "-";
+	
+	text.render(out + to_string(spawnedLemmings), glm::vec2(747, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(1147, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 453, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+
+	text.render(out + to_string(spawnedLemmings), glm::vec2(753, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(1153, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 447, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+
+	text.render(out + to_string(spawnedLemmings), glm::vec2(750, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(1150, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 450, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	
+	simpleTexProgram.use();
+	simpleTexProgram.setUniformMatrix4f("projection", projection);
+	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	modelview = glm::mat4(1.0f);
+	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+
 	cursor->render();
 
 	program.use();
@@ -186,7 +248,6 @@ void Scene::render()
 	modelview = glm::translate(glm::mat4(1.0f), glm::vec3(float(CAMERA_WIDTH + 20), 0.f, 0.f));
 	program.setUniformMatrix4f("modelview", modelview);
 	quad->render();
-
 	
 }
 

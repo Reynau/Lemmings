@@ -19,7 +19,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	pendingFloater = false;
 	isBashing = false;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
-	sprite->setNumberAnimations(26);
+	sprite->setNumberAnimations(30);
 	
 		sprite->setAnimationSpeed(LemmingAnims::WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -118,11 +118,32 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 		sprite->setAnimationSpeed(LemmingAnims::CLIMBER_UP_LEFT, 12);
 		for (int i = 0; i < 8; i++)
 			sprite->addKeyframe(LemmingAnims::CLIMBER_UP_LEFT, glm::vec2(float(i) / 10, 480.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::BUILDER_RIGHT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BUILDER_RIGHT, glm::vec2(float(i) / 10, 496.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BUILDER_RIGHT, glm::vec2(float(i) / 10, 512.0f / SPRITE_HEIGHT));
+		sprite->setAnimationSpeed(LemmingAnims::BUILDER_LEFT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BUILDER_LEFT, glm::vec2(float(i) / 10, 528.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::BUILDER_LEFT, glm::vec2(float(i) / 10, 544.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::FINISH_BUILDER_RIGHT, 12);
+		for (int j = 496; j < 560; j += 16)
+			for (int i = 8; i < 10; i++)
+				sprite->addKeyframe(LemmingAnims::FINISH_BUILDER_RIGHT, glm::vec2(float(i) / 10, float(j) / SPRITE_HEIGHT));
+		sprite->setAnimationSpeed(LemmingAnims::FINISH_BUILDER_LEFT, 12);		 
+		for (int j = 560; j < 624; j += 16)
+			for (int i = 9; i > 7; i--)
+				sprite->addKeyframe(LemmingAnims::FINISH_BUILDER_LEFT, glm::vec2(float(i) / 10, float(j) / SPRITE_HEIGHT));
 		
 	sprite->changeAnimation(LemmingAnims::FALLING_RIGHT);
 	sprite->setPosition(initialPosition);
 
 	fallSpeed = 2.0f;
+	builderNumStairs = 0;
 }
 
 void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
@@ -220,6 +241,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == BUILDER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		else {
 			sprite->position() += glm::vec2(-1, -4);
 			if (collisionFloor() && pendingClimber) {
@@ -250,6 +276,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		}
 		else if (pending_state == BASHER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BUILDER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_RIGHT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -380,6 +411,60 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		}
 		break;
 
+	case BUILDER_RIGHT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (builderNumStairs == 12) {
+			sprite->changeAnimation(LemmingAnims::FINISH_BUILDER_RIGHT);
+			state = FINISH_BUILDER_RIGHT_STATE;
+		}
+		else if (builderCanBuild(true)) {
+			_build(LemmingAnims::WALKING_RIGHT, LemmingState::WALKING_RIGHT_STATE);
+		}
+		else //canviar direcció i posar a walking
+		
+		break;
+
+	case BUILDER_LEFT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (builderNumStairs == 12) {
+			sprite->changeAnimation(LemmingAnims::FINISH_BUILDER_LEFT);
+			state = FINISH_BUILDER_LEFT_STATE;
+		}
+		else if (builderCanBuild(false)) {
+			_build(LemmingAnims::WALKING_LEFT, LemmingState::WALKING_LEFT_STATE);
+		}
+		else //canviar direcció i posar a walking
+
+		break;
+
+	case FINISH_BUILDER_RIGHT_STATE:
+		builderNumStairs = 0;
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		
+		break;
+
+	case FINISH_BUILDER_LEFT_STATE:
+		builderNumStairs = 0;
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		
+		break;
+
 	case SURRENDER_STATE:
 		if (sprite->keyFrame() == 15) {
 			sprite->changeAnimation(LemmingAnims::EXPLOSION);
@@ -439,6 +524,36 @@ bool Lemming::basherHasToMove()
 		sprite->keyFrame() > 22 && sprite->keyFrame() < 27)
 		return true;
 	return false;
+}
+
+bool Lemming::builderCanBuild(bool isRight)
+{
+	int posX, posY;
+	if (isRight) {
+		posX = sprite->position().x + lem_offset + 8;
+		posY = sprite->position().y + 5;
+
+		for (int y = max(0, posY); y <= min(mask->height() - 1, posY + 11); y++) {
+			for (int x = max(0, posX); x <= min(mask->width() - 1, posX + 5); x++) {
+				if (mask->pixel(x, y) == 255)
+					return false;
+			}
+		}
+		return true;
+	}
+	else {
+		posX = sprite->position().x + lem_offset + 7;
+		posY = sprite->position().y + 5;
+
+		for (int y = max(0, posY); y <= min(mask->height() - 1, posY + 11); y++) {
+			for (int x = max(0, posX - 5); x <= min(mask->width() - 1, posX); x++) {
+				if (mask->pixel(x, y) == 255)
+					return false;
+			}
+		}
+		return true;
+	}
+
 }
 
 void Lemming::remove() {
@@ -645,6 +760,27 @@ void Lemming::_explote()
 			{
 				mask->setPixel(x, y, 0);
 			}
+		}
+	}
+}
+
+void Lemming::_build(LemmingAnims walkAnimation, LemmingState walkState)
+{
+	int posX, posY;
+
+	posX = sprite->position().x + lem_offset + 7;
+	posY = sprite->position().y + 13;
+
+	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
+		for (int x = max(0, posX - r); x <= min(mask->width() - 1, posX + r); x++) {
+
+
+
+
+
+
+			sprite->changeAnimation(walkAnimation);
+			state = walkState;
 		}
 	}
 }
