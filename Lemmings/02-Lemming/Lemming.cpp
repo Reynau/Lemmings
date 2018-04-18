@@ -809,6 +809,7 @@ void Lemming::_diagBash(LemmingAnims fallAnim, LemmingState fallState)
 	if (fall > 1) {
 		sprite->changeAnimation(fallAnim);
 		state = fallState;
+		pending_state = LemmingState::NULL_STATE;
 	}
 	else if (sprite->keyFrame() == 2) {
 		
