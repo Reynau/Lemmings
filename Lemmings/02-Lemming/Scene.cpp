@@ -621,7 +621,7 @@ void Scene::applyButtonPressed(int i)
 			selected_lem_state = Lemming::BASHER;
 		}
 		else if (i == 7) {
-			selected_lem_state = Lemming::NO_SKILL;
+			selected_lem_state = Lemming::DIAG_BASHER;
 		}
 		else if (i == 8) {
 			selected_lem_state = Lemming::DIGGER;

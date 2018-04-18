@@ -15,14 +15,14 @@ class Lemming
 public:
 	enum LemmingSkill 
 	{
-		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, CLIMBER, SURREND
+		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, DIAG_BASHER, CLIMBER, SURREND
 	};
 
 	enum LemmingState
 	{
 		NULL_STATE, WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, FALL_DIE_STATE,
 		BLOCKER_RIGHT_STATE, BLOCKER_LEFT_STATE, DIGGER_RIGHT_STATE, DIGGER_LEFT_STATE, FLOATER_RIGHT_STATE, FLOATER_LEFT_STATE,
-		CLIMBER_RIGHT_STATE, CLIMBER_LEFT_STATE, BASHER_RIGHT_STATE, BASHER_LEFT_STATE,
+		CLIMBER_RIGHT_STATE, CLIMBER_LEFT_STATE, BASHER_RIGHT_STATE, BASHER_LEFT_STATE, DIAG_BASHER_RIGHT_STATE, DIAG_BASHER_LEFT_STATE,
 		DEAD_STATE, ARRIVE_STATE, SAFE_STATE, SURRENDER_STATE, EXPLOSION_STATE
 	};
 
@@ -37,6 +37,7 @@ public:
 	bool isBusy();
 	bool isBlocker();
 	bool basherHasToMove();
+	bool diagBasherHasToMove();
 
 	void remove();
 
@@ -83,6 +84,7 @@ private:
 	void _float(LemmingAnims walkAnimation, LemmingState walkState);
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
 	void _bash();
+	void _diagBash(LemmingAnims fallAnim, LemmingState fallState);
 	void _explote();
 
 	int collisionAny(int maxFall);

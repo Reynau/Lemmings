@@ -19,7 +19,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 	pendingFloater = false;
 	isBashing = false;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
-	sprite->setNumberAnimations(26);
+	sprite->setNumberAnimations(28);
 	
 		sprite->setAnimationSpeed(LemmingAnims::WALKING_RIGHT, 12);
 		for(int i=0; i<8; i++)
@@ -82,6 +82,23 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 			sprite->addKeyframe(LemmingAnims::SURRENDER, glm::vec2(float(i) / 10, 176.0f / SPRITE_HEIGHT));
 		for (int i = 0; i<8; i++)
 			sprite->addKeyframe(LemmingAnims::SURRENDER, glm::vec2(float(i) / 10, 192.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::DIAG_BASHER_RIGHT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_RIGHT, glm::vec2(float(i) / 10, 208.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_RIGHT, glm::vec2(float(i) / 10, 224.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_RIGHT, glm::vec2(float(i) / 10, 240.0f / SPRITE_HEIGHT));
+
+		sprite->setAnimationSpeed(LemmingAnims::DIAG_BASHER_LEFT, 12);
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_LEFT, glm::vec2(float(i) / 10, 256.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_LEFT, glm::vec2(float(i) / 10, 272.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
+			sprite->addKeyframe(LemmingAnims::DIAG_BASHER_LEFT, glm::vec2(float(i) / 10, 288.0f / SPRITE_HEIGHT));
+		for (int i = 0; i < 8; i++)
 
 		sprite->setAnimationSpeed(LemmingAnims::BASHER_RIGHT, 12);
 		for (int i = 0; i < 8; i++)
@@ -220,6 +237,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == DIAG_BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		else {
 			sprite->position() += glm::vec2(-1, -4);
 			if (collisionFloor() && pendingClimber) {
@@ -250,6 +272,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		}
 		else if (pending_state == BASHER_RIGHT_STATE) {
 			sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIAG_BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_RIGHT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -316,6 +343,27 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 				else _walk(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
 			}
 		}
+		break;
+
+	case DIAG_BASHER_RIGHT_STATE:
+		// 1,2,3,4 // 7,8,9,10 // 15 // 18,19,20 // 23,24,25,26 // 31
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else _diagBash(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
+		
+		break;
+
+	case DIAG_BASHER_LEFT_STATE:
+		if (pending_state == SURRENDER_STATE) {
+			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else _diagBash(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
+
 		break;
 
 	case CLIMBER_LEFT_STATE:
@@ -441,6 +489,13 @@ bool Lemming::basherHasToMove()
 	return false;
 }
 
+bool Lemming::diagBasherHasToMove()
+{
+	if (sprite->keyFrame() == 3)
+		return true;
+	return false;
+}
+
 void Lemming::remove() {
 	sprite->free();
 }
@@ -496,6 +551,7 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 		if (skill == LemmingSkill::DIGGER) return LemmingState::DIGGER_LEFT_STATE;
 		if (skill == LemmingSkill::FLOATER) return LemmingState::FLOATER_LEFT_STATE;
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_LEFT_STATE;
+		if (skill == LemmingSkill::DIAG_BASHER) return LemmingState::DIAG_BASHER_LEFT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_LEFT_STATE;
 		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
@@ -505,6 +561,7 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 		if (skill == LemmingSkill::DIGGER) return LemmingState::DIGGER_RIGHT_STATE;
 		if (skill == LemmingSkill::FLOATER) return LemmingState::FLOATER_RIGHT_STATE;
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_RIGHT_STATE;
+		if (skill == LemmingSkill::DIAG_BASHER) return LemmingState::DIAG_BASHER_RIGHT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_RIGHT_STATE;
 		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
@@ -624,6 +681,40 @@ void Lemming::_bash()
 			{
 				mask->setPixel(x, y, 0);
 			}
+		}
+	}
+}
+
+void Lemming::_diagBash(LemmingAnims fallAnim, LemmingState fallState)
+{
+	int posX, posY;
+	int fall = collisionAny(3);
+	if (fall > 0) {
+		sprite->position() += glm::vec2(0, 1);
+	}
+	if (fall > 1) {
+		sprite->changeAnimation(fallAnim);
+		state = fallState;
+	}
+	else if (sprite->keyFrame() == 2) {
+		
+		if (state == DIAG_BASHER_RIGHT_STATE) {
+			posX = int(sprite->position().x) + lem_offset + 7;
+			posY = int(sprite->position().y) + 15;
+			for (int y = max(0, posY - 10); y <= min(mask->height() - 1, posY + 1); y++)
+				for (int x = max(0, posX + 3); x <= min(mask->width() - 1, posX + 8); x++)
+					mask->setPixel(x, y, 0);
+
+			sprite->position() += glm::vec2(3, 1);
+		}
+		else {
+			posX = int(sprite->position().x) + lem_offset + 7;
+			posY = int(sprite->position().y) + 15;
+			for (int y = max(0, posY - 10); y <= min(mask->height() - 1, posY + 1); y++)
+				for (int x = max(0, posX - 7); x <= min(mask->width() - 1, posX - 2); x++)
+					mask->setPixel(x, y, 0);
+
+			sprite->position() += glm::vec2(-3, 1);
 		}
 	}
 }
