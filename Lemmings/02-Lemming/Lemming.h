@@ -15,7 +15,7 @@ class Lemming
 public:
 	enum LemmingSkill 
 	{
-		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, DIAG_BASHER, CLIMBER, SURREND
+		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, DIAG_BASHER, CLIMBER, SURREND, BUILDER
 	};
 
 	enum LemmingState
@@ -23,6 +23,7 @@ public:
 		NULL_STATE, WALKING_LEFT_STATE, WALKING_RIGHT_STATE, FALLING_LEFT_STATE, FALLING_RIGHT_STATE, FALL_DIE_STATE,
 		BLOCKER_RIGHT_STATE, BLOCKER_LEFT_STATE, DIGGER_RIGHT_STATE, DIGGER_LEFT_STATE, FLOATER_RIGHT_STATE, FLOATER_LEFT_STATE,
 		CLIMBER_RIGHT_STATE, CLIMBER_LEFT_STATE, BASHER_RIGHT_STATE, BASHER_LEFT_STATE, DIAG_BASHER_RIGHT_STATE, DIAG_BASHER_LEFT_STATE,
+		BUILDER_RIGHT_STATE, BUILDER_LEFT_STATE, FINISH_BUILDER_RIGHT_STATE, FINISH_BUILDER_LEFT_STATE,
 		DEAD_STATE, ARRIVE_STATE, SAFE_STATE, SURRENDER_STATE, EXPLOSION_STATE
 	};
 
@@ -38,6 +39,7 @@ public:
 	bool isBlocker();
 	bool basherHasToMove();
 	bool diagBasherHasToMove();
+	bool builderCanBuild(bool isRight);
 
 	void remove();
 
@@ -62,6 +64,7 @@ private:
 	LemmingState pending_state;
 	bool pendingFloater;
 	bool pendingClimber;
+	int builderNumStairs;
 	bool isBashing;
 	float fallSpeed;
 	int lem_offset;
@@ -73,7 +76,8 @@ private:
 		WALKING_LEFT, WALKING_RIGHT, FALLING_LEFT, FALLING_RIGHT, 
 		DIGGING, FLOATER_INI_RIGHT, FLOATER_INI_LEFT, FLOATER_RIGHT, FLOATER_LEFT, 
 		CLIMBER_RIGHT, CLIMBER_LEFT, CLIMBER_UP_RIGHT, CLIMBER_UP_LEFT, FALL_DIE, BLOCKER_ANIM,
-		SAFE, SURRENDER, EXPLOSION, DIAG_BASHER_RIGHT, DIAG_BASHER_LEFT, BASHER_RIGHT, BASHER_LEFT
+		SAFE, SURRENDER, EXPLOSION, DIAG_BASHER_RIGHT, DIAG_BASHER_LEFT, BASHER_RIGHT, BASHER_LEFT,
+		BUILDER_RIGHT, BUILDER_LEFT, FINISH_BUILDER_RIGHT, FINISH_BUILDER_LEFT
 	};
 
 private:
@@ -85,6 +89,7 @@ private:
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
 	void _bash();
 	void _diagBash(LemmingAnims fallAnim, LemmingState fallState);
+	void _build(LemmingAnims walkAnimation, LemmingState walkState);
 	void _explote();
 
 	int collisionAny(int maxFall);

@@ -11,6 +11,7 @@
 #include "Quad.h"
 #include "Countdown.h"
 #include "Button.h"
+#include "Text.h"
 
 
 // Scene contains all the entities of our game.
@@ -142,6 +143,8 @@ private:
 	vector<Button *> buttons;
 	int selected_but;
 	Lemming::LemmingSkill selected_lem_state;
+	Text text;
+	int wid, hei, xOffsetIn, xOffsetOut, xOffsetTime, yOffset, sizeFont, percent, levelTime;
 };
 
 
