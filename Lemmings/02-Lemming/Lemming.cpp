@@ -161,6 +161,7 @@ void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgra
 
 	fallSpeed = 2.0f;
 	builderNumStairs = 0;
+	canBuild = false;
 }
 
 void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
@@ -468,12 +469,23 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		else if (builderNumStairs == 12) {
 			sprite->changeAnimation(LemmingAnims::FINISH_BUILDER_RIGHT);
 			state = FINISH_BUILDER_RIGHT_STATE;
+			builderNumStairs = 0;
 		}
-		else if (builderCanBuild(true)) {
-			_build(LemmingAnims::WALKING_RIGHT, LemmingState::WALKING_RIGHT_STATE);
+		else if (sprite->keyFrame() == 1) {
+			cout << "check" << endl;
+			if (builderCanBuild(true))
+				canBuild = true;
 		}
-		else //canviar direcció i posar a walking
-		
+		else if (canBuild) {
+			if (sprite->keyFrame() == 15) {
+				_build(true);
+				builderNumStairs++;
+				cout << "builded" << endl;
+				sprite->position() += glm::vec2(-2, -1);
+				canBuild = false;
+			}
+		}
+		else changeDirection();
 		break;
 
 	case BUILDER_LEFT_STATE:
@@ -485,32 +497,55 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		else if (builderNumStairs == 12) {
 			sprite->changeAnimation(LemmingAnims::FINISH_BUILDER_LEFT);
 			state = FINISH_BUILDER_LEFT_STATE;
+			builderNumStairs = 0;
 		}
-		else if (builderCanBuild(false)) {
-			_build(LemmingAnims::WALKING_LEFT, LemmingState::WALKING_LEFT_STATE);
+		else if (sprite->keyFrame() == 1) {
+			if (builderCanBuild(false))
+				canBuild = true;
 		}
-		else //canviar direcció i posar a walking
-
+		else if (canBuild) {
+			if (sprite->keyFrame() == 15) {
+				_build(false);
+				builderNumStairs++;
+				sprite->position() += glm::vec2(2, -1);
+				canBuild = false;
+			}
+		}
+		else changeDirection();
 		break;
 
 	case FINISH_BUILDER_RIGHT_STATE:
-		builderNumStairs = 0;
 		if (pending_state == SURRENDER_STATE) {
 			sprite->changeAnimation(LemmingAnims::SURRENDER);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		
+		else if (pending_state == BUILDER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else {
+			sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
+			state = LemmingState::WALKING_RIGHT_STATE;
+		}
 		break;
 
 	case FINISH_BUILDER_LEFT_STATE:
-		builderNumStairs = 0;
 		if (pending_state == SURRENDER_STATE) {
 			sprite->changeAnimation(LemmingAnims::SURRENDER);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		
+		else if (pending_state == BUILDER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else {
+			sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
+			state = LemmingState::WALKING_LEFT_STATE;
+		}
 		break;
 
 	case SURRENDER_STATE:
@@ -667,6 +702,7 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_LEFT_STATE;
 		if (skill == LemmingSkill::DIAG_BASHER) return LemmingState::DIAG_BASHER_LEFT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_LEFT_STATE;
+		if (skill == LemmingSkill::BUILDER) return LemmingState::BUILDER_LEFT_STATE;
 		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
 	else {
@@ -677,6 +713,7 @@ Lemming::LemmingState Lemming::getStateFromSkill(LemmingSkill skill)
 		if (skill == LemmingSkill::BASHER) return LemmingState::BASHER_RIGHT_STATE;
 		if (skill == LemmingSkill::DIAG_BASHER) return LemmingState::DIAG_BASHER_RIGHT_STATE;
 		if (skill == LemmingSkill::CLIMBER) return LemmingState::CLIMBER_RIGHT_STATE;
+		if (skill == LemmingSkill::BUILDER) return LemmingState::BUILDER_RIGHT_STATE;
 		else cout << "You have to implement this skill on Lemming::getStateFromSkill(LemmingSkill skill); !" << endl;
 	}
 }
@@ -693,6 +730,7 @@ bool Lemming::isSameSkill(LemmingSkill newSkill)
 	if (newSkill == BLOCKER && (state == BLOCKER_RIGHT_STATE || state == BLOCKER_LEFT_STATE)) return true;
 	if (newSkill == DIGGER && (state == DIGGER_RIGHT_STATE || state == DIGGER_LEFT_STATE)) return true;
 	if (newSkill == FLOATER && (state == FLOATER_RIGHT_STATE || state == FLOATER_LEFT_STATE)) return true;
+	if (newSkill == BUILDER && (state == BUILDER_RIGHT_STATE || state == BUILDER_LEFT_STATE)) return true;
 	return false;
 }
 
@@ -855,27 +893,25 @@ void Lemming::_explote()
 	}
 }
 
-void Lemming::_build(LemmingAnims walkAnimation, LemmingState walkState)
+void Lemming::_build(bool isRight)
 {
-	/*
 	int posX, posY;
+	if (isRight) {
+		posX = sprite->position().x + lem_offset + 9;
+		posY = sprite->position().y + 15;
 
-	posX = sprite->position().x + lem_offset + 7;
-	posY = sprite->position().y + 13;
-
-	for (int y = max(0, posY - r); y <= min(mask->height() - 1, posY + r); y++) {
-		for (int x = max(0, posX - r); x <= min(mask->width() - 1, posX + r); x++) {
-
-
-
-
-
-
-			sprite->changeAnimation(walkAnimation);
-			state = walkState;
+		for (int x = max(0, posX); x <= min(mask->width() - 1, posX + 3); x++) {
+			mask->setPixel(posX, posY, 255);
 		}
 	}
-	*/
+	else {
+		posX = sprite->position().x + lem_offset + 6;
+		posY = sprite->position().y + 15;
+
+		for (int x = max(0, posX - 3); x <= min(mask->width(), posX); x++) {
+			mask->setPixel(posX, posY, 255);
+		}
+	}
 }
 
 int Lemming::collisionAny(int maxFall) {
@@ -981,6 +1017,14 @@ void Lemming::changeDirection() {
 		sprite->position() -= glm::vec2(1, -1);
 		sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
 		state = BASHER_LEFT_STATE;
+	}
+	else if (state == BUILDER_LEFT_STATE) {
+		sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
+		state = WALKING_RIGHT_STATE;
+	}
+	else if (state == BUILDER_RIGHT_STATE) {
+		sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
+		state = WALKING_LEFT_STATE;
 	}
 }
 

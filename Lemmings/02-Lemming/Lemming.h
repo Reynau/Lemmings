@@ -64,6 +64,7 @@ private:
 	LemmingState pending_state;
 	bool pendingFloater;
 	bool pendingClimber;
+	bool canBuild;
 	int builderNumStairs;
 	bool isBashing;
 	float fallSpeed;
@@ -89,7 +90,7 @@ private:
 	void _fall(LemmingAnims walkAnimation, LemmingState walkState);
 	void _bash();
 	void _diagBash(LemmingAnims fallAnim, LemmingState fallState);
-	void _build(LemmingAnims walkAnimation, LemmingState walkState);
+	void _build(bool isRight);
 	void _explote();
 
 	int collisionAny(int maxFall);

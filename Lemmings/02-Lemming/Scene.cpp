@@ -95,13 +95,10 @@ void Scene::update(int deltaTime)
 	if (currentTime < 1000) {
 		wid = float(glutGet(GLUT_WINDOW_WIDTH));
 		hei = float(glutGet(GLUT_WINDOW_HEIGHT));
-		xOffsetIn = roundf(wid * 911.f / 1080.f);
-		cout << xOffsetIn << "    //     ";
-		xOffsetOut = roundf(wid * 911.f / 1080.f);
-		cout << xOffsetOut << "    //     ";
-		xOffsetTime = roundf(wid * 911.f / 1080.f);
-		cout << xOffsetTime << endl << endl;
-		yOffset = roundf(hei * 911.f/ 1080.f);
+		xOffsetIn = roundf(wid * 550.f / 1920.f);
+		xOffsetOut = roundf(wid * 950.f / 1920.f);
+		xOffsetTime = roundf(wid * 1270.f / 1920.f);
+		yOffset = roundf(hei * 911.f / 1080.f);
 		sizeFont = roundf(hei * 58.f / 1080.f);
 	}
 
@@ -217,17 +214,17 @@ void Scene::render()
 	if (seconds < 10) dash = "-0";
 	else dash = "-";
 	
-	text.render(out + to_string(spawnedLemmings), glm::vec2(747, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render(in + to_string(percent) + "%", glm::vec2(1147, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 453, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render(out + to_string(spawnedLemmings), glm::vec2(xOffsetIn - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut -3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
 
-	text.render(out + to_string(spawnedLemmings), glm::vec2(753, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render(in + to_string(percent) + "%", glm::vec2(1153, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 447, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render(out + to_string(spawnedLemmings), glm::vec2(xOffsetIn + 3, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut + 3, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime + 3, yOffset + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
 
-	text.render(out + to_string(spawnedLemmings), glm::vec2(750, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
-	text.render(in + to_string(percent) + "%", glm::vec2(1150, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
-	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(wid - 450, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render(out + to_string(spawnedLemmings), glm::vec2(xOffsetIn, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 	
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
@@ -676,7 +673,7 @@ void Scene::applyButtonPressed(int i)
 			selected_lem_state = Lemming::BLOCKER;
 		}
 		else if (i == 5) {
-			selected_lem_state = Lemming::NO_SKILL;
+			selected_lem_state = Lemming::BUILDER;
 		}
 		else if (i == 6) {
 			selected_lem_state = Lemming::BASHER;
