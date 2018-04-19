@@ -87,8 +87,8 @@ void Scene::init()
 	startSpawn = false;
 
 	audioDriver = Audio();
-	audioDriver.loadAudio("sounds/theme.mp3");
-	audioDriver.playAudio("sounds/theme.mp3");
+	audioDriver.loadAudio("sounds/01_lemming1.wav");
+	audioDriver.playAudio("sounds/01_lemming1.wav");
 }
 
 unsigned int x = 0;
