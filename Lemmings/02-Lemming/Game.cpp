@@ -8,12 +8,14 @@ void Game::init()
 	bPlay = true;
 	bLeftMouse = bRightMouse = false;
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
+	//mainMenu.init();
 	scene.init();
 	//sound.PlayThemeSong();
 }
 
 bool Game::update(int deltaTime)
 {
+	//mainMenu.update(deltaTime);
 	scene.update(deltaTime);
 	
 	return bPlay;
@@ -22,6 +24,7 @@ bool Game::update(int deltaTime)
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//mainMenu.render();
 	scene.render();
 }
 
@@ -55,6 +58,7 @@ void Game::mouseMove(int x, int y)
 {
 	mouseX = x;
 	mouseY = y;
+	//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 }
 

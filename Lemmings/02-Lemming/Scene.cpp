@@ -79,9 +79,12 @@ void Scene::init()
 	door->setState(level.door);
 	door->setPos(glm::vec2(level.savePosition.x, level.savePosition.y));
 
-	//TEST
 	if (!text.init("fonts/Pixellari.ttf"))
 		cout << "Could not load font!!!" << endl;
+
+	lemmingTime = 0;
+	previousTime = 0.f;
+	startSpawn = false;
 }
 
 unsigned int x = 0;
@@ -91,6 +94,8 @@ void Scene::update(int deltaTime)
 	int auxdeltaTime = deltaTime;
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
+
+	if (levelTime <= 0) finishLevel();
 
 	if (currentTime < 1000) {
 		wid = float(glutGet(GLUT_WINDOW_WIDTH));
@@ -130,9 +135,7 @@ void Scene::update(int deltaTime)
 	}
 
 	// A level finishes when all lemmings are not alive
-	if (aliveLemmings == 0) {
-		finishLevel();
-	}
+	if (aliveLemmings == 0) finishLevel();
 
 	if (cursor->getPos().x < -4.f) moveMap(0);
 	else if (cursor->getPos().x > 307.f) moveMap(1);
@@ -214,6 +217,8 @@ void Scene::render()
 	if (seconds < 10) dash = "-0";
 	else dash = "-";
 	
+
+	text.render(to_string(int(level.releaseRate)), glm::vec2(xOffsetIn - 300, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 	text.render(out + to_string(spawnedLemmings), glm::vec2(xOffsetIn - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
 	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut -3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
 	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
@@ -536,6 +541,10 @@ void Scene::changeLevel(int newLevel)
 {
 	currentLevel = newLevel;
 
+	lemmingTime = 0;
+	previousTime = 0.f;
+	startSpawn = false;
+
 	resetOffsetsAndReleases();
 
 	surrStarted = false;
@@ -613,6 +622,10 @@ void Scene::resetOffsetsAndReleases()
 	levels[6].releaseRate = 50.f;
 	levels[6].spawnPosition = glm::vec2(145 + levels[6].offset, 1);
 	levels[6].savePosition = glm::vec2(626 + levels[6].offset, 3);
+	levels[7].offset = 2.f;
+	levels[7].releaseRate = 40.f;
+	levels[7].spawnPosition = glm::vec2(50 + levels[7].offset, 30);
+	levels[7].savePosition = glm::vec2(1120 + levels[7].offset, 15);
 }
 
 bool Scene::checkSelecting()
@@ -648,13 +661,33 @@ void Scene::checkButtons()
 			for (int x = int(curPos.x) - 12; x <= int(curPos.x) + 12; x++) {
 				if (glm::vec2(int(butPos.x) + 12, int(butPos.y) + 14) == glm::vec2(x, y)) {
 					index_selected_but = i + 1;
-					selected_but = index_selected_but;
+					if (index_selected_but == 1) {
+						for (int y = int(curPos.y) - 3; y <= int(curPos.y) + 4; y++) {
+							for (int x = int(curPos.x) - 3; x <= int(curPos.x) + 4; x++) {
+								if (glm::vec2(int(butPos.x) + 13, int(butPos.y) + 18) == glm::vec2(x, y)) index_selected_release = 1;
+								else if (glm::vec2(int(butPos.x) + 13, int(butPos.y) + 26) == glm::vec2(x, y)) index_selected_release = 2;
+							}
+						}
+					}
+					else index_selected_release = 0;
 					return;
 				}
 			}
 		}
 	}
 	index_selected_but = 0;
+}
+
+void Scene::checkAndSetReleaseButton()
+{
+	if (index_selected_release == 1) {
+		if (levels[currentLevel].releaseRate < 99.f)
+			levels[currentLevel].releaseRate++;
+	}
+	else if (index_selected_release == 2) {
+		if (levels[currentLevel].releaseRate > 1.f)
+			levels[currentLevel].releaseRate--;
+	}
 }
 
 void Scene::applyButtonPressed(int i)
@@ -718,8 +751,8 @@ void Scene::applySkill(Lemming::LemmingSkill skill)
 
 void Scene::pressButton()
 {
-	if (index_selected_but == 0) return;	// IS IT NECESSARY?
-	if (index_selected_but == 1) return;	// CHANGE THIS FOR INCREASE/DECREASE LEMMING SPAWN RATING 
+	if (index_selected_but == 0) return;
+	if (index_selected_but == 1) checkAndSetReleaseButton();
 	else {
 		if ((index_selected_but - 1) < 9) {
 			for (int i = 1; i < 9; i++) {
@@ -778,10 +811,20 @@ bool Scene::lemmingHasToSpawn(int deltaTime) {
 		ct += dt;
 	}
 	float spawnTime = getSpawnTime(level.releaseRate);
-	int sec = int(ct / 100 / (roundf(spawnTime * 10 + 1) / 10.f)) -10 * (1 + roundf(level.releaseRate / 100.f)) * ceilf(2/(roundf(spawnTime * 10 + 1) / 10.f));
-	sec = floor(float(sec) / 10.f);
+	// Codi deixat en honor a Joel Borràs per haver passat 2 hore fent-lo i que després no funcionés bé, i arreglar-lo amb el codi de més a sota en 10 minuts
+	//int sec = int(ct / 100 / (roundf(spawnTime * 10 + 1) / 10.f)) -10 * (1 + roundf(level.releaseRate / 100.f)) * ceilf(2/(roundf(spawnTime * 10 + 1) / 10.f));
+	//sec = floor(float(sec) / 10.f);
+	if (!startSpawn && (float(ct) / 100.f) > 30.f) {
+		lemmingTime++;
+		previousTime = float(ct) / 100.f;
+		startSpawn = true;
+	}
+	if (startSpawn && previousTime < ((float(ct) / 100.f) - (spawnTime * 10.f))) {
+		lemmingTime++;
+		previousTime = float(ct) / 100.f;
+	}
 
-	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings <= sec && !surrStarted;
+	return spawnedLemmings < level.lemmingsToSpawn && spawnedLemmings < lemmingTime && !surrStarted;
 }
 
 float Scene::getSpawnTime(int releaseRate)
