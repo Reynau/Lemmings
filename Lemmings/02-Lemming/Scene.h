@@ -12,6 +12,7 @@
 #include "Countdown.h"
 #include "Button.h"
 #include "Text.h"
+#include "Audio.h"
 
 
 // Scene contains all the entities of our game.
@@ -78,6 +79,7 @@ private:
 	void initButtons();
 
 private:
+	Audio audioDriver;
 	Texture colorTexture;
 	VariableTexture *maskTexture2;
 	MaskedTexturedQuad *map;

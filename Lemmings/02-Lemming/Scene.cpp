@@ -85,6 +85,10 @@ void Scene::init()
 	lemmingTime = 0;
 	previousTime = 0.f;
 	startSpawn = false;
+
+	audioDriver = Audio();
+	audioDriver.loadAudio("sounds/theme.mp3");
+	audioDriver.playAudio("sounds/theme.mp3");
 }
 
 unsigned int x = 0;
@@ -144,6 +148,7 @@ void Scene::update(int deltaTime)
 	if (!checkSelecting()) cursor->setSelect(Cursor::NORMAL);
 	checkButtons();
 	
+	audioDriver.update();
 }
 
 void Scene::render()
