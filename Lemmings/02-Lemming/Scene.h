@@ -50,6 +50,7 @@ private:
 
 	bool checkSelecting();
 	void checkButtons();
+	void checkAndSetReleaseButton();
 	void applyButtonPressed(int i);
 	void undoButtonPressed(int i);
 	void applySkill(Lemming::LemmingSkill skill);
@@ -115,6 +116,7 @@ private:
 	Cursor * cursor;
 	int index_selected_lem;
 	int index_selected_but;
+	int index_selected_release;
 
 	// Door related
 	Door * spawnDoor;
@@ -141,10 +143,14 @@ private:
 	// UI related
 	Texture buttonTexture;
 	vector<Button *> buttons;
-	int selected_but;
 	Lemming::LemmingSkill selected_lem_state;
 	Text text;
 	int wid, hei, xOffsetIn, xOffsetOut, xOffsetTime, yOffset, sizeFont, percent, levelTime;
+
+	//Spawn Lemming related
+	int lemmingTime;
+	float previousTime;
+	bool startSpawn;
 };
 
 
