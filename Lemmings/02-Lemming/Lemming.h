@@ -40,6 +40,7 @@ public:
 	bool basherHasToMove();
 	bool diagBasherHasToMove();
 	bool builderCanBuild(bool isRight);
+	bool basherCanBash(bool isRight);
 
 	void remove();
 
@@ -65,6 +66,7 @@ private:
 	bool pendingFloater;
 	bool pendingClimber;
 	bool canBuild;
+	bool builderHasToMove;
 	int builderNumStairs;
 	bool isBashing;
 	float fallSpeed;
