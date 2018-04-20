@@ -99,6 +99,7 @@ void Scene::init(Cursor* cursor)
 	clicked = false;
 
 	audioDriver = Audio();
+	goStarted = false;
 	letsgoStarted = false;
 	musicStarted = false;
 	exploteDone = false;
@@ -111,7 +112,6 @@ void Scene::init(Cursor* cursor)
 	audioDriver.loadAudio("sounds/01_lemming1.wav");
 	audioDriver.loadAudio("sounds/02_lemming2.wav");
 	audioDriver.loadAudio("sounds/03_lemming3.wav");
-	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 }
 
 unsigned int x = 0;
@@ -146,6 +146,11 @@ int Scene::update(int deltaTime)
 		xOffsetBut = roundf(wid * 59.f / 800.f);
 		yOffsetBut = roundf(hei * 407.f / 450.f);
 		xOffsetMult = wid * 118.3f / 1600.f;
+	}
+
+	if (!goStarted) {
+		audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+		goStarted = true;
 	}
 
 	if (currentTime > 1000 && !letsgoStarted) {
@@ -678,10 +683,10 @@ void Scene::changeLevel(int newLevel)
 	}
 
 	currentTime = 0;
+	goStarted = false;
 	letsgoStarted = false;
 	musicStarted = false;
 	exploteDone = false;
-	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 
 }
 

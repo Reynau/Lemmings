@@ -39,22 +39,6 @@ void Instructions::init(Cursor *cursor)
 	titleTexture.setMinFilter(GL_NEAREST);
 	titleTexture.setMagFilter(GL_NEAREST);
 
-	textureW.loadFromFile("images/letter_w.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textureW.setMinFilter(GL_NEAREST);
-	textureW.setMagFilter(GL_NEAREST);
-
-	textureS.loadFromFile("images/letter_s.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textureS.setMinFilter(GL_NEAREST);
-	textureS.setMagFilter(GL_NEAREST);
-
-	textureA.loadFromFile("images/letter_a.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textureA.setMinFilter(GL_NEAREST);
-	textureA.setMagFilter(GL_NEAREST);
-
-	textureD.loadFromFile("images/letter_d.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	textureD.setMinFilter(GL_NEAREST);
-	textureD.setMagFilter(GL_NEAREST);
-
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	lemmingTexture.setMinFilter(GL_NEAREST);
 	lemmingTexture.setMagFilter(GL_NEAREST);
@@ -81,9 +65,9 @@ int Instructions::update(int deltaTime)
 	if (currentTime < 2000) {
 		wid = float(glutGet(GLUT_WINDOW_WIDTH));
 		hei = float(glutGet(GLUT_WINDOW_HEIGHT));
-		xOffset = roundf(wid * 500.f / 1920.f);
-		yOffset = roundf(hei * 350.f / 1080.f);
-		sizeFont = roundf(hei * 70.f / 1080.f);
+		xOffset = roundf(wid * 100.f / 1920.f);
+		yOffset = roundf(hei * 250.f / 1080.f);
+		sizeFont = roundf(hei * 50.f / 1080.f);
 		spaceBut = roundf(hei * 120.f / 1080.f);
 	}
 
@@ -115,27 +99,48 @@ void Instructions::render()
 
 	int yOffsetAux = yOffset;
 
-	text.render("You rescued", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("You rescued", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You rescued", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("When in game, press key 'W' to increment release rating.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("When in game, press key 'W' to increment release rating.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("When in game, press key 'W' to increment release rating.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("You needed", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("You needed", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You needed", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("You can also press key 'S' to decrease release rating.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("You can also press key 'S' to decrease release rating.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("You can also press key 'S' to decrease release rating.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
-	yOffsetAux += spaceBut * 3;
+	yOffsetAux += spaceBut * 1.5;
 
-	text.render("Good luck next time.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("For camera movement, press key 'A' to go to left.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("For camera movement, press key 'A' to go to left.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("For camera movement, press key 'A' to go to left.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("Press left click to retry", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("For the other direction press key 'D' to go to right.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("For the other direction press key 'D' to go to right.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("For the other direction press key 'D' to go to right.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+
+	yOffsetAux += spaceBut * 1.5;
+
+	text.render("PRO tip: if you move your mouse to the edge and also press the key", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("PRO tip: if you move your mouse to the edge and also press the key", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("PRO tip: if you move your mouse to the edge and also press the key", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+
+	yOffsetAux += spaceBut;
+
+	text.render(" for camera movement, you can move the camera faster!", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render(" for camera movement, you can move the camera faster!", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render(" for camera movement, you can move the camera faster!", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+
+	int xOffsetAux = xOffset;
+	xOffsetAux += spaceBut * 7;
+	yOffsetAux += spaceBut / 2;
+
+	text.render("Press right click to go back", glm::vec2(xOffsetAux - 2, yOffsetAux - 2), sizeFont / 1.5, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("Press right click to go back", glm::vec2(xOffsetAux + 2, yOffsetAux + 2), sizeFont / 1.5, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("Press right click to go back", glm::vec2(xOffsetAux, yOffsetAux), sizeFont / 1.5, glm::vec4(0.63, 0.76, 0.32, 1));
+	
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);

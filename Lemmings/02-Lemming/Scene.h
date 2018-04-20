@@ -169,6 +169,7 @@ private:
 	bool startSpawn;
 
 	//Audio related
+	bool goStarted;
 	bool letsgoStarted;
 	bool musicStarted;
 	bool exploteDone;
