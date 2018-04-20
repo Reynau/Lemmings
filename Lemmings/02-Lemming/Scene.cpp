@@ -117,8 +117,9 @@ void Scene::init()
 
 unsigned int x = 0;
 
-void Scene::update(int deltaTime)
+int Scene::update(int deltaTime)
 {
+	int updateState = 0;
 	int auxdeltaTime = deltaTime;
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
@@ -196,7 +197,10 @@ void Scene::update(int deltaTime)
 	}
 
 	// A level finishes when all lemmings are not alive
-	if (aliveLemmings == 0) finishLevel();
+	if (aliveLemmings == 0) {
+		finishLevel();
+		updateState = 7;
+	}
 
 	if (cursor->getPos().x < -4.f) moveMap(0);
 	else if (cursor->getPos().x > 307.f) moveMap(1);
@@ -205,6 +209,8 @@ void Scene::update(int deltaTime)
 	if (!checkSelecting()) cursor->setSelect(Cursor::NORMAL);
 	
 	audioDriver.update();
+
+	return updateState;
 }
 
 void Scene::render()

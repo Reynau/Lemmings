@@ -62,7 +62,7 @@ void Menu::init()
 	clicked = false;
 }
 
-void Menu::update(int deltaTime)
+int Menu::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
@@ -75,6 +75,8 @@ void Menu::update(int deltaTime)
 		spaceBut = roundf(hei * 120.f / 1080.f);
 		initButtons();
 	}
+
+	return transition;
 }
 
 void Menu::render()
@@ -138,14 +140,22 @@ void Menu::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButto
 		checkButtons(mouseX, mouseY);
 		if (bLeftButton) {
 			if (index_selected_but == 0) return;
-			else if (index_selected_but == 1)	// PLAY
+			else if (index_selected_but == 1) { // PLAY
+				transition = 5;
 				cout << "PLAY" << endl;
-			else if (index_selected_but == 3)	// HOW TO
+			}
+			else if (index_selected_but == 3) {	// HOW TO
+				transition = 2;
 				cout << "HOW TO PLAY" << endl;
-			else if (index_selected_but == 5)	// CREDITS
+			}
+			else if (index_selected_but == 5) {	// CREDITS
+				transition = 3;
 				cout << "CREDITS" << endl;
-			else if (index_selected_but == 7)	// EXIT
+			}
+			else if (index_selected_but == 7) {	// EXIT
+				transition = 9;
 				cout << "EXIT" << endl;
+			}
 			clicked = true;
 		}
 		if (bRightButton) {
@@ -283,4 +293,5 @@ void Menu::checkButtons(int x, int y)
 		}
 	}
 	index_selected_but = 0;
+	transition = 0;
 }

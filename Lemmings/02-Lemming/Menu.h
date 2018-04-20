@@ -25,7 +25,7 @@ public:
 	Menu();
 	~Menu();
 	void init();
-	void update(int deltaTime);
+	int update(int deltaTime);
 	void render();
 
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
@@ -59,6 +59,8 @@ private:
 	vector<glm::vec2> buttonsPos;
 	bool buttonsStarted;
 	bool clicked;
+
+	int transition = 0;
 };
 
 #endif // _MENU_INCLUDE

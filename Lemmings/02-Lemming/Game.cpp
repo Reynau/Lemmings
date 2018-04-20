@@ -14,8 +14,52 @@ void Game::init()
 
 bool Game::update(int deltaTime)
 {
-	mainMenu.update(deltaTime);
-	//scene.update(deltaTime);
+	int transition;
+	switch (gameState) {
+	case GameState::GAME:
+		transition = scene.update(deltaTime);
+		if (transition == 7) {
+			gameState = GameState::DATA;
+		}
+		break;
+	case GameState::CREDITS:
+		//transition = credits.update(deltaTime);
+		if (transition == 4) {
+			gameState = GameState::MENU;
+		}
+		break;
+	case GameState::DATA:
+		//transition = data.update(deltaTime);
+		if (transition == 6) {
+			gameState = GameState::GAME;
+		}
+		if (transition == 8) {
+			gameState = GameState::MENU;
+		}
+		break;
+	case GameState::INSTRUCTIONS:
+		//transition = instructions.update(deltaTime);
+		if (transition == 1) {
+			gameState = GameState::MENU;
+		}
+		break;
+
+	case GameState::MENU:
+		transition = mainMenu.update(deltaTime);
+		if (transition == 2) {
+			gameState = GameState::INSTRUCTIONS;
+		}
+		if (transition == 5) {
+			gameState = GameState::GAME;
+		}
+		if (transition == 3) {
+			gameState = GameState::CREDITS;
+		}
+		if (transition == 9) {
+			// EXIT
+		}
+		break;
+	}
 	
 	return bPlay;
 }
@@ -23,8 +67,25 @@ bool Game::update(int deltaTime)
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mainMenu.render();
-	//scene.render();
+
+	switch (gameState) {
+	case GameState::GAME:
+		scene.render();
+		break;
+	case GameState::CREDITS:
+		//credits.render();
+		break;
+	case GameState::DATA:
+		//data.render();
+		break;
+	case GameState::INSTRUCTIONS:
+		//instructions.render();
+		break;
+
+	case GameState::MENU:
+		//menu.render();
+		break;
+	}
 }
 
 void Game::keyPressed(int key)
