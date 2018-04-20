@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "Menu.h"
+#include "Results.h"
 //#include "SoundFX.h"
 
 // Game is a singleton (a class with a single instance) that represents our whole application
@@ -43,6 +44,7 @@ private:
 	bool bPlay;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	Menu mainMenu;					  // Menu to render
+	Results resultMenu;
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	int mouseX, mouseY;               // Mouse position

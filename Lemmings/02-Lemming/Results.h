@@ -1,38 +1,29 @@
-#ifndef _MENU_INCLUDE
-#define _MENU_INCLUDE
-
+#ifndef _RESULTS_INCLUDE
+#define _RESULTS_INCLUDE
 
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "MaskedTexturedQuad.h"
 #include "Quad.h"
 #include "Texture.h"
-#include "Lemming.h"
-#include "cursor.h"
-#include "Button.h"
+#include "Sprite.h"
 #include "Text.h"
 
-
-
-
-class Menu
+class Results
 {
 public:
-	Menu();
-	~Menu();
+	Results();
+	~Results();
 	void init();
 	void update(int deltaTime);
 	void render();
 
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
-
 private:
 	void initShaders();
-	void initButtons();
-	void checkButtons(int x, int y);
 
 private:
-	Texture colorTexture, titleTexture, lemmingTexture;
+	Texture titleTexture, colorTexture;
 	VariableTexture maskTexture;
 	MaskedTexturedQuad *map;
 	ShaderProgram simpleTexProgram, maskedTexProgram;
@@ -40,18 +31,14 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 
+	Sprite *sprite;
+
 	float wid, hei, xOffset, yOffset, spaceBut;
 	int sizeFont;
 	Text text;
 
-	Sprite *sprite;
-	Quad *quad;
-
-	Cursor * cursor;
-	int index_selected_but;
-	vector<glm::vec2> buttonsPos;
-	bool buttonsStarted;
 	bool clicked;
+
 };
 
 #endif // _MENU_INCLUDE
