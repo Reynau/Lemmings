@@ -12,12 +12,13 @@
 #define FALL_STEP 4
 
 
-void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture)
+void Lemming::init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture, Audio *audioDriver)
 {
 	state = FALLING_RIGHT_STATE;
 	pending_state = NULL_STATE;
 	pendingFloater = false;
 	isBashing = false;
+	this->audioDriver = audioDriver;
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.1, 16.0f / SPRITE_HEIGHT), lemmingTexture, &shaderProgram);
 	sprite->setNumberAnimations(30);
 	
@@ -593,6 +594,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			sprite->changeAnimation(LemmingAnims::EXPLOSION);
 			_explote();
 			state = EXPLOSION_STATE;
+			audioDriver->playAudio("sounds/EXPLODE.WAV");
 		}
 		break;
 	case EXPLOSION_STATE:
@@ -610,6 +612,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 	case ARRIVE_STATE:
 		if (sprite->keyFrame() == 7) {
 			state = SAFE_STATE;
+
 		}
 		break;
 	}
@@ -762,6 +765,7 @@ bool Lemming::setSkill(LemmingSkill newSkill)
 void Lemming::lemmingArrived()
 {
 	sprite->changeAnimation(LemmingAnims::SAFE);
+	audioDriver->playAudio("sounds/YIPPEE.WAV");
 	state = ARRIVE_STATE;
 }
 
@@ -877,6 +881,7 @@ void Lemming::_fall(LemmingAnims walkAnimation, LemmingState walkState)
 		if (fallSpeed == 3.0f) {
 			sprite->changeAnimation(LemmingAnims::FALL_DIE);
 			state = FALL_DIE_STATE;
+			audioDriver->playAudio("sounds/SPLAT.WAV");
 		}
 		else {
 			fallSpeed = MINIMUM_FALL_SPEED;

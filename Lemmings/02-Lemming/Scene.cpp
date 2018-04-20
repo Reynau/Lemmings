@@ -102,6 +102,7 @@ void Scene::init()
 	audioDriver.loadAudio("sounds/MOUSEPRE.WAV");
 	audioDriver.loadAudio("sounds/YIPPEE.WAV");
 	audioDriver.loadAudio("sounds/EXPLODE.WAV");
+	audioDriver.loadAudio("sounds/SPLAT.WAV");
 	audioDriver.loadAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 	audioDriver.loadAudio("sounds/00_lets_go.wav");
 	audioDriver.loadAudio("sounds/01_lemming1.wav");
@@ -171,7 +172,6 @@ void Scene::update(int deltaTime)
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
 		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) exploteLemming(i);
 		if (lemmings[i]->hasExploted() && !exploteDone) {
-			audioDriver.playAudio("sounds/EXPLODE.WAV");
 			exploteDone = true;
 			exploteTime = currentTime;
 		}
@@ -180,7 +180,6 @@ void Scene::update(int deltaTime)
 			if (countds[i]) removeCount(i);
 		}
 		else if (lemmings[i]->isSafe()) {
-			audioDriver.playAudio("sounds/YIPPEE.WAV");
 			removeLemming(i);
 			if (countds[i]) removeCount(i);
 			++safeLemmings;
@@ -959,7 +958,7 @@ void Scene::initLemmings() {
 	Level level = levels[currentLevel];
 	for (int i = 0; i < level.lemmingsToSpawn; ++i) {
 		Lemming * lem = new Lemming();
-		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture);
+		lem->init(level.spawnPosition, simpleTexProgram, &lemmingTexture, &audioDriver);
 		lem->setMapMask(&maskTexture);
 
 		lemmings.push_back(lem);

@@ -4,6 +4,7 @@
 
 #include "Sprite.h"
 #include "VariableTexture.h"
+#include "Audio.h"
 
 
 // Lemming is basically a Sprite that represents one lemming. As such it has
@@ -28,7 +29,7 @@ public:
 	};
 
 public:
-	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture);
+	void init(const glm::vec2 &initialPosition, ShaderProgram &shaderProgram, Texture * lemmingTexture, Audio *audioDriver);
 	void update(int deltaTime, int offset, vector<glm::vec2> colliders);
 	void render();
 
@@ -74,6 +75,8 @@ private:
 	int lem_offset;
 
 	vector<glm::vec2> colliders;
+
+	Audio *audioDriver;
 
 	enum LemmingAnims
 	{
