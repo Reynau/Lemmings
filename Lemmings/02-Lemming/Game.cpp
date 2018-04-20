@@ -126,7 +126,7 @@ void Game::mouseMove(int x, int y)
 {
 	mouseX = x;
 	mouseY = y;
-	mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+	//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 }
 
@@ -135,7 +135,7 @@ void Game::mousePress(int button)
 	if(button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = true;
-		mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
@@ -150,7 +150,7 @@ void Game::mouseRelease(int button)
 	if (button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = false;
-		mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
