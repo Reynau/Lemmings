@@ -6,6 +6,7 @@ Xavier Lopez Reynau
 - Pantalla extra del joc: dades de la partida
 - Totes les animacions implementades, fins i tot als botons de les habilitats.
 - Botons per augmentar/disminuir la velocitat de spawn dels lemmings
+- Temps en la UI de la partida
 
 El joc funciona majoritàriament amb el ratolí i mitjançant butons.
 Es pot augmentar i disminuir la velocitat de spawn amb les tecles W i S, a més dels botons de la UI
