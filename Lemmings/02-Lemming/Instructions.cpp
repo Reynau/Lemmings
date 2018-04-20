@@ -45,7 +45,13 @@ void Instructions::init(Cursor *cursor)
 
 	sprite = Sprite::createSprite(glm::ivec2(75, 28), glm::vec2(1.f, 1.f), &titleTexture, &simpleTexProgram);
 	sprite->setPosition(glm::vec2(115.f, 3.f));
+	/*
+	wSprite = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1.f, 1.f), &textureW, &simpleTexProgram);
+	wSprite->setPosition(glm::vec2(25.f, 115.f));
 
+	sSprite = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1.f, 1.f), &textureS, &simpleTexProgram);
+	sSprite->setPosition(glm::vec2(25.f, 150.f));
+	*/
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
 
@@ -140,7 +146,6 @@ void Instructions::render()
 	text.render("Press right click to go back", glm::vec2(xOffsetAux - 2, yOffsetAux - 2), sizeFont / 1.5, glm::vec4(0.74, 0.89, 0.38, 1));
 	text.render("Press right click to go back", glm::vec2(xOffsetAux + 2, yOffsetAux + 2), sizeFont / 1.5, glm::vec4(0.51, 0.61, 0.26, 1));
 	text.render("Press right click to go back", glm::vec2(xOffsetAux, yOffsetAux), sizeFont / 1.5, glm::vec4(0.63, 0.76, 0.32, 1));
-	
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
