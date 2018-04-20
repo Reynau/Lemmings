@@ -8,15 +8,14 @@ void Game::init()
 	bPlay = true;
 	bLeftMouse = bRightMouse = false;
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
-	//mainMenu.init();
-	scene.init();
-	//sound.PlayThemeSong();
+	mainMenu.init();
+	//scene.init();
 }
 
 bool Game::update(int deltaTime)
 {
-	//mainMenu.update(deltaTime);
-	scene.update(deltaTime);
+	mainMenu.update(deltaTime);
+	//scene.update(deltaTime);
 	
 	return bPlay;
 }
@@ -24,8 +23,8 @@ bool Game::update(int deltaTime)
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//mainMenu.render();
-	scene.render();
+	mainMenu.render();
+	//scene.render();
 }
 
 void Game::keyPressed(int key)
@@ -36,6 +35,10 @@ void Game::keyPressed(int key)
 		scene.moveMap(true);
 	else if (key == 65 || key == 97) // A
 		scene.moveMap(false);
+	if (key == 87 || key == 119) // W
+		scene.releaseRateUp();
+	else if (key == 83 || key == 115) // S
+		scene.releaseRateDown();
 	keys[key] = true;
 }
 
@@ -58,8 +61,8 @@ void Game::mouseMove(int x, int y)
 {
 	mouseX = x;
 	mouseY = y;
-	//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
-	scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+	mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+	//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 }
 
 void Game::mousePress(int button)
@@ -67,19 +70,24 @@ void Game::mousePress(int button)
 	if(button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = true;
-		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
 	{
 		bRightMouse = true;
-		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 }
 
 void Game::mouseRelease(int button)
 {
-	if(button == GLUT_LEFT_BUTTON)
+	if (button == GLUT_LEFT_BUTTON)
+	{
 		bLeftMouse = false;
+		mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+	}
 	else if(button == GLUT_RIGHT_BUTTON)
 		bRightMouse = false;
 }

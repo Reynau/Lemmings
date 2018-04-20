@@ -37,6 +37,8 @@ public:
 	bool isArriving();
 	bool isSafe();
 	bool isBusy();
+	bool isCLimber();
+	bool isFloater();
 	bool isBlocker();
 	bool hasExploted();
 	bool basherHasToMove();
@@ -56,7 +58,7 @@ public:
 private:
 	const float SPRITE_HEIGHT = 624.0f;
 
-	const float GRAVITY = 0.05f;
+	const float GRAVITY = 0.045f;
 	const float MAXIMUM_FALL_SPEED = 3.0f;
 	const float MINIMUM_FALL_SPEED = 2.0f;
 

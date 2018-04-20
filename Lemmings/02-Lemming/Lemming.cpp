@@ -200,12 +200,42 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == BUILDER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIAG_BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		_dig(LemmingAnims::FALLING_LEFT, LemmingState::FALLING_LEFT_STATE);
 		break;
 
 	case DIGGER_RIGHT_STATE:
 		if (pending_state == SURRENDER_STATE) {
 			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BUILDER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIAG_BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_RIGHT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -335,6 +365,11 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == BUILDER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		else if (basherHasToMove()) {
 			sprite->position() += glm::vec2(1, -1);
 			if (basherCanBash(true)) {
@@ -364,6 +399,16 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 	case BASHER_LEFT_STATE:
 		if (pending_state == SURRENDER_STATE) {
 			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BUILDER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIAG_BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_LEFT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -400,6 +445,21 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
+		else if (pending_state == BUILDER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == DIAG_BASHER_RIGHT_STATE) {
+			sprite->changeAnimation(LemmingAnims::DIAG_BASHER_RIGHT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
 		else _diagBash(LemmingAnims::FALLING_RIGHT, LemmingState::FALLING_RIGHT_STATE);
 		
 		break;
@@ -407,6 +467,16 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 	case DIAG_BASHER_LEFT_STATE:
 		if (pending_state == SURRENDER_STATE) {
 			sprite->changeAnimation(LemmingAnims::SURRENDER);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BUILDER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BUILDER_LEFT);
+			state = pending_state;
+			pending_state = NULL_STATE;
+		}
+		else if (pending_state == BASHER_LEFT_STATE) {
+			sprite->changeAnimation(LemmingAnims::BASHER_LEFT);
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
@@ -633,7 +703,17 @@ bool Lemming::isSafe() {
 
 bool Lemming::isBusy()
 {
-	return (pending_state != NULL_STATE || pendingFloater);
+	return (pending_state != NULL_STATE || pendingFloater || pendingClimber);
+}
+
+bool Lemming::isCLimber()
+{
+	return pendingClimber;
+}
+
+bool Lemming::isFloater()
+{
+	return  pendingFloater;
 }
 
 bool Lemming::isBlocker()
@@ -809,6 +889,10 @@ bool Lemming::isSameSkill(LemmingSkill newSkill)
 	if (newSkill == DIGGER && (state == DIGGER_RIGHT_STATE || state == DIGGER_LEFT_STATE)) return true;
 	if (newSkill == FLOATER && (state == FLOATER_RIGHT_STATE || state == FLOATER_LEFT_STATE)) return true;
 	if (newSkill == BUILDER && (state == BUILDER_RIGHT_STATE || state == BUILDER_LEFT_STATE)) return true;
+	if (newSkill == BASHER && (state == BASHER_RIGHT_STATE || state == BASHER_LEFT_STATE)) return true;
+	if (newSkill == DIAG_BASHER && (state == DIAG_BASHER_RIGHT_STATE || state == DIAG_BASHER_LEFT_STATE)) return true;
+	if (newSkill == CLIMBER && (state == CLIMBER_RIGHT_STATE || state == CLIMBER_LEFT_STATE)) return true;
+	if (newSkill == SURREND && (state == SURRENDER_STATE)) return true;
 	return false;
 }
 

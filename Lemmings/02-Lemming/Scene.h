@@ -32,6 +32,8 @@ public:
 	
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
 	void moveMap(bool right);
+	void releaseRateUp();
+	void releaseRateDown();
 
 public:
 	VariableTexture maskTexture;
@@ -52,7 +54,6 @@ private:
 	bool checkSelecting();
 	void checkButtons();
 	void checkAndSetReleaseButton();
-	const char * obtainMusicPath(int numLevel);
 	void applyButtonPressed(int i);
 	void undoButtonPressed(int i);
 	void applySkill(Lemming::LemmingSkill skill);
@@ -123,6 +124,7 @@ private:
 	int index_selected_lem;
 	int index_selected_but;
 	int index_selected_release;
+	bool clicked;
 
 	// Door related
 	Door * spawnDoor;

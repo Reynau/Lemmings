@@ -17,6 +17,9 @@ Scene::~Scene()
 	if(map != NULL)
 		delete map;
 	audioDriver.removeAudio("sounds/MOUSEPRE.WAV");
+	audioDriver.removeAudio("sounds/YIPPEE.WAV");
+	audioDriver.removeAudio("sounds/EXPLODE.WAV");
+	audioDriver.removeAudio("sounds/SPLAT.WAV");
 	audioDriver.removeAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 	audioDriver.removeAudio("sounds/00_lets_go.wav");
 	audioDriver.removeAudio("sounds/01_lemming1.wav");
@@ -28,7 +31,7 @@ void Scene::init()
 {
 
 	//SELECT LEVEL
-	currentLevel = 4;	// From 1 to NumLevels
+	currentLevel = 8;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
@@ -94,6 +97,7 @@ void Scene::init()
 	skillApplied = false;
 	previousSkillTime = 0.f;
 	exploteTime = 0.f;
+	clicked = false;
 
 	audioDriver = Audio();
 	letsgoStarted = false;
@@ -199,7 +203,6 @@ void Scene::update(int deltaTime)
 	spawnDoor->update(deltaTime, int(currentTime/1000));
 	door->update(deltaTime, 0);
 	if (!checkSelecting()) cursor->setSelect(Cursor::NORMAL);
-	checkButtons();
 	
 	audioDriver.update();
 }
@@ -322,12 +325,14 @@ void Scene::render()
 
 void Scene::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
-	if (bLeftButton) {
-		if (index_selected_but == 0) applySkill(selected_lem_state);
-		else pressButton();
-	}
-	if (bRightButton) {
-		
+	if (!bLeftButton) clicked = false;
+	if (!clicked) {
+		checkButtons();
+		if (bLeftButton) {
+			if (index_selected_but == 0) applySkill(selected_lem_state);
+			else pressButton();
+			clicked = true;
+		}
 	}
 	cursor->setPos(mouseX, mouseY);
 }
@@ -476,7 +481,6 @@ void Scene::initLevels()
 	firstLevel.releaseRate = 50.f;
 	firstLevel.door = Door::FIRST_DOOR;
 	firstLevel.spriteWidth = 512.f;
-	// CLIMBER, FLOATER, SURREND, BLOCKER, BUILDER, BASHER, DIAG_BASHER, DIGGER
 	firstLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(firstLevel);
 
@@ -493,7 +497,7 @@ void Scene::initLevels()
 	secondLevel.releaseRate = 50.f;
 	secondLevel.door = Door::SECOND_DOOR;
 	secondLevel.spriteWidth = 512.f;
-	secondLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	secondLevel.availableSkills = { 0, 10, 0, 0, 0, 0, 0, 0 };
 	levels.push_back(secondLevel);
 
 	Level thirdLevel;
@@ -509,7 +513,7 @@ void Scene::initLevels()
 	thirdLevel.releaseRate = 50.f;
 	thirdLevel.door = Door::SECOND_DOOR;
 	thirdLevel.spriteWidth = 512.f;
-	thirdLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	thirdLevel.availableSkills = { 0, 0, 0, 10, 0, 0, 0, 0 };
 	levels.push_back(thirdLevel);
 
 
@@ -526,7 +530,7 @@ void Scene::initLevels()
 	fourthLevel.releaseRate = 1.f;
 	fourthLevel.door = Door::THIRD_DOOR;
 	fourthLevel.spriteWidth = 512.f;
-	fourthLevel.availableSkills = { 10, 0, 0, 0, 0, 0, 0, 10 };
+	fourthLevel.availableSkills = { 10, 0, 0, 0, 0, 0, 1, 0 };
 	levels.push_back(fourthLevel);
 
 	// TRICKY
@@ -543,7 +547,7 @@ void Scene::initLevels()
 	fifthLevel.releaseRate = 50.f;
 	fifthLevel.door = Door::FIRST_DOOR;
 	fifthLevel.spriteWidth = 924.f;
-	fifthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	fifthLevel.availableSkills = { 10, 10, 10, 10, 10, 10, 10, 10 };
 	levels.push_back(fifthLevel);
 
 	Level sixthLevel;
@@ -559,7 +563,7 @@ void Scene::initLevels()
 	sixthLevel.releaseRate = 1.f;
 	sixthLevel.door = Door::FOURTH_DOOR;
 	sixthLevel.spriteWidth = 1600.f;
-	sixthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	sixthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 20 };
 	levels.push_back(sixthLevel);
 
 	Level seventhLevel;
@@ -575,7 +579,7 @@ void Scene::initLevels()
 	seventhLevel.releaseRate = 50.f;
 	seventhLevel.door = Door::FIRST_DOOR;
 	seventhLevel.spriteWidth = 704.f;
-	seventhLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	seventhLevel.availableSkills = { 20, 20, 20, 20, 40, 20, 20, 20 };
 	levels.push_back(seventhLevel);
 
 	// TAXING
@@ -592,7 +596,7 @@ void Scene::initLevels()
 	eighthLevel.releaseRate = 40.f;
 	eighthLevel.door = Door::SECOND_DOOR;
 	eighthLevel.spriteWidth = 1224.f;
-	eighthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	eighthLevel.availableSkills = { 2, 2, 2, 2, 8, 2, 2, 2 };
 	levels.push_back(eighthLevel);
 
 }
@@ -698,37 +702,37 @@ void Scene::resetOffsetsAndReleases()
 	levels[1].releaseRate = 50.f;
 	levels[1].spawnPosition = glm::vec2(-41 + levels[1].offset, 10);
 	levels[1].savePosition = glm::vec2(188 + levels[1].offset, 101);
-	levels[1].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[1].availableSkills = { 0, 10, 0, 0, 0, 0, 0, 0 };
 	levels[2].offset = 22.f;
 	levels[2].releaseRate = 50.f;
 	levels[2].spawnPosition = glm::vec2(107 + levels[2].offset, 3);
 	levels[2].savePosition = glm::vec2(73 + levels[2].offset, 105);
-	levels[2].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[2].availableSkills = { 0, 0, 0, 10, 0, 0, 0, 0 };
 	levels[3].offset = 122.f;
 	levels[3].releaseRate = 1.f;
 	levels[3].spawnPosition = glm::vec2(-37 + levels[3].offset, 10);
 	levels[3].savePosition = glm::vec2(121 + levels[3].offset, 0);
-	levels[3].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[3].availableSkills = { 10, 0, 0, 0, 0, 0, 1, 0 };
 	levels[4].offset = 22.f;
 	levels[4].releaseRate = 50.f;
 	levels[4].spawnPosition = glm::vec2(70 + levels[4].offset, 65);
 	levels[4].savePosition = glm::vec2(687 + levels[4].offset, 69);
-	levels[4].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[4].availableSkills = { 10, 10, 10, 10, 10, 10, 10, 10 };
 	levels[5].offset = 240.f;
 	levels[5].releaseRate = 1.f;
 	levels[5].spawnPosition = glm::vec2(-78 + levels[5].offset, 13);
 	levels[5].savePosition = glm::vec2(512 + levels[5].offset, 72);
-	levels[5].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[5].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 20 };
 	levels[6].offset = 2.f;
 	levels[6].releaseRate = 50.f;
 	levels[6].spawnPosition = glm::vec2(145 + levels[6].offset, 1);
 	levels[6].savePosition = glm::vec2(626 + levels[6].offset, 3);
-	levels[6].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[6].availableSkills = { 20, 20, 20, 20, 40, 20, 20, 20 };
 	levels[7].offset = 2.f;
 	levels[7].releaseRate = 40.f;
 	levels[7].spawnPosition = glm::vec2(50 + levels[7].offset, 30);
 	levels[7].savePosition = glm::vec2(1120 + levels[7].offset, 15);
-	levels[7].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	levels[7].availableSkills = { 2, 2, 2, 2, 8, 2, 2, 2 };
 }
 
 bool Scene::checkSelecting()
@@ -779,6 +783,18 @@ void Scene::checkButtons()
 		}
 	}
 	index_selected_but = 0;
+}
+
+void Scene::releaseRateUp()
+{
+	if (levels[currentLevel].releaseRate < 99.f)
+		levels[currentLevel].releaseRate++;
+}
+
+void Scene::releaseRateDown()
+{
+	if (levels[currentLevel].releaseRate > 1.f)
+		levels[currentLevel].releaseRate--;
 }
 
 void Scene::checkAndSetReleaseButton()
@@ -851,6 +867,24 @@ void Scene::applySkill(Lemming::LemmingSkill skill)
 	else if (!skillApplied) {
 		if (levels[currentLevel].availableSkills[skill] == 0) return;
 		if (!lemmings[index_selected_lem - 1]->isBusy()) {
+			if (!lemmings[index_selected_lem - 1]->setSkill(skill)) return;
+			else {
+				audioDriver.playAudio("sounds/MOUSEPRE.WAV");
+				levels[currentLevel].availableSkills[skill]--;
+				skillApplied = true;
+				previousSkillTime = currentTime;
+			}
+		}
+		else if ((lemmings[index_selected_lem - 1]->isCLimber()) && skill != Lemming::CLIMBER) {
+			if (!lemmings[index_selected_lem - 1]->setSkill(skill)) return;
+			else {
+				audioDriver.playAudio("sounds/MOUSEPRE.WAV");
+				levels[currentLevel].availableSkills[skill]--;
+				skillApplied = true;
+				previousSkillTime = currentTime;
+			}
+		}
+		else if ((lemmings[index_selected_lem - 1]->isFloater()) && skill != Lemming::FLOATER) {
 			if (!lemmings[index_selected_lem - 1]->setSkill(skill)) return;
 			else {
 				audioDriver.playAudio("sounds/MOUSEPRE.WAV");
