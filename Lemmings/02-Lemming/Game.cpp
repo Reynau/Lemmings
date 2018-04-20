@@ -14,6 +14,7 @@ void Game::init()
 	mainMenu.init(cursor);
 	scene.init(cursor);
 	credits.init(cursor);
+	results.init(cursor);
 }
 
 bool Game::update(int deltaTime)
@@ -23,6 +24,11 @@ bool Game::update(int deltaTime)
 	case GameState::GAME:
 		transition = scene.update(deltaTime);
 		if (transition == 7) {
+			int lemmingsToSave = scene.getLemmingsToSave();
+			int savedLemmings = scene.getSavedLemmings();
+			bool winner = scene.isWinner();
+			results.resetTransition();
+			results.setData(lemmingsToSave, savedLemmings, winner);
 			gameState = GameState::DATA;
 		}
 		break;
@@ -33,7 +39,7 @@ bool Game::update(int deltaTime)
 		}
 		break;
 	case GameState::DATA:
-		//transition = data.update(deltaTime);
+		transition = results.update(deltaTime);
 		if (transition == 6) {
 			gameState = GameState::GAME;
 		}
@@ -80,7 +86,7 @@ void Game::render()
 		credits.render();
 		break;
 	case GameState::DATA:
-		//data.render();
+		results.render();
 		break;
 	case GameState::INSTRUCTIONS:
 		//instructions.render();
@@ -135,7 +141,7 @@ void Game::mouseMove(int x, int y)
 		credits.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		break;
 	case GameState::DATA:
-		//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		results.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		break;
 	case GameState::INSTRUCTIONS:
 		//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);

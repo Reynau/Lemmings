@@ -34,8 +34,6 @@ void Menu::init(Cursor *cursor)
 	maskTexture.loadFromFile("images/menu_background_mask.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
-
-	//quad = Quad::createQuad(0.f, 0.f, 128.f, 128.f, program);
 	
 	titleTexture.loadFromFile("images/Lemmings-Logo.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	titleTexture.setMinFilter(GL_NEAREST);
@@ -44,7 +42,6 @@ void Menu::init(Cursor *cursor)
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	lemmingTexture.setMinFilter(GL_NEAREST);
 	lemmingTexture.setMagFilter(GL_NEAREST);
-
 
 	sprite = Sprite::createSprite(glm::ivec2(275, 102), glm::vec2(1.f, 1.f), &titleTexture, &simpleTexProgram);
 	sprite->setPosition(glm::vec2(20.f, 3.f));

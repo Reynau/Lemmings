@@ -35,6 +35,10 @@ public:
 	void releaseRateUp();
 	void releaseRateDown();
 
+	int getLemmingsToSave();
+	int getSavedLemmings();
+	bool isWinner();
+
 public:
 	VariableTexture maskTexture;
 
@@ -168,6 +172,8 @@ private:
 	bool exploteDone;
 	float exploteTime;
 	int songNum;
+
+	bool winner;
 };
 
 

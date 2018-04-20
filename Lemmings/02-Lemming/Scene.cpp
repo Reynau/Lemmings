@@ -128,7 +128,10 @@ int Scene::update(int deltaTime)
 	if (exploteTime + 100 < currentTime)
 		exploteDone = false;
 
-	if (levelTime <= 0) finishLevel();
+	if (levelTime <= 0) {
+		finishLevel();
+		updateState = 7;
+	}
 
 	if (currentTime < 2000) {
 		wid = float(glutGet(GLUT_WINDOW_WIDTH));
@@ -685,13 +688,12 @@ void Scene::changeLevel(int newLevel)
 void Scene::finishLevel() {
 	Level level = levels[currentLevel];
 
-	// TODO: Improve this logic
-	if (safeLemmings >= level.lemmingsToSecure) {
-		// Win
+	if (safeLemmings >= level.lemmingsToSecure) {	// Win
+		winner = true;
 		changeLevel(++currentLevel);
 	}
-	else {
-		// Lose
+	else {	// Lose
+		winner = false;
 		changeLevel(currentLevel);
 	}
 }
@@ -800,6 +802,18 @@ void Scene::releaseRateDown()
 {
 	if (levels[currentLevel].releaseRate > 1.f)
 		levels[currentLevel].releaseRate--;
+}
+
+int Scene::getLemmingsToSave() {
+	return levels[currentLevel].lemmingsToSecure;
+}
+
+int Scene::getSavedLemmings() {
+	return safeLemmings;
+}
+
+bool Scene::isWinner() {
+	return winner;
 }
 
 void Scene::checkAndSetReleaseButton()

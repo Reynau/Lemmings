@@ -47,7 +47,7 @@ private:
 	Scene scene;                      // Scene to render
 	Menu mainMenu;		
 	Credits credits;
-	Results resultMenu;
+	Results results;
 
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
