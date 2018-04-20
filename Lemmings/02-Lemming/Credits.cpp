@@ -127,9 +127,9 @@ void Credits::render()
 	int xOffsetAux = xOffset;
 	xOffsetAux += spaceBut * 7;
 
-	text.render("Press left click to go back", glm::vec2(xOffsetAux - 3, yOffsetAux - 3), sizeFont / 2, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("Press left click to go back", glm::vec2(xOffsetAux + 3, yOffsetAux + 3), sizeFont / 2, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("Press left click to go back", glm::vec2(xOffsetAux, yOffsetAux), sizeFont / 2, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("Press right click to go back", glm::vec2(xOffsetAux - 3, yOffsetAux - 3), sizeFont / 2, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("Press right click to go back", glm::vec2(xOffsetAux + 3, yOffsetAux + 3), sizeFont / 2, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("Press right click to go back", glm::vec2(xOffsetAux, yOffsetAux), sizeFont / 2, glm::vec4(0.63, 0.76, 0.32, 1));
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
@@ -149,11 +149,10 @@ void Credits::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightBu
 	if (!bLeftButton) clicked = false;
 	if (!clicked) {
 		if (bLeftButton) {
-			transition = 4;
-			clicked = true;
 		}
 		if (bRightButton) {
-
+			transition = 4;
+			clicked = true;
 		}
 	}
 	cursor->setPos(mouseX, mouseY);
