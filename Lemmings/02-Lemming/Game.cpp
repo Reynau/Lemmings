@@ -126,8 +126,25 @@ void Game::mouseMove(int x, int y)
 {
 	mouseX = x;
 	mouseY = y;
-	//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
-	//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+
+	switch (gameState) {
+	case GameState::GAME:
+		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		break;
+	case GameState::CREDITS:
+		credits.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		break;
+	case GameState::DATA:
+		//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		break;
+	case GameState::INSTRUCTIONS:
+		//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		break;
+
+	case GameState::MENU:
+		mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		break;
+	}
 }
 
 void Game::mousePress(int button)
@@ -135,13 +152,49 @@ void Game::mousePress(int button)
 	if(button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = true;
-		//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
-		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+
+		switch (gameState) {
+		case GameState::GAME:
+			scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::CREDITS:
+			credits.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::DATA:
+			//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::INSTRUCTIONS:
+			//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+
+		case GameState::MENU:
+			mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		}
+
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
 	{
 		bRightMouse = true;
-		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+
+		switch (gameState) {
+		case GameState::GAME:
+			scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::CREDITS:
+			credits.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::DATA:
+			//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		case GameState::INSTRUCTIONS:
+			//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+
+		case GameState::MENU:
+			mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			break;
+		}
 	}
 }
 
