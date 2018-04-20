@@ -101,25 +101,50 @@ void Results::render()
 
 	text.render("You rescued " + to_string(savedLemmings), glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
 	text.render("You rescued " + to_string(savedLemmings), glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You rescued " + to_string(savedLemmings), glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("You rescued " + to_string(savedLemmings), glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
 
 	yOffsetAux += spaceBut;
 
 	text.render("You needed " + to_string(lemmingsToSave), glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
 	text.render("You needed " + to_string(lemmingsToSave), glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You needed " + to_string(lemmingsToSave), glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("You needed " + to_string(lemmingsToSave), glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
 
-	yOffsetAux += spaceBut*3;
+	yOffsetAux += spaceBut*2.7f;
 
-	text.render("Good luck next time.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	if (!winner) {
+		text.render("Good luck next time.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Good luck next time.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Good luck next time.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
 
-	yOffsetAux += spaceBut;
+		yOffsetAux += spaceBut;
 
-	text.render("Press left click to retry", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+		text.render("Press left click to retry", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Press left click to retry", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Press left click to retry", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
+
+		yOffsetAux += spaceBut;
+
+		text.render("Press right click to menu", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Press right click to menu", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Press right click to menu", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
+	}
+	else {
+		text.render("Good job on that one!", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Good job on that one!", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Good job on that one!", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
+
+		yOffsetAux += spaceBut;
+
+		text.render("Press left click to next", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Press left click to next", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Press left click to next", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0.1, 0.36, 1));
+
+		yOffsetAux += spaceBut;
+
+		text.render("Press right click to menu", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+		text.render("Press right click to menu", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+		text.render("Press right click to menu", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	}
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
@@ -134,11 +159,12 @@ void Results::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightBu
 	if (!bLeftButton) clicked = false;
 	if (!clicked) {
 		if (bLeftButton) {
-			updateState = 8;
+			updateState = 6;
 			clicked = true;
 		}
 		if (bRightButton) {
-
+			updateState = 8;
+			clicked = true;
 		}
 	}
 	cursor->setPos(mouseX, mouseY);

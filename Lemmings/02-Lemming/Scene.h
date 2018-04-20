@@ -122,6 +122,8 @@ private:
 	int spawnedLemmings;
 	int aliveLemmings;
 	int safeLemmings;
+	int lastSavedLemmnings;
+	int lastLemmingsToSecure;
 
 	// Cursor related
 	Cursor * cursor;

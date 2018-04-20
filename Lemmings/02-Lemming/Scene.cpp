@@ -30,7 +30,7 @@ Scene::~Scene()
 void Scene::init(Cursor* cursor)
 {
 	//SELECT LEVEL
-	currentLevel = 6;	// From 1 to NumLevels
+	currentLevel = 1;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
@@ -688,6 +688,9 @@ void Scene::changeLevel(int newLevel)
 void Scene::finishLevel() {
 	Level level = levels[currentLevel];
 
+	lastSavedLemmnings = safeLemmings;
+	lastLemmingsToSecure = level.lemmingsToSecure;
+
 	if (safeLemmings >= level.lemmingsToSecure) {	// Win
 		winner = true;
 		changeLevel(++currentLevel);
@@ -805,11 +808,11 @@ void Scene::releaseRateDown()
 }
 
 int Scene::getLemmingsToSave() {
-	return levels[currentLevel].lemmingsToSecure;
+	return lastLemmingsToSecure;
 }
 
 int Scene::getSavedLemmings() {
-	return safeLemmings;
+	return lastSavedLemmnings;
 }
 
 bool Scene::isWinner() {
