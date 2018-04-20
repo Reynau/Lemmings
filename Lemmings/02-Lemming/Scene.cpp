@@ -87,8 +87,10 @@ void Scene::init()
 	startSpawn = false;
 
 	audioDriver = Audio();
-	audioDriver.loadAudio("sounds/01_lemming1.wav");
-	audioDriver.playAudio("sounds/01_lemming1.wav");
+	letsgoStarted = false;
+	musicStarted = false;
+	audioDriver.loadAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 }
 
 unsigned int x = 0;
@@ -109,6 +111,31 @@ void Scene::update(int deltaTime)
 		xOffsetTime = roundf(wid * 1270.f / 1920.f);
 		yOffset = roundf(hei * 911.f / 1080.f);
 		sizeFont = roundf(hei * 58.f / 1080.f);
+	}
+
+	if (currentTime > 1000 && !letsgoStarted) {
+		audioDriver.removeAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+		audioDriver.loadAudio("sounds/00_lets_go.wav");
+		audioDriver.playAudio("sounds/00_lets_go.wav");
+		letsgoStarted = true;
+	}
+
+	if ((currentTime > 3000) && !musicStarted) {
+		audioDriver.removeAudio("sounds/00_lets_go.wav");
+		songNum = currentLevel % 3;
+		if (songNum == 0) {
+			audioDriver.loadAudio("sounds/01_lemming1.wav");
+			audioDriver.playAudio("sounds/01_lemming1.wav");
+		}
+		else if (songNum == 1) {
+			audioDriver.loadAudio("sounds/02_lemming2.wav");
+			audioDriver.playAudio("sounds/02_lemming2.wav");
+		}
+		else if (songNum == 2) {
+			audioDriver.loadAudio("sounds/03_lemming3.wav");
+			audioDriver.playAudio("sounds/03_lemming3.wav");
+		}
+		musicStarted = true;
 	}
 
 	Level level = levels[currentLevel];
@@ -581,6 +608,21 @@ void Scene::changeLevel(int newLevel)
 	selected_lem_state = Lemming::NO_SKILL;
 
 	currentTime = 0;
+
+	if (songNum == 0) {
+		audioDriver.removeAudio("sounds/01_lemming1.wav");
+	}
+	else if (songNum == 1) {
+		audioDriver.removeAudio("sounds/02_lemming2.wav");
+	}
+	else if (songNum == 2) {
+		audioDriver.removeAudio("sounds/03_lemming3.wav");
+	}
+	letsgoStarted = false;
+	musicStarted = false;
+	audioDriver.loadAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+
 }
 
 void Scene::finishLevel() {

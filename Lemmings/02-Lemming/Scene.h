@@ -52,6 +52,7 @@ private:
 	bool checkSelecting();
 	void checkButtons();
 	void checkAndSetReleaseButton();
+	const char * obtainMusicPath(int numLevel);
 	void applyButtonPressed(int i);
 	void undoButtonPressed(int i);
 	void applySkill(Lemming::LemmingSkill skill);
@@ -153,6 +154,11 @@ private:
 	int lemmingTime;
 	float previousTime;
 	bool startSpawn;
+
+	//Audio related
+	bool letsgoStarted;
+	bool musicStarted;
+	int songNum;
 };
 
 
