@@ -125,6 +125,13 @@ void Menu::render()
 	text.render("EXIT", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
 	text.render("EXIT", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 
+	int xOffsetAux = xOffset;
+	xOffsetAux += spaceBut * 6;
+
+	text.render("Press left click to select an option", glm::vec2(xOffsetAux - 3, yOffsetAux - 3), sizeFont/2, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("Press left click to select an option", glm::vec2(xOffsetAux + 3, yOffsetAux + 3), sizeFont/2, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("Press left click to select an option", glm::vec2(xOffsetAux, yOffsetAux), sizeFont/2, glm::vec4(0.63, 0.76, 0.32, 1));
+
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -139,8 +146,7 @@ void Menu::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButto
 	if (!clicked) {
 		checkButtons(mouseX, mouseY);
 		if (bLeftButton) {
-			if (index_selected_but == 0) return;
-			else if (index_selected_but == 1) { // PLAY
+			if (index_selected_but == 1) { // PLAY
 				transition = 5;
 				cout << "PLAY" << endl;
 			}
@@ -245,6 +251,12 @@ void Menu::initShaders()
 	vShader.free();
 	fShader.free();
 }
+
+void Menu::resetTransition()
+{
+	transition = 0;
+}
+
 
 void Menu::initButtons()
 {

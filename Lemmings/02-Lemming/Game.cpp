@@ -14,6 +14,7 @@ void Game::init()
 	mainMenu.init(cursor);
 	scene.init(cursor);
 	credits.init(cursor);
+	instructions.init(cursor);
 }
 
 bool Game::update(int deltaTime)
@@ -30,6 +31,7 @@ bool Game::update(int deltaTime)
 		transition = credits.update(deltaTime);
 		if (transition == 4) {
 			gameState = GameState::MENU;
+			credits.resetTransition();
 		}
 		break;
 	case GameState::DATA:
@@ -42,9 +44,10 @@ bool Game::update(int deltaTime)
 		}
 		break;
 	case GameState::INSTRUCTIONS:
-		//transition = instructions.update(deltaTime);
+		transition = instructions.update(deltaTime);
 		if (transition == 1) {
 			gameState = GameState::MENU;
+			instructions.resetTransition();
 		}
 		break;
 
@@ -52,15 +55,18 @@ bool Game::update(int deltaTime)
 		transition = mainMenu.update(deltaTime);
 		if (transition == 2) {
 			gameState = GameState::INSTRUCTIONS;
+			mainMenu.resetTransition();
 		}
 		if (transition == 5) {
 			gameState = GameState::GAME;
+			mainMenu.resetTransition();
 		}
 		if (transition == 3) {
 			gameState = GameState::CREDITS;
+			mainMenu.resetTransition();
 		}
 		if (transition == 9) {
-			// EXIT
+			bPlay = false;
 		}
 		break;
 	}
@@ -83,7 +89,7 @@ void Game::render()
 		//data.render();
 		break;
 	case GameState::INSTRUCTIONS:
-		//instructions.render();
+		instructions.render();
 		break;
 
 	case GameState::MENU:
@@ -138,7 +144,7 @@ void Game::mouseMove(int x, int y)
 		//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		break;
 	case GameState::INSTRUCTIONS:
-		//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		break;
 
 	case GameState::MENU:
@@ -164,7 +170,7 @@ void Game::mousePress(int button)
 			//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 			break;
 		case GameState::INSTRUCTIONS:
-			//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 			break;
 
 		case GameState::MENU:
@@ -188,7 +194,7 @@ void Game::mousePress(int button)
 			//data.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 			break;
 		case GameState::INSTRUCTIONS:
-			//instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+			instructions.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 			break;
 
 		case GameState::MENU:
@@ -204,7 +210,7 @@ void Game::mouseRelease(int button)
 	{
 		bLeftMouse = false;
 		//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
-		//scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
+		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)
 		bRightMouse = false;

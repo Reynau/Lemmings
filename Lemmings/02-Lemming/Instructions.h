@@ -1,5 +1,5 @@
-#ifndef _MENU_INCLUDE
-#define _MENU_INCLUDE
+#ifndef _INSTRUCTIONS_INCLUDE
+#define _INSTRUCTIONS_INCLUDE
 
 
 #include <glm/glm.hpp>
@@ -7,19 +7,15 @@
 #include "MaskedTexturedQuad.h"
 #include "Quad.h"
 #include "Texture.h"
-#include "Lemming.h"
+#include "Sprite.h"
 #include "cursor.h"
-#include "Button.h"
 #include "Text.h"
 
-
-
-
-class Menu
+class Instructions
 {
 public:
-	Menu();
-	~Menu();
+	Instructions();
+	~Instructions();
 	void init(Cursor *cursor);
 	int update(int deltaTime);
 	void render();
@@ -30,11 +26,9 @@ public:
 
 private:
 	void initShaders();
-	void initButtons();
-	void checkButtons(int x, int y);
 
 private:
-	Texture colorTexture, titleTexture, lemmingTexture;
+	Texture titleTexture, colorTexture, lemmingTexture, textureW, textureS, textureA, textureD;
 	VariableTexture maskTexture;
 	MaskedTexturedQuad *map;
 	ShaderProgram simpleTexProgram, maskedTexProgram;
@@ -42,20 +36,17 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 
+	Sprite *sprite;
+
+	Cursor * cursor;
 	float wid, hei, xOffset, yOffset, spaceBut;
 	int sizeFont;
 	Text text;
 
-	Sprite *sprite;
-	Quad *quad;
-
-	Cursor * cursor;
-	int index_selected_but;
-	vector<glm::vec2> buttonsPos;
-	bool buttonsStarted;
 	bool clicked;
 
 	int transition = 0;
+
 };
 
-#endif // _MENU_INCLUDE
+#endif // _INSTRUCTIONS_INCLUDE
