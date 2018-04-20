@@ -15,7 +15,7 @@ class Lemming
 public:
 	enum LemmingSkill 
 	{
-		NO_SKILL, BLOCKER, DIGGER, FLOATER, BASHER, DIAG_BASHER, CLIMBER, SURREND, BUILDER
+		CLIMBER, FLOATER, SURREND, BLOCKER, BUILDER, BASHER, DIAG_BASHER, DIGGER, NO_SKILL
 	};
 
 	enum LemmingState
@@ -37,6 +37,7 @@ public:
 	bool isSafe();
 	bool isBusy();
 	bool isBlocker();
+	bool hasExploted();
 	bool basherHasToMove();
 	bool diagBasherHasToMove();
 	bool builderCanBuild(bool isRight);

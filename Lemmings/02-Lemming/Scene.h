@@ -88,6 +88,8 @@ private:
 	ShaderProgramQuad program;
 	float currentTime;
 	glm::mat4 projection;
+	bool skillApplied;
+	float previousSkillTime;
 
 	// Level related
 	struct Level {
@@ -103,6 +105,7 @@ private:
 		float releaseRate;
 		Door::doorState door;
 		float spriteWidth;
+		vector<int> availableSkills;
 	};
 	vector<Level> levels;
 	int currentLevel;
@@ -149,6 +152,8 @@ private:
 	Lemming::LemmingSkill selected_lem_state;
 	Text text;
 	int wid, hei, xOffsetIn, xOffsetOut, xOffsetTime, yOffset, sizeFont, percent, levelTime;
+	int xOffsetBut, yOffsetBut, spaceEachBut, sizeFontBut;
+	float xOffsetMult;
 
 	//Spawn Lemming related
 	int lemmingTime;
@@ -158,6 +163,8 @@ private:
 	//Audio related
 	bool letsgoStarted;
 	bool musicStarted;
+	bool exploteDone;
+	float exploteTime;
 	int songNum;
 };
 

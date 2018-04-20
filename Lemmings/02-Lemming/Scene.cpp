@@ -16,6 +16,12 @@ Scene::~Scene()
 {
 	if(map != NULL)
 		delete map;
+	audioDriver.removeAudio("sounds/MOUSEPRE.WAV");
+	audioDriver.removeAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+	audioDriver.removeAudio("sounds/00_lets_go.wav");
+	audioDriver.removeAudio("sounds/01_lemming1.wav");
+	audioDriver.removeAudio("sounds/02_lemming2.wav");
+	audioDriver.removeAudio("sounds/03_lemming3.wav");
 }
 
 void Scene::init()
@@ -85,11 +91,22 @@ void Scene::init()
 	lemmingTime = 0;
 	previousTime = 0.f;
 	startSpawn = false;
+	skillApplied = false;
+	previousSkillTime = 0.f;
+	exploteTime = 0.f;
 
 	audioDriver = Audio();
 	letsgoStarted = false;
 	musicStarted = false;
+	exploteDone = false;
+	audioDriver.loadAudio("sounds/MOUSEPRE.WAV");
+	audioDriver.loadAudio("sounds/YIPPEE.WAV");
+	audioDriver.loadAudio("sounds/EXPLODE.WAV");
 	audioDriver.loadAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+	audioDriver.loadAudio("sounds/00_lets_go.wav");
+	audioDriver.loadAudio("sounds/01_lemming1.wav");
+	audioDriver.loadAudio("sounds/02_lemming2.wav");
+	audioDriver.loadAudio("sounds/03_lemming3.wav");
 	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 }
 
@@ -101,38 +118,42 @@ void Scene::update(int deltaTime)
 	deltaTime = considerSceneSpeed(deltaTime);
 	currentTime += deltaTime;
 
+	if (previousSkillTime + 100 < currentTime)
+		skillApplied = false;
+	if (exploteTime + 100 < currentTime)
+		exploteDone = false;
+
 	if (levelTime <= 0) finishLevel();
 
-	if (currentTime < 1000) {
+	if (currentTime < 2000) {
 		wid = float(glutGet(GLUT_WINDOW_WIDTH));
+		cout << wid << endl;
 		hei = float(glutGet(GLUT_WINDOW_HEIGHT));
-		xOffsetIn = roundf(wid * 550.f / 1920.f);
-		xOffsetOut = roundf(wid * 950.f / 1920.f);
-		xOffsetTime = roundf(wid * 1270.f / 1920.f);
+		xOffsetIn = roundf(wid * 55.f / 192.f);
+		xOffsetOut = roundf(wid * 95.f / 192.f);
+		xOffsetTime = roundf(wid * 127.f / 192.f);
 		yOffset = roundf(hei * 911.f / 1080.f);
-		sizeFont = roundf(hei * 58.f / 1080.f);
+		sizeFont = roundf(hei * 29.f / 540.f);
+		sizeFontBut = roundf(hei * 5.f / 108.f);
+		xOffsetBut = roundf(wid * 59.f / 800.f);
+		yOffsetBut = roundf(hei * 407.f / 450.f);
+		xOffsetMult = wid * 118.3f / 1600.f;
 	}
 
 	if (currentTime > 1000 && !letsgoStarted) {
-		audioDriver.removeAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
-		audioDriver.loadAudio("sounds/00_lets_go.wav");
 		audioDriver.playAudio("sounds/00_lets_go.wav");
 		letsgoStarted = true;
 	}
 
 	if ((currentTime > 3000) && !musicStarted) {
-		audioDriver.removeAudio("sounds/00_lets_go.wav");
 		songNum = currentLevel % 3;
 		if (songNum == 0) {
-			audioDriver.loadAudio("sounds/01_lemming1.wav");
 			audioDriver.playAudio("sounds/01_lemming1.wav");
 		}
 		else if (songNum == 1) {
-			audioDriver.loadAudio("sounds/02_lemming2.wav");
 			audioDriver.playAudio("sounds/02_lemming2.wav");
 		}
 		else if (songNum == 2) {
-			audioDriver.loadAudio("sounds/03_lemming3.wav");
 			audioDriver.playAudio("sounds/03_lemming3.wav");
 		}
 		musicStarted = true;
@@ -149,11 +170,17 @@ void Scene::update(int deltaTime)
 		if (!lemmings[i]) continue;		
 		lemmings[i]->update(deltaTime, int(level.offset), colliders);
 		if (countds[i]->update(lemmings[i]->getPosition(), deltaTime)) exploteLemming(i);
+		if (lemmings[i]->hasExploted() && !exploteDone) {
+			audioDriver.playAudio("sounds/EXPLODE.WAV");
+			exploteDone = true;
+			exploteTime = currentTime;
+		}
 		if (lemmings[i]->isDead()) {
 			removeLemming(i);
 			if (countds[i]) removeCount(i);
 		}
 		else if (lemmings[i]->isSafe()) {
+			audioDriver.playAudio("sounds/YIPPEE.WAV");
 			removeLemming(i);
 			if (countds[i]) removeCount(i);
 			++safeLemmings;
@@ -238,11 +265,13 @@ void Scene::render()
 	else levelTime = level.availableTime;
 
 
-	string out, in, dash;
+	string out, in, dash, but;
 	if (spawnedLemmings < 10) out = "OUT:  ";
 	else out = "OUT:";
 	if (percent < 10) in = "IN:  ";
 	else in = "IN:";
+
+	
 
 	int minutes = levelTime / 60;
 	int seconds = levelTime % 60;
@@ -250,7 +279,6 @@ void Scene::render()
 	else dash = "-";
 	
 
-	text.render(to_string(int(level.releaseRate)), glm::vec2(xOffsetIn - 300, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 	text.render(out + to_string(spawnedLemmings), glm::vec2(xOffsetIn - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
 	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut -3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
 	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime - 3, yOffset - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
@@ -263,6 +291,14 @@ void Scene::render()
 	text.render(in + to_string(percent) + "%", glm::vec2(xOffsetOut, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 	text.render("TIME: " + to_string(minutes) + dash + to_string(seconds), glm::vec2(xOffsetTime, yOffset), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 	
+	if (int(level.releaseRate) < 10) text.render("0" + to_string(int(level.releaseRate)), glm::vec2(xOffsetBut, yOffsetBut), sizeFontBut, glm::vec4(0.9, 0.9, 0.9, 1));
+	else text.render(to_string(int(level.releaseRate)), glm::vec2(xOffsetBut, yOffsetBut), sizeFontBut, glm::vec4(0.9, 0.9, 0.9, 1));
+
+	for (int i = 0; i < 8; i++) {
+		if (level.availableSkills[i] < 10) text.render("0" + to_string(level.availableSkills[i]), glm::vec2(roundf(float(xOffsetBut + ((float(i)+1.f) * xOffsetMult))), yOffsetBut), sizeFontBut, glm::vec4(0.9, 0.9, 0.9, 1));
+		else text.render(to_string(level.availableSkills[i]), glm::vec2(roundf(float(xOffsetBut + ((float(i) + 1.f) * xOffsetMult))), yOffsetBut), sizeFontBut, glm::vec4(0.9, 0.9, 0.9, 1));
+	}
+
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -441,6 +477,8 @@ void Scene::initLevels()
 	firstLevel.releaseRate = 50.f;
 	firstLevel.door = Door::FIRST_DOOR;
 	firstLevel.spriteWidth = 512.f;
+	// CLIMBER, FLOATER, SURREND, BLOCKER, BUILDER, BASHER, DIAG_BASHER, DIGGER
+	firstLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(firstLevel);
 
 	Level secondLevel;
@@ -456,6 +494,7 @@ void Scene::initLevels()
 	secondLevel.releaseRate = 50.f;
 	secondLevel.door = Door::SECOND_DOOR;
 	secondLevel.spriteWidth = 512.f;
+	secondLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(secondLevel);
 
 	Level thirdLevel;
@@ -471,6 +510,7 @@ void Scene::initLevels()
 	thirdLevel.releaseRate = 50.f;
 	thirdLevel.door = Door::SECOND_DOOR;
 	thirdLevel.spriteWidth = 512.f;
+	thirdLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(thirdLevel);
 
 
@@ -487,6 +527,7 @@ void Scene::initLevels()
 	fourthLevel.releaseRate = 1.f;
 	fourthLevel.door = Door::THIRD_DOOR;
 	fourthLevel.spriteWidth = 512.f;
+	fourthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(fourthLevel);
 
 	// TRICKY
@@ -503,6 +544,7 @@ void Scene::initLevels()
 	fifthLevel.releaseRate = 50.f;
 	fifthLevel.door = Door::FIRST_DOOR;
 	fifthLevel.spriteWidth = 924.f;
+	fifthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(fifthLevel);
 
 	Level sixthLevel;
@@ -518,6 +560,7 @@ void Scene::initLevels()
 	sixthLevel.releaseRate = 1.f;
 	sixthLevel.door = Door::FOURTH_DOOR;
 	sixthLevel.spriteWidth = 1600.f;
+	sixthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(sixthLevel);
 
 	Level seventhLevel;
@@ -533,6 +576,7 @@ void Scene::initLevels()
 	seventhLevel.releaseRate = 50.f;
 	seventhLevel.door = Door::FIRST_DOOR;
 	seventhLevel.spriteWidth = 704.f;
+	seventhLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(seventhLevel);
 
 	// TAXING
@@ -549,6 +593,7 @@ void Scene::initLevels()
 	eighthLevel.releaseRate = 40.f;
 	eighthLevel.door = Door::SECOND_DOOR;
 	eighthLevel.spriteWidth = 1224.f;
+	eighthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(eighthLevel);
 
 }
@@ -607,20 +652,24 @@ void Scene::changeLevel(int newLevel)
 	sceneSpeed = NORMAL;
 	selected_lem_state = Lemming::NO_SKILL;
 
-	currentTime = 0;
 
 	if (songNum == 0) {
 		audioDriver.removeAudio("sounds/01_lemming1.wav");
+		audioDriver.loadAudio("sounds/01_lemming1.wav");
 	}
 	else if (songNum == 1) {
 		audioDriver.removeAudio("sounds/02_lemming2.wav");
+		audioDriver.loadAudio("sounds/02_lemming2.wav");
 	}
 	else if (songNum == 2) {
 		audioDriver.removeAudio("sounds/03_lemming3.wav");
+		audioDriver.loadAudio("sounds/03_lemming3.wav");
 	}
+
+	currentTime = 0;
 	letsgoStarted = false;
 	musicStarted = false;
-	audioDriver.loadAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
+	exploteDone = false;
 	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 
 }
@@ -645,34 +694,42 @@ void Scene::resetOffsetsAndReleases()
 	levels[0].releaseRate = 50.f;
 	levels[0].spawnPosition = glm::vec2(-30 + levels[0].offset, 30);
 	levels[0].savePosition = glm::vec2(96 + levels[0].offset, 84);
+	levels[0].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[1].offset = 69.f;
 	levels[1].releaseRate = 50.f;
 	levels[1].spawnPosition = glm::vec2(-41 + levels[1].offset, 10);
 	levels[1].savePosition = glm::vec2(188 + levels[1].offset, 101);
+	levels[1].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[2].offset = 22.f;
 	levels[2].releaseRate = 50.f;
 	levels[2].spawnPosition = glm::vec2(107 + levels[2].offset, 3);
 	levels[2].savePosition = glm::vec2(73 + levels[2].offset, 105);
+	levels[2].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[3].offset = 122.f;
 	levels[3].releaseRate = 1.f;
 	levels[3].spawnPosition = glm::vec2(-37 + levels[3].offset, 10);
 	levels[3].savePosition = glm::vec2(121 + levels[3].offset, 0);
+	levels[3].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[4].offset = 22.f;
 	levels[4].releaseRate = 50.f;
 	levels[4].spawnPosition = glm::vec2(70 + levels[4].offset, 65);
 	levels[4].savePosition = glm::vec2(687 + levels[4].offset, 69);
+	levels[4].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[5].offset = 240.f;
 	levels[5].releaseRate = 1.f;
 	levels[5].spawnPosition = glm::vec2(-78 + levels[5].offset, 13);
 	levels[5].savePosition = glm::vec2(512 + levels[5].offset, 72);
+	levels[5].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[6].offset = 2.f;
 	levels[6].releaseRate = 50.f;
 	levels[6].spawnPosition = glm::vec2(145 + levels[6].offset, 1);
 	levels[6].savePosition = glm::vec2(626 + levels[6].offset, 3);
+	levels[6].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 	levels[7].offset = 2.f;
 	levels[7].releaseRate = 40.f;
 	levels[7].spawnPosition = glm::vec2(50 + levels[7].offset, 30);
 	levels[7].savePosition = glm::vec2(1120 + levels[7].offset, 15);
+	levels[7].availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
 }
 
 bool Scene::checkSelecting()
@@ -792,8 +849,18 @@ void Scene::applySkill(Lemming::LemmingSkill skill)
 {
 	if (index_selected_lem == 0) return;
 	if (skill == Lemming::LemmingSkill::SURREND) countdownLemming(index_selected_lem - 1);
-	else if (!lemmings[index_selected_lem-1]->setSkill(skill)) return;
-	//--availableSkills[skill]; 
+	else if (!skillApplied) {
+		if (levels[currentLevel].availableSkills[skill] == 0) return;
+		if (!lemmings[index_selected_lem - 1]->isBusy()) {
+			if (!lemmings[index_selected_lem - 1]->setSkill(skill)) return;
+			else {
+				audioDriver.playAudio("sounds/MOUSEPRE.WAV");
+				levels[currentLevel].availableSkills[skill]--;
+				skillApplied = true;
+				previousSkillTime = currentTime;
+			}
+		}
+	}
 }
 
 void Scene::pressButton()
@@ -858,7 +925,7 @@ bool Scene::lemmingHasToSpawn(int deltaTime) {
 		ct += dt;
 	}
 	float spawnTime = getSpawnTime(level.releaseRate);
-	// Codi deixat en honor a Joel Borràs per haver passat 2 hore fent-lo i que després no funcionés bé, i arreglar-lo amb el codi de més a sota en 10 minuts
+	// Codi deixat en honor a Joel Borràs per haver passat 2 hores fent-lo i que després no funcionés bé, i arreglar-lo amb el codi de més a sota en 10 minuts
 	//int sec = int(ct / 100 / (roundf(spawnTime * 10 + 1) / 10.f)) -10 * (1 + roundf(level.releaseRate / 100.f)) * ceilf(2/(roundf(spawnTime * 10 + 1) / 10.f));
 	//sec = floor(float(sec) / 10.f);
 	if (!startSpawn && (float(ct) / 100.f) > 30.f) {

@@ -629,6 +629,11 @@ bool Lemming::isBlocker()
 	return (state == BLOCKER_RIGHT_STATE || state == BLOCKER_LEFT_STATE);
 }
 
+bool Lemming::hasExploted()
+{
+	return (sprite->animation() == LemmingAnims::EXPLOSION && sprite->keyFrame() <= 0);
+}
+
 bool Lemming::basherHasToMove()
 {
 	if (sprite->keyFrame() > 0 && sprite->keyFrame() < 5 ||
