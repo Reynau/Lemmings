@@ -102,6 +102,7 @@ private:
 	bool collisionAny();
 	bool collisionFloor();
 	bool collisionCollider();
+	bool collisionClimber();
 	bool collideWithBlocker(glm::vec2 startBox1, glm::vec2 endBox1, glm::vec2 startBox2, glm::vec2 endBox2);
 
 	bool isSameSkill(LemmingSkill newState);

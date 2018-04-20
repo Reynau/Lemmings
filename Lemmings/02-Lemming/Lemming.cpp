@@ -273,6 +273,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		else {
 			sprite->position() += glm::vec2(-1, -4);
 			if (collisionFloor() && pendingClimber) {
+				sprite->position() += glm::vec2(0, 2);
 				sprite->changeAnimation(LemmingAnims::CLIMBER_LEFT);
 				state = LemmingState::CLIMBER_LEFT_STATE;
 				pending_state = NULL_STATE;
@@ -316,6 +317,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 		else {
 			sprite->position() += glm::vec2(1, -4);
 			if (collisionFloor() && pendingClimber) {
+				sprite->position() += glm::vec2(0, 2);
 				sprite->changeAnimation(LemmingAnims::CLIMBER_RIGHT);
 				state = LemmingState::CLIMBER_RIGHT_STATE;
 				pending_state = NULL_STATE;
@@ -417,7 +419,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		else if (collisionFloor()) {
+		else if (collisionClimber()) {
 			if (sprite->keyFrame() > 4) sprite->position() += glm::vec2(0, -1);
 
 			glm::vec2 pos = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
@@ -434,10 +436,13 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			if (sprite->animation() == LemmingAnims::CLIMBER_LEFT) {
 				sprite->changeAnimation(LemmingAnims::CLIMBER_UP_LEFT);
 			}
-			else if (sprite->keyFrame() == 7) {
+			else if (sprite->animation() == LemmingAnims::CLIMBER_UP_LEFT && sprite->keyFrame() == 7) {
 				sprite->changeAnimation(LemmingAnims::WALKING_LEFT);
 				state = LemmingState::WALKING_LEFT_STATE;
 				pending_state = NULL_STATE;
+			}
+			else if (sprite->animation() == LemmingAnims::CLIMBER_UP_LEFT) {
+				if (sprite->keyFrame() > 0 && sprite->keyFrame() < 4) sprite->position() += glm::vec2(0, -2);
 			}
 		}
 		break;
@@ -448,7 +453,7 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			state = pending_state;
 			pending_state = NULL_STATE;
 		}
-		else if(collisionFloor()) {
+		else if(collisionClimber()) {
 			if (sprite->keyFrame() > 4) sprite->position() += glm::vec2(0, -1);
 
 			glm::vec2 pos = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
@@ -465,10 +470,14 @@ void Lemming::update(int deltaTime, int offset, vector<glm::vec2> newColliders)
 			if (sprite->animation() == LemmingAnims::CLIMBER_RIGHT) {
 				sprite->changeAnimation(LemmingAnims::CLIMBER_UP_RIGHT);
 			}
-			else if (sprite->keyFrame() == 7) {
+			else if (sprite->animation() == LemmingAnims::CLIMBER_UP_RIGHT && sprite->keyFrame() == 7) {
 				sprite->changeAnimation(LemmingAnims::WALKING_RIGHT);
 				state = LemmingState::WALKING_RIGHT_STATE;
 				pending_state = NULL_STATE;
+			}
+			else if (sprite->animation() == LemmingAnims::CLIMBER_UP_RIGHT) {
+				if (sprite->keyFrame() > 0 && sprite->keyFrame() < 5) sprite->position() += glm::vec2(0, -2);
+				if (sprite->keyFrame() > 6) sprite->position() += glm::vec2(2, 0);
 			}
 		}
 		break;
@@ -1067,6 +1076,15 @@ bool Lemming::collisionCollider() {
 		if (collideWithBlocker(lemmingStart, lemmingEnd, colliderStart, colliderEnd)) return true;;
 	}
 	return false;
+}
+
+bool Lemming::collisionClimber() {
+	glm::ivec2 posBase = sprite->position() + glm::vec2(lem_offset, 0); // Add the map displacement
+
+	posBase += glm::ivec2(7, 7);
+	if ((mask->pixel(posBase.x, posBase.y) == 0) && (mask->pixel(posBase.x + 1, posBase.y) == 0))
+		return false;
+	return true;
 }
 
 bool Lemming::collideWithBlocker(glm::vec2 startBox1, glm::vec2 endBox1, glm::vec2 startBox2, glm::vec2 endBox2)

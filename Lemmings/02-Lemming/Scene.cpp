@@ -28,7 +28,7 @@ void Scene::init()
 {
 
 	//SELECT LEVEL
-	currentLevel = 1;	// From 1 to NumLevels
+	currentLevel = 4;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
@@ -527,7 +527,7 @@ void Scene::initLevels()
 	fourthLevel.releaseRate = 1.f;
 	fourthLevel.door = Door::THIRD_DOOR;
 	fourthLevel.spriteWidth = 512.f;
-	fourthLevel.availableSkills = { 0, 0, 0, 0, 0, 0, 0, 10 };
+	fourthLevel.availableSkills = { 10, 0, 0, 0, 0, 0, 0, 10 };
 	levels.push_back(fourthLevel);
 
 	// TRICKY
