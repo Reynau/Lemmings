@@ -26,7 +26,7 @@ public:
 	Scene();
 	~Scene();
 
-	void init();
+	void init(Cursor *cursor);
 	int update(int deltaTime);
 	void render();
 	

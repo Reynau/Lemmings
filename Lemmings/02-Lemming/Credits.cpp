@@ -4,23 +4,23 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Menu.h"
+#include "Credits.h"
 
 
 
-Menu::Menu()
+Credits::Credits()
 {
 	//map = NULL;
 }
 
 
-Menu::~Menu()
+Credits::~Credits()
 {
 	//if (map != NULL)
 	//	delete map;
 }
 
-void Menu::init(Cursor *cursor)
+void Credits::init(Cursor *cursor)
 {
 	glm::vec2 geom[2] = { glm::vec2(0.f, 0.f), glm::vec2(glutGet(GLUT_WINDOW_WIDTH) + 56, glutGet(GLUT_WINDOW_HEIGHT) + 56) };
 	glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(8.f, 8.f) };
@@ -36,7 +36,7 @@ void Menu::init(Cursor *cursor)
 	maskTexture.setMagFilter(GL_NEAREST);
 
 	//quad = Quad::createQuad(0.f, 0.f, 128.f, 128.f, program);
-	
+
 	titleTexture.loadFromFile("images/Lemmings-Logo.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	titleTexture.setMinFilter(GL_NEAREST);
 	titleTexture.setMagFilter(GL_NEAREST);
@@ -54,7 +54,7 @@ void Menu::init(Cursor *cursor)
 
 	this->cursor = cursor;
 	this->cursor->initCursor(simpleTexProgram, &lemmingTexture);
-	
+
 	if (!text.init("fonts/Pixellari.ttf"))
 		cout << "Could not load font!!!" << endl;
 
@@ -62,7 +62,7 @@ void Menu::init(Cursor *cursor)
 	clicked = false;
 }
 
-int Menu::update(int deltaTime)
+int Credits::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
@@ -79,7 +79,7 @@ int Menu::update(int deltaTime)
 	return transition;
 }
 
-void Menu::render()
+void Credits::render()
 {
 	glm::mat4 modelview;
 
@@ -89,7 +89,7 @@ void Menu::render()
 	modelview = glm::mat4(1.0f);
 	maskedTexProgram.setUniformMatrix4f("modelview", modelview);
 	map->render(maskedTexProgram, colorTexture, maskTexture);
-	
+
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
 	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -133,7 +133,7 @@ void Menu::render()
 	cursor->render();
 }
 
-void Menu::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
+void Credits::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton)
 {
 	if (!bLeftButton) clicked = false;
 	if (!clicked) {
@@ -141,19 +141,19 @@ void Menu::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButto
 		if (bLeftButton) {
 			if (index_selected_but == 0) return;
 			else if (index_selected_but == 1) { // PLAY
-				transition = 5;
+				transition = 4;
 				cout << "PLAY" << endl;
 			}
 			else if (index_selected_but == 3) {	// HOW TO
-				transition = 2;
+				transition = 4;
 				cout << "HOW TO PLAY" << endl;
 			}
 			else if (index_selected_but == 5) {	// CREDITS
-				transition = 3;
+				transition = 4;
 				cout << "CREDITS" << endl;
 			}
 			else if (index_selected_but == 7) {	// EXIT
-				transition = 9;
+				transition = 4;
 				cout << "EXIT" << endl;
 			}
 			clicked = true;
@@ -165,7 +165,7 @@ void Menu::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButto
 	cursor->setPos(mouseX, mouseY);
 }
 
-void Menu::initShaders()
+void Credits::initShaders()
 {
 	Shader vShader, fShader;
 	vShader.initFromFile(VERTEX_SHADER, "shaders/simple.vert");
@@ -246,7 +246,7 @@ void Menu::initShaders()
 	fShader.free();
 }
 
-void Menu::initButtons()
+void Credits::initButtons()
 {
 	if (buttonsStarted) buttonsPos.clear();
 	int x, y;
@@ -282,11 +282,11 @@ void Menu::initButtons()
 	buttonsStarted = true;
 }
 
-void Menu::checkButtons(int x, int y)
+void Credits::checkButtons(int x, int y)
 {
-	for (int i = 0; i < 8; i=i+2) {
+	for (int i = 0; i < 8; i = i + 2) {
 		glm::vec2 butPos1 = buttonsPos[i];
-		glm::vec2 butPos2 = buttonsPos[i+1];
+		glm::vec2 butPos2 = buttonsPos[i + 1];
 		if ((x >= butPos1.x) && (x <= butPos2.x) && (y >= butPos1.y) && (y <= butPos2.y)) {
 			index_selected_but = i + 1;
 			return;

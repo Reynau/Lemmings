@@ -8,13 +8,17 @@ void Game::init()
 	bPlay = true;
 	bLeftMouse = bRightMouse = false;
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
-	mainMenu.init();
-	//scene.init();
+
+	cursor = new Cursor();
+
+	mainMenu.init(cursor);
+	scene.init(cursor);
+	credits.init(cursor);
 }
 
 bool Game::update(int deltaTime)
 {
-	int transition;
+	int transition = 0;
 	switch (gameState) {
 	case GameState::GAME:
 		transition = scene.update(deltaTime);
@@ -23,7 +27,7 @@ bool Game::update(int deltaTime)
 		}
 		break;
 	case GameState::CREDITS:
-		//transition = credits.update(deltaTime);
+		transition = credits.update(deltaTime);
 		if (transition == 4) {
 			gameState = GameState::MENU;
 		}
@@ -73,7 +77,7 @@ void Game::render()
 		scene.render();
 		break;
 	case GameState::CREDITS:
-		//credits.render();
+		credits.render();
 		break;
 	case GameState::DATA:
 		//data.render();
@@ -83,7 +87,7 @@ void Game::render()
 		break;
 
 	case GameState::MENU:
-		//menu.render();
+		mainMenu.render();
 		break;
 	}
 }

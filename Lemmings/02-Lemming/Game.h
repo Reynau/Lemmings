@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 #include "Menu.h"
-//#include "SoundFX.h"
+#include "Credits.h"
 
 // Game is a singleton (a class with a single instance) that represents our whole application
 
@@ -40,9 +40,12 @@ public:
 	bool getSpecialKey(int key) const;
 
 private:
+	Cursor *cursor;
+
 	bool bPlay;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	Menu mainMenu;					  // Menu to render
+	Credits credits;					  // Menu to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 	int mouseX, mouseY;               // Mouse position
@@ -50,7 +53,9 @@ private:
 
 	enum GameState {
 		MENU, INSTRUCTIONS, CREDITS, GAME, DATA
-	} gameState;
+	};
+
+	GameState gameState = GameState::MENU;
 };
 
 

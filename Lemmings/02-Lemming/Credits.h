@@ -1,7 +1,3 @@
-#ifndef _MENU_INCLUDE
-#define _MENU_INCLUDE
-
-
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "MaskedTexturedQuad.h"
@@ -16,14 +12,12 @@
 #include "Button.h"
 #include "Text.h"
 
-
-
-
-class Menu
+class Credits
 {
 public:
-	Menu();
-	~Menu();
+	Credits();
+	~Credits();
+
 	void init(Cursor *cursor);
 	int update(int deltaTime);
 	void render();
@@ -63,4 +57,3 @@ private:
 	int transition = 0;
 };
 
-#endif // _MENU_INCLUDE

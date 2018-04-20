@@ -27,9 +27,8 @@ Scene::~Scene()
 	audioDriver.removeAudio("sounds/03_lemming3.wav");
 }
 
-void Scene::init()
+void Scene::init(Cursor* cursor)
 {
-
 	//SELECT LEVEL
 	currentLevel = 8;	// From 1 to NumLevels
 
@@ -74,8 +73,8 @@ void Scene::init()
 
 	sceneSpeed = NORMAL;
 
-	cursor = new Cursor();
-	cursor->initCursor(simpleTexProgram, &lemmingTexture);
+	this->cursor = cursor;
+	this->cursor->initCursor(simpleTexProgram, &lemmingTexture);
 	index_selected_lem = NULL;
 	selected_lem_state = Lemming::NO_SKILL;
 
