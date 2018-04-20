@@ -1,0 +1,11 @@
+Joel Borràs Escoda
+Xavier Lopez Reynau
+
+- Punts 1 i 2 implementats completament (PART COMUNA, FUNCIONALITATS DEL JOC)
+- 8 nivells de dificultats diferents, amb característiques propies de cada un d'ells (nombre d'habilitats, temps, lemmings disponibles i per salvar...)
+- Pantalla extra del joc: dades de la partida
+- Totes les animacions implementades, fins i tot als botons de les habilitats.
+- Botons per augmentar/disminuir la velocitat de spawn dels lemmings
+
+El joc funciona majoritàriament amb el ratolí i mitjançant butons.
+Es pot augmentar i disminuir la velocitat de spawn amb les tecles W i S, a més dels botons de la UI

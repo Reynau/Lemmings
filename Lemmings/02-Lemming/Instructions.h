@@ -36,7 +36,7 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 
-	Sprite *sprite;
+	Sprite *sprite, *wSprite, *sSprite;
 
 	Cursor * cursor;
 	float wid, hei, xOffset, yOffset, spaceBut;

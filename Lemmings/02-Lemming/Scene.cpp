@@ -111,7 +111,6 @@ void Scene::init(Cursor* cursor)
 	audioDriver.loadAudio("sounds/01_lemming1.wav");
 	audioDriver.loadAudio("sounds/02_lemming2.wav");
 	audioDriver.loadAudio("sounds/03_lemming3.wav");
-	audioDriver.playAudio("sounds/00_-_Lemmings_-_Let_s_Go_.wav");
 }
 
 unsigned int x = 0;

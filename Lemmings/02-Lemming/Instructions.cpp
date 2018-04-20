@@ -38,22 +38,23 @@ void Instructions::init(Cursor *cursor)
 	titleTexture.loadFromFile("images/Lemmings-Logo.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	titleTexture.setMinFilter(GL_NEAREST);
 	titleTexture.setMagFilter(GL_NEAREST);
-
-	textureW.loadFromFile("images/letter_w.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	/*
+	textureW.loadFromFile("images/letter_w.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	textureW.setMinFilter(GL_NEAREST);
 	textureW.setMagFilter(GL_NEAREST);
 
-	textureS.loadFromFile("images/letter_s.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	textureS.loadFromFile("images/letter_s.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	textureS.setMinFilter(GL_NEAREST);
 	textureS.setMagFilter(GL_NEAREST);
 
-	textureA.loadFromFile("images/letter_a.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	textureA.loadFromFile("images/letter_a.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	textureA.setMinFilter(GL_NEAREST);
 	textureA.setMagFilter(GL_NEAREST);
 
-	textureD.loadFromFile("images/letter_d.png.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	textureD.loadFromFile("images/letter_d.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	textureD.setMinFilter(GL_NEAREST);
 	textureD.setMagFilter(GL_NEAREST);
+	*/
 
 	lemmingTexture.loadFromFile("images/lemming.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	lemmingTexture.setMinFilter(GL_NEAREST);
@@ -61,7 +62,13 @@ void Instructions::init(Cursor *cursor)
 
 	sprite = Sprite::createSprite(glm::ivec2(75, 28), glm::vec2(1.f, 1.f), &titleTexture, &simpleTexProgram);
 	sprite->setPosition(glm::vec2(115.f, 3.f));
+	/*
+	wSprite = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1.f, 1.f), &textureW, &simpleTexProgram);
+	wSprite->setPosition(glm::vec2(25.f, 115.f));
 
+	sSprite = Sprite::createSprite(glm::ivec2(28, 28), glm::vec2(1.f, 1.f), &textureS, &simpleTexProgram);
+	sSprite->setPosition(glm::vec2(25.f, 150.f));
+	*/
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT + 40), 0.f);
 	currentTime = 0.0f;
 
@@ -108,6 +115,20 @@ void Instructions::render()
 	modelview = glm::mat4(1.0f);
 	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
 	sprite->render();
+	/*
+	simpleTexProgram.use();
+	simpleTexProgram.setUniformMatrix4f("projection", projection);
+	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	modelview = glm::mat4(1.0f);
+	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+	wSprite->render();
+
+	simpleTexProgram.use();
+	simpleTexProgram.setUniformMatrix4f("projection", projection);
+	simpleTexProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	modelview = glm::mat4(1.0f);
+	simpleTexProgram.setUniformMatrix4f("modelview", modelview);
+	sSprite->render();*/
 
 	program.use();
 	program.setUniformMatrix4f("projection", projection);
@@ -115,27 +136,27 @@ void Instructions::render()
 
 	int yOffsetAux = yOffset;
 
-	text.render("You rescued", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("You rescued", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You rescued", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("Use the mouse and the buttons to interact", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("Use the mouse and the buttons to interact", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("Use the mouse and the buttons to interact", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("You needed", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("You needed", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("You needed", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("with the game", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("with the game", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("with the gamee", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
-	yOffsetAux += spaceBut * 3;
+	yOffsetAux += spaceBut * 2;
 
-	text.render("Good luck next time.", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Good luck next time.", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("Use W to increment the lemmings spawn rate", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("Use W to increment the lemmings spawn rate", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("Use W to increment the lemmings spawn rate", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("Press left click to retry", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
-	text.render("Press left click to retry", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
+	text.render("Use S to reduce the lemmings spawn rate", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.41, 0, 0.45, 1));
+	text.render("Use S to reduce the lemmings spawn rate", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.21, 0, 0.24, 1));
+	text.render("Use S to reduce the lemmings spawn rate", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.32, 0, 0.36, 1));
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
