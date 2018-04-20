@@ -30,7 +30,7 @@ Scene::~Scene()
 void Scene::init(Cursor* cursor)
 {
 	//SELECT LEVEL
-	currentLevel = 8;	// From 1 to NumLevels
+	currentLevel = 6;	// From 1 to NumLevels
 
 	currentLevel--;		// Here gets the value in the vector
 
