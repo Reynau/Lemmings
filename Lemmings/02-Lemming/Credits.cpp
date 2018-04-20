@@ -73,7 +73,6 @@ int Credits::update(int deltaTime)
 		yOffset = roundf(hei * 650.f / 1080.f);
 		sizeFont = roundf(hei * 90.f / 1080.f);
 		spaceBut = roundf(hei * 120.f / 1080.f);
-		initButtons();
 	}
 
 	return transition;
@@ -103,27 +102,34 @@ void Credits::render()
 
 	int yOffsetAux = yOffset;
 
-	text.render("PLAY", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("PLAY", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("PLAY", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("DEVELOPED BY: ", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("DEVELOPED BY: ", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("DEVELOPED BY: ", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("HOW TO PLAY", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("HOW TO PLAY", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("HOW TO PLAY", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("JOEL BORRAS ESCODA", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("JOEL BORRAS ESCODA", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("JOEL BORRAS ESCODA", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("CREDITS", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("CREDITS", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("CREDITS", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("XAVIER LOPEZ REYNAU", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("XAVIER LOPEZ REYNAU", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("XAVIER LOPEZ REYNAU", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
 
 	yOffsetAux += spaceBut;
 
-	text.render("EXIT", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
-	text.render("EXIT", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
-	text.render("EXIT", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+	text.render("VJ - 2017 / 2018", glm::vec2(xOffset - 3, yOffsetAux - 3), sizeFont, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("VJ - 2017 / 2018", glm::vec2(xOffset + 3, yOffsetAux + 3), sizeFont, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("VJ - 2017 / 2018", glm::vec2(xOffset, yOffsetAux), sizeFont, glm::vec4(0.63, 0.76, 0.32, 1));
+
+	int xOffsetAux = xOffset;
+	xOffsetAux += spaceBut * 7;
+
+	text.render("Press left click to go back", glm::vec2(xOffsetAux - 3, yOffsetAux - 3), sizeFont / 2, glm::vec4(0.74, 0.89, 0.38, 1));
+	text.render("Press left click to go back", glm::vec2(xOffsetAux + 3, yOffsetAux + 3), sizeFont / 2, glm::vec4(0.51, 0.61, 0.26, 1));
+	text.render("Press left click to go back", glm::vec2(xOffsetAux, yOffsetAux), sizeFont / 2, glm::vec4(0.63, 0.76, 0.32, 1));
 
 	simpleTexProgram.use();
 	simpleTexProgram.setUniformMatrix4f("projection", projection);
@@ -142,25 +148,8 @@ void Credits::mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightBu
 {
 	if (!bLeftButton) clicked = false;
 	if (!clicked) {
-		checkButtons(mouseX, mouseY);
 		if (bLeftButton) {
-			if (index_selected_but == 0) return;
-			else if (index_selected_but == 1) { // PLAY
-				transition = 4;
-				cout << "PLAY" << endl;
-			}
-			else if (index_selected_but == 3) {	// HOW TO
-				transition = 4;
-				cout << "HOW TO PLAY" << endl;
-			}
-			else if (index_selected_but == 5) {	// CREDITS
-				transition = 4;
-				cout << "CREDITS" << endl;
-			}
-			else if (index_selected_but == 7) {	// EXIT
-				transition = 4;
-				cout << "EXIT" << endl;
-			}
+			transition = 4;
 			clicked = true;
 		}
 		if (bRightButton) {
@@ -249,54 +238,4 @@ void Credits::initShaders()
 	maskedTexProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
-}
-
-void Credits::initButtons()
-{
-	if (buttonsStarted) buttonsPos.clear();
-	int x, y;
-	int yOffsetAux = yOffset;
-	yOffsetAux -= 85;
-	x = roundf(wid * 440.f / 1920.f);
-	y = roundf(hei * 650.f / 1080.f);
-	glm::vec2 but1x = glm::vec2(xOffset, yOffsetAux);
-	glm::vec2 but1y = glm::vec2(x, y);
-	buttonsPos.push_back(but1x);
-	buttonsPos.push_back(but1y);
-	yOffsetAux += spaceBut;
-	x = roundf(wid * 850.f / 1920.f);
-	y = roundf(hei * 776.f / 1080.f);
-	glm::vec2 but2x = glm::vec2(xOffset, yOffsetAux);
-	glm::vec2 but2y = glm::vec2(x, y);
-	buttonsPos.push_back(but2x);
-	buttonsPos.push_back(but2y);
-	yOffsetAux += spaceBut;
-	x = roundf(wid * 626.f / 1920.f);
-	y = roundf(hei * 896.f / 1080.f);
-	glm::vec2 but3x = glm::vec2(xOffset, yOffsetAux);
-	glm::vec2 but3y = glm::vec2(x, y);
-	buttonsPos.push_back(but3x);
-	buttonsPos.push_back(but3y);
-	x = roundf(wid * 424.f / 1920.f);
-	y = roundf(hei * 1014.f / 1080.f);
-	yOffsetAux += spaceBut;
-	glm::vec2 but4x = glm::vec2(xOffset, yOffsetAux);
-	glm::vec2 but4y = glm::vec2(x, y);
-	buttonsPos.push_back(but4x);
-	buttonsPos.push_back(but4y);
-	buttonsStarted = true;
-}
-
-void Credits::checkButtons(int x, int y)
-{
-	for (int i = 0; i < 8; i = i + 2) {
-		glm::vec2 butPos1 = buttonsPos[i];
-		glm::vec2 butPos2 = buttonsPos[i + 1];
-		if ((x >= butPos1.x) && (x <= butPos2.x) && (y >= butPos1.y) && (y <= butPos2.y)) {
-			index_selected_but = i + 1;
-			return;
-		}
-	}
-	index_selected_but = 0;
-	transition = 0;
 }

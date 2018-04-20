@@ -28,8 +28,6 @@ public:
 
 private:
 	void initShaders();
-	void initButtons();
-	void checkButtons(int x, int y);
 
 private:
 	Texture colorTexture, titleTexture, lemmingTexture;
