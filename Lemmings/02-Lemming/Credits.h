@@ -22,6 +22,8 @@ public:
 	int update(int deltaTime);
 	void render();
 
+	void resetTransition();
+
 	void mouseMoved(int mouseX, int mouseY, bool bLeftButton, bool bRightButton);
 
 private:
