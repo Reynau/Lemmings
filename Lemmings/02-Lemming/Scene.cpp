@@ -985,9 +985,6 @@ bool Scene::lemmingHasToSpawn(int deltaTime) {
 		ct += dt;
 	}
 	float spawnTime = getSpawnTime(level.releaseRate);
-	// Codi deixat en honor a Joel Borràs per haver passat 2 hores fent-lo i que després no funcionés bé, i arreglar-lo amb el codi de més a sota en 10 minuts
-	//int sec = int(ct / 100 / (roundf(spawnTime * 10 + 1) / 10.f)) -10 * (1 + roundf(level.releaseRate / 100.f)) * ceilf(2/(roundf(spawnTime * 10 + 1) / 10.f));
-	//sec = floor(float(sec) / 10.f);
 	if (!startSpawn && (float(ct) / 100.f) > 30.f) {
 		lemmingTime++;
 		previousTime = float(ct) / 100.f;

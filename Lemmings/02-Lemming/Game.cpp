@@ -106,8 +106,6 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
 	if (key == 68 || key == 100) // D
 		scene.moveMap(true);
 	else if (key == 65 || key == 97) // A
@@ -215,7 +213,6 @@ void Game::mouseRelease(int button)
 	if (button == GLUT_LEFT_BUTTON)
 	{
 		bLeftMouse = false;
-		//mainMenu.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 		scene.mouseMoved(mouseX, mouseY, bLeftMouse, bRightMouse);
 	}
 	else if(button == GLUT_RIGHT_BUTTON)

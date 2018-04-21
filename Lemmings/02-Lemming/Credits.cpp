@@ -10,14 +10,14 @@
 
 Credits::Credits()
 {
-	//map = NULL;
+	map = NULL;
 }
 
 
 Credits::~Credits()
 {
-	//if (map != NULL)
-	//	delete map;
+	if (map != NULL)
+		delete map;
 }
 
 void Credits::init(Cursor *cursor)
@@ -34,8 +34,6 @@ void Credits::init(Cursor *cursor)
 	maskTexture.loadFromFile("images/menu_background_mask_old.png", TEXTURE_PIXEL_FORMAT_L);
 	maskTexture.setMinFilter(GL_NEAREST);
 	maskTexture.setMagFilter(GL_NEAREST);
-
-	//quad = Quad::createQuad(0.f, 0.f, 128.f, 128.f, program);
 
 	titleTexture.loadFromFile("images/Lemmings-Logo.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	titleTexture.setMinFilter(GL_NEAREST);

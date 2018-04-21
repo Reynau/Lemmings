@@ -10,14 +10,14 @@
 
 Results::Results()
 {
-	//map = NULL;
+	map = NULL;
 }
 
 
 Results::~Results()
 {
-	//if (map != NULL)
-	//	delete map;
+	if (map != NULL)
+		delete map;
 }
 
 void Results::init(Cursor *cursor)

@@ -10,14 +10,14 @@
 
 Menu::Menu()
 {
-	//map = NULL;
+	map = NULL;
 }
 
 
 Menu::~Menu()
 {
-	//if (map != NULL)
-	//	delete map;
+	if (map != NULL)
+		delete map;
 }
 
 void Menu::init(Cursor *cursor)

@@ -10,14 +10,14 @@
 
 Instructions::Instructions()
 {
-	//map = NULL;
+	map = NULL;
 }
 
 
 Instructions::~Instructions()
 {
-	//if (map != NULL)
-	//	delete map;
+	if (map != NULL)
+		delete map;
 }
 
 void Instructions::init(Cursor *cursor)
